@@ -6,6 +6,7 @@ gemspec
 group :development do
   gem 'rspec'
   gem 'guard-rspec'
+  gem 'rack-test'
 end
 
 group :evaluations do
