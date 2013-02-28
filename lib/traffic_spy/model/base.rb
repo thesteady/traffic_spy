@@ -6,7 +6,7 @@ module TrafficSpy
   #   database_file = 'db/ideabox-test.sqlite3'
   # end
 
-  DB = Sequel.postgres database_file
+  DB = Sequel.postgres('trafficspy', :host=>'localhost', :user=>'user', :password=>'password')
 
 end
 
