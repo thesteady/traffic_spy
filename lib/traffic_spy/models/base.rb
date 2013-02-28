@@ -18,4 +18,4 @@ module TrafficSpy
 
 end
 
-require 'traffic_spy/models/sites'
+require 'traffic_spy/models/site'
