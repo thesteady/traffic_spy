@@ -21,5 +21,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency('rspec', '2.13.0')
 
    gem.add_dependency('sinatra', '1.3.5')
-  # #gem.add_dependency('sql', '')
+   gem.add_dependency('sequel', '3.44.0')
 end

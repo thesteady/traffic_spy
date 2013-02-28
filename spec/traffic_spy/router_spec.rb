@@ -2,16 +2,16 @@ require 'spec_helper'
 require 'rspec'
 require 'rack/test'
 
-# set :environment, :test
+describe TrafficSpy::Router do
 
-describe 'The Traffic Spy App' do
   include Rack::Test::Methods
 
   def app
-    TrafficSpy::Controller
+    TrafficSpy::Router
   end
 
   describe "POST /sources" do
+
     context "with both identifier and rootUrl" do
       it "returns a 200(OK) with a body" do
         post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
@@ -46,5 +46,6 @@ describe 'The Traffic Spy App' do
         last_response.body.should eq "{\"message\":\identifier already exists\"}"
       end
     end
+
   end
 end
