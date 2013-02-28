@@ -6,6 +6,8 @@ gemspec
 group :development do
   gem 'rspec'
   gem 'guard-rspec'
+  gem 'rb-readline'
+  gem 'rb-fsevent', '~> 0.9'
   gem 'rack-test'
 end
 
