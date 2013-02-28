@@ -7,7 +7,7 @@ Sequel.migration do
       foreign_key :os_id
       String      :resolution
       Integer     :response_time
-      foreign_key :eventname_id, null => true
+      foreign_key :eventname_id, :null => true
     end
   end
 end

@@ -14,18 +14,23 @@ namespace :db do
     Sequel::Migrator.run(@database, "db/migrations")
   end
 
-  # task :setup do
-  #   Sequel.extension :migration
+  desc "Show Tables of the Database"
+  task :tables => :setup do
+    puts @database.tables
+  end
 
-  #   database_path = 'db/ideabox.sqlite3'
+  task :setup do
+    Sequel.extension :migration
 
-  #   if ENV["IDEA_BOX_ENV"] == "test"
-  #     database_path = 'db/ideabox-test.sqlite3'
-  #   end
+    database_path = 'trafficspy'
 
-  #   puts "Using database: #{database_path}"
-  #   @database = Sequel.postgres database_path
-  # end
+    if ENV["TRAFFIC_SPY_ENV"] == "test"
+      database_path = 'trafficspy-test'
+    end
+
+    puts "Using database: #{database_path}"
+    @database = Sequel.postgres database_path
+  end
 end
 
 
