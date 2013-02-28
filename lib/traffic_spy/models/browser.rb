@@ -3,8 +3,8 @@ module TrafficSpy
   
   attr_reader :browser
   
-    def initialize(browser_info)
-      @browser = browser_info
+    def initialize(params)
+      @browser = params[:browser]
     end
 
   end
