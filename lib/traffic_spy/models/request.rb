@@ -11,9 +11,10 @@ module TrafficSpy
     def initialize(json_payload)
       payload = parse_json(json_payload)
 
-      url_path_id = TrafficSpy::UrlPath.parse(payload["url"])
+      # url_path_id = TrafficSpy::UrlPath.parse(payload["url"])
+      # @url = url_path_id
+      @url = payload["url"]
 
-      @url = url_path_id
       @requestedAt = payload["requestedAt"]
       @respondedIn = payload["respondedIn"]
       @referredBy = payload["referredBy"]
