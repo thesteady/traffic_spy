@@ -6,6 +6,6 @@ module TrafficSpy
     def initialize(params)
 
     end
-  
+
   end
 end

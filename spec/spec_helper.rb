@@ -1,3 +1,4 @@
+#ENV["TRAFFIC_SPY_ENV"] ||= "test"
 require 'traffic_spy'
 
 RSpec.configure do |config|

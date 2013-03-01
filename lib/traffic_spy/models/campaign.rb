@@ -6,6 +6,6 @@ module TrafficSpy
     def initialize(params)
       @name = params[:campaign_name]
     end
-  
+
   end
 end
