@@ -22,7 +22,9 @@ namespace :db do
   task :setup do
     Sequel.extension :migration
 
-    database_path = 'trafficspy'
+    database_path = 'trafficspy-test'
+
+   # puts ENV["TRAFFIC_SPY_ENV"] == "test"
 
     if ENV["TRAFFIC_SPY_ENV"] == "test"
       database_path = 'trafficspy-test'

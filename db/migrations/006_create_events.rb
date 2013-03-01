@@ -3,7 +3,7 @@ Sequel.migration do
     create_table(:events) do
       primary_key :id
       String      :eventname
-      foreign_key :app_id
+      foreign_key :site_id
     end
   end
 end

@@ -19,7 +19,7 @@ module TrafficSpy
       @resolutionHeight = params["resolutionHeight"]
       @ip = params["ip"]
     end
-  
+
   end
 end
 
