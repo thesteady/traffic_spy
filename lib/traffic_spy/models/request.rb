@@ -4,28 +4,25 @@ module TrafficSpy
   class Request
     attr_reader :url, :requestedAt, :respondedIn
 
-    def parse_json(params)
-      JSON.parse(params)
-    end
+    def initialize(params)
+      
+      @url = params["url"]
 
-    def initialize(json_payload)
-      payload = parse_json(json_payload)
-
-      # url_path_id = TrafficSpy::UrlPath.parse(payload["url"])
-      # @url = url_path_id
-      @url = payload["url"]
-
-      @requestedAt = payload["requestedAt"]
-      @respondedIn = payload["respondedIn"]
-      @referredBy = payload["referredBy"]
-      @requestType = payload["requestType"]
-      @parameters = payload["parameters"]
-      @eventName = payload["eventName"]
-      @userAgent = payload["userAgent"]
-      @resolutionWidth = payload["resolutionWidth"]
-      @resolutionHeight = payload["resolutionHeight"]
-      @ip = payload["ip"]
+      @requestedAt = params["requestedAt"]
+      @respondedIn = params["respondedIn"]
+      @referredBy = params["referredBy"]
+      @requestType = params["requestType"]
+      @parameters = params["parameters"]
+      @eventName = params["eventName"]
+      @userAgent = params["userAgent"]
+      @resolutionWidth = params["resolutionWidth"]
+      @resolutionHeight = params["resolutionHeight"]
+      @ip = params["ip"]
     end
   
   end
 end
+
+# should this look like?
+# @url = RequestParser.url
+# @resolution = RequestParser.resolution

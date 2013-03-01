@@ -8,7 +8,7 @@ module TrafficSpy
     end
 
     #def self.parse(url_path)
-      #based on teh url path, spit back a primary key id
+      #based on the url path, spit back a primary key id
     #end
   end
 end

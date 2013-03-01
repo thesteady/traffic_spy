@@ -18,7 +18,22 @@ describe TrafficSpy::UrlPath do
         expect(url.url_path).to eq "http://jumpstartlab.com/blog/article1"
       end
     end
+  end
+  
+  describe "new instance" do
+    context "given a new url_path" do
+      it "parses it properly and stores with a new key value" do
+        pending
+      end
+    end
+  end
 
+  describe "new instance" do
+    context "given an existing url_path" do
+      it "assigns the exisiting key value" do
+        pending
+      end
+    end
   end
 
 end

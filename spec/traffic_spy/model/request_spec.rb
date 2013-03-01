@@ -11,6 +11,9 @@ describe TrafficSpy::Request do
     TrafficSpy::Request
   end
 
+
+##Rewrite this test and the class to just take in the data it needs, coming from the
+### request parser already ready to go.
   describe "New Request Instance" do
     context "given required parameters for a new request instance" do
       it "parses and creates a new request" do

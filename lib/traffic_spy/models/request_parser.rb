@@ -7,7 +7,7 @@ module TrafficSpy
     attr_accessor :url
     attr_reader :requestedAt, :respondedIn, :referredBy, :requestType,
                 :parameters, :eventName, :userAgent, 
-                :resolutionWidth, :resolutionHeight,
+                :resolution
                 :ip
 
     def parse(json_payload)
@@ -27,12 +27,21 @@ module TrafficSpy
       @referredBy = payload["referredBy"]
       @requestType = payload["requestType"]
       @parameters = payload["parameters"]
+
       @eventName = payload["eventName"]
+      
       @userAgent = payload["userAgent"]
-      @resolutionWidth = payload["resolutionWidth"]
-      @resolutionHeight = payload["resolutionHeight"]
+      
+      @resolution = combine_resolutions(
+                                        payload["resolutionWidth"], 
+                                        payload["resolutionHeight"]
+                                        )
       @ip = payload["ip"]
     
+    end
+
+    def combine_resolutions(width, height)
+      "#{width} x #{height}"
     end
 
   end
