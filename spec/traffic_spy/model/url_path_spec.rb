@@ -76,6 +76,16 @@ describe TrafficSpy::UrlPath do
       end
     end
 
+    describe ".find_by_path(path)"do
+      it "returns record id for the path" do
+        app.new(url1).save
+        app.new(url2).save
+
+        test_name = app.all.first.path
+        expect(app.find_by_path(test_name).path).to eq("/blog")
+     end
+    end
+
     describe ".exists?(url_path)" do
 
       context "record exists in db" do

@@ -4,7 +4,7 @@ require 'json'
 #where do we check for duplicates in things likes url paths, etc?
 module TrafficSpy
   class RequestParser
-    attr_accessor :url
+    attr_accessor :path
     attr_reader :requestedAt, :respondedIn, :referredBy, :requestType,
                 :parameters, :eventName, :userAgent, 
                 :resolution
@@ -18,9 +18,20 @@ module TrafficSpy
     def initialize(json_payload)
       payload = parse(json_payload)
 
-      # url_path_id = TrafficSpy::UrlPath.parse(payload["url"])
+      #url_path_id = TrafficSpy::UrlPath.parse(payload["url"])
       # @url = url_path_id
-      @url = payload["url"]
+      if UrlPath.exists?(payload["url"])
+        urlpath = UrlPath.find_by_path(path)
+        urlpath.id
+      else
+        path = UrlPath.new(payload["url"])
+        path.save
+        urlpath = UrlPath.find_by_path(path.path)
+        urlpath.id
+      end
+    
+      
+
 
       @requestedAt = payload["requestedAt"]
       @respondedIn = payload["respondedIn"]

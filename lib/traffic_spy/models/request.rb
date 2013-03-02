@@ -2,11 +2,13 @@ require 'json'
 
 module TrafficSpy
   class Request
-    attr_reader :url, :requestedAt, :respondedIn
+    attr_reader :path, :requestedAt, :respondedIn
 
     def initialize(params)
+      puts params.inspect
       
-      @url = params["url"]
+      @path = params["url"]
+      puts @path
 
       @requestedAt = params["requestedAt"]
       @respondedIn = params["respondedIn"]

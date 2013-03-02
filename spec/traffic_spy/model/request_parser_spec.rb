@@ -27,7 +27,7 @@ describe TrafficSpy::RequestParser do
 
         parsed_payload = TrafficSpy::RequestParser.new(payload)
 
-        expect(parsed_payload.url).to eq "http://jumpstartlab.com/blog"
+        expect(parsed_payload.path).to eq "http://jumpstartlab.com/blog"
         expect(parsed_payload.respondedIn).to eq 37
         expect(parsed_payload.resolution).to eq "1920 x 1280"
 
