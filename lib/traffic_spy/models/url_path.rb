@@ -28,8 +28,8 @@ module TrafficSpy
       UrlPath.new(result)
     end
 
-    def self.exists?(path)
-      !data.where(:path => path).empty?
+    def self.exists?(url)
+      !data.where(:path => url).empty?
     end
 
     def self.all
@@ -42,8 +42,5 @@ module TrafficSpy
       UrlPath.data.insert({:path => path, :site_id => site_id})
     end
 
-    #def self.parse(url_path)
-      #based on the url path, spit back a primary key id
-    #end
   end
 end

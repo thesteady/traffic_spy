@@ -19,7 +19,7 @@ describe TrafficSpy::UrlPath do
       end
     end
   end
-  
+
   describe "new instance" do
     context "given a new url_path" do
       it "parses it properly and stores with a new key value" do
@@ -52,8 +52,8 @@ describe TrafficSpy::UrlPath do
 
     describe ".count" do
       it  "returns 1 record" do
-        site = app.new(url1)
-        site.save
+        url = app.new(url1)
+        url.save
         expect(app.count).to eq(1)
       end
     end
