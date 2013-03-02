@@ -15,9 +15,70 @@ describe TrafficSpy::Event do
       it "creates a new event" do
         details = {:eventname => "log_in"}
         new_event = app.new(details)
-        expect(new_event.name).to eq "log_in"
+        expect(new_event.eventname).to eq "log_in"
       end
     end
+  end
+
+  describe "Class method" do
+
+    before do
+      TrafficSpy::DB[:events].delete
+    end
+
+    let(:e1) do
+      {:eventname => "sociallogin"}
+    end
+
+    let(:e2) do
+      {:eventname => "log_in"}
+    end
+
+    describe ".count" do
+      it  "returns 1 record" do
+        event = app.new(e1)
+        event.save
+        expect(app.count).to eq(1)
+      end
+    end
+
+    describe ".all" do
+      it "returns 2 records" do
+        app.new(e1).save
+        app.new(e2).save
+        expect(app.all.count).to eq(2)
+      end
+    end
+
+    describe ".find(id)" do
+      it "returns record with id of first saved e" do
+        app.new(e1).save
+        app.new(e2).save
+
+        test_id = app.all.first.id
+        expect(app.find(test_id).eventname).to eq("/blog")
+      end
+    end
+
+    describe ".exists?(event_name)" do
+
+      context "record exists in db" do
+        it 'should return true' do
+          app.new(e1).save
+          event = app.all.first
+
+          expect(app.exists?(event.eventname).should be_true)
+        end
+      end
+
+      context "record does not exist in db" do
+        it 'should return false' do
+          expect(app.exists?("cancel_account").should be_false)
+        end
+      end
+
+    end
+
   end
 
 end

@@ -66,9 +66,9 @@ describe TrafficSpy::UrlPath do
       context "record exists in db" do
         it 'should return true' do
           app.new(url1).save
-          site = app.all.first
+          url = app.all.first
 
-          expect(app.exists?(site.path).should be_true)
+          expect(app.exists?(url.path).should be_true)
         end
       end
 

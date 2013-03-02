@@ -27,7 +27,7 @@ module TrafficSpy
     end
 
     def self.all
-      results = data.map do |site|
+      data.map do |site|
         Site.new(site)
       end
     end

@@ -4,7 +4,7 @@ module TrafficSpy
     database_path = 'trafficspy-test'
   end
 
-  DB = Sequel.postgres('trafficspy-test')
+  DB = Sequel.postgres('trafficspy')
 
 end
 
