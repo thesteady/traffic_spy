@@ -18,16 +18,8 @@ module TrafficSpy
     def initialize(json_payload)
       payload = parse(json_payload)
 
-      if UrlPath.exists?(payload[:url])
-        puts "path exists"
-        urlpath = UrlPath.find_by_path(path)
-        urlpath.id
-      else
-        path = UrlPath.new({:path => payload[:url], :site_id => 1})
-        path.save
-        urlpath = UrlPath.find_by_path(path.path)
-        @path_id = urlpath.id
-      end
+      #parses url, checking against database to make sure not a new instance, if it is, stores in database.
+      @path_id = parse_urlpath(payload[:url])
     
       @requestedAt = payload[:requestedAt]
       @respondedIn = payload[:respondedIn]
@@ -51,8 +43,15 @@ module TrafficSpy
       "#{width} x #{height}"
     end
 
-    # def parse_urlpath(urlpath)
-    # end
+    def parse_urlpath(urlpath)
+      if UrlPath.exists?(urlpath)
+        UrlPath.find_by_path(path).id
+      else
+        path = UrlPath.new({:path => urlpath, :site_id => 1})
+        path.save
+        UrlPath.find_by_path(path.path).id
+      end
+    end
 
 
   end
