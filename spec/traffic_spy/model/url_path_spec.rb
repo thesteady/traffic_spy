@@ -18,7 +18,22 @@ describe TrafficSpy::UrlPath do
         expect(url.path).to eq "http://jumpstartlab.com/blog/article1"
       end
     end
+  end
+  
+  describe "new instance" do
+    context "given a new url_path" do
+      it "parses it properly and stores with a new key value" do
+        pending
+      end
+    end
+  end
 
+  describe "new instance" do
+    context "given an existing url_path" do
+      it "assigns the exisiting key value" do
+        pending
+      end
+    end
   end
 
   describe "Class method" do
@@ -59,6 +74,16 @@ describe TrafficSpy::UrlPath do
         test_id = app.all.first.id
         expect(app.find(test_id).path).to eq("/blog")
       end
+    end
+
+    describe ".find_by_path(path)"do
+      it "returns record id for the path" do
+        app.new(url1).save
+        app.new(url2).save
+
+        test_name = app.all.first.path
+        expect(app.find_by_path(test_name).path).to eq("/blog")
+     end
     end
 
     describe ".exists?(url_path)" do

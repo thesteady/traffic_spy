@@ -21,6 +21,11 @@ module TrafficSpy
       UrlPath.new(result)
     end
 
+    def self.find_by_path(path)
+     result = data.first(:path =>path)
+      UrlPath.new(result)
+    end
+
     def self.exists?(path)
       !data.where(:path => path).empty?
     end
@@ -36,7 +41,7 @@ module TrafficSpy
     end
 
     #def self.parse(url_path)
-      #based on teh url path, spit back a primary key id
+      #based on the url path, spit back a primary key id
     #end
   end
 end
