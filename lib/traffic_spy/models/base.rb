@@ -1,10 +1,12 @@
 module TrafficSpy
 
   if ENV["TRAFFIC_SPY_ENV"] == "test"
-    database_path = 'trafficspy-test'
+    database_path = 'trafficspy_test'
+  else
+    database_path = 'trafficspy_prod'
   end
 
-  DB = Sequel.postgres('trafficspy')
+  DB = Sequel.postgres(database_path)
 
 end
 
