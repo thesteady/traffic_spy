@@ -21,7 +21,7 @@ describe TrafficSpy::RequestParser do
         
         new_site = TrafficSpy::Site.new({:identifier=>"jumpstartlab", :rootUrl => "http://jumpstartlab.com"})
         new_site.save
-        
+
         payload = {
                     :url => "http://jumpstartlab.com/blog",
                     :requestedAt => "2013-02-16 21:38:28 -0700",
@@ -48,7 +48,7 @@ describe TrafficSpy::RequestParser do
         expect(parsed_payload.parameters).to eq []
 
         #Event Name needs to be turned into an id; userAgent needs to become browser/os
-        expect(parsed_payload.eventName).to eq "socialLogin"
+        expect(parsed_payload.eventname_id).to eq TrafficSpy::Event.find_by_eventName("socialLogin").id
         expect(parsed_payload.userAgent).to eq "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17"
         expect(parsed_payload.resolution).to eq "1920 x 1280"
         expect(parsed_payload.ip).to eq "63.29.38.211"

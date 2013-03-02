@@ -22,6 +22,11 @@ module TrafficSpy
       Event.new(result)
     end
 
+    def self.find_by_eventName(eventName)
+      result = data.first(:name => eventName)
+      Event.new(result)
+    end
+
     def self.exists?(name)
       !data.where(:name => name).empty?
     end
