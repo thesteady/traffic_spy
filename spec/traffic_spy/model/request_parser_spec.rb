@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'rspec'
 require 'rack/test'
 require 'json'
+#require 'traffic_spy/models/url_path'
 
 describe TrafficSpy::RequestParser do
 
@@ -9,6 +10,11 @@ describe TrafficSpy::RequestParser do
 
 
   describe "Payload is Parsed and Stored" do
+
+    before do
+      TrafficSpy::DB[:url_paths].delete
+    end
+
     context "when a new payload is received" do
       it "parses and creates a new request" do
         payload = {
@@ -24,10 +30,11 @@ describe TrafficSpy::RequestParser do
                     :resolutionHeight => "1280",
                     :ip => "63.29.38.211" 
                   }.to_json
-
+        
         parsed_payload = TrafficSpy::RequestParser.new(payload)
+        object = TrafficSpy::UrlPath.find_by_path("http://jumpstartlab.com/blog")
 
-        expect(parsed_payload.path).to eq "http://jumpstartlab.com/blog"
+        expect(object.path).to eq "http://jumpstartlab.com/blog"
         expect(parsed_payload.respondedIn).to eq 37
         expect(parsed_payload.resolution).to eq "1920 x 1280"
 

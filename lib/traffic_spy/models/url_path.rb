@@ -1,11 +1,13 @@
 module TrafficSpy
   class UrlPath
 
-  attr_reader :id, :path
+  attr_reader :id, :path, :site_id
 
-    def initialize(params)
-      @id = params[:id]
-      @path = params[:path]
+    def initialize(input)
+
+      @id = input[:id]
+      @path = input[:path]
+      @site_id = input[:site_id]
     end
 
     def self.data
@@ -21,8 +23,8 @@ module TrafficSpy
       UrlPath.new(result)
     end
 
-    def self.find_by_path(path)
-     result = data.first(:path =>path)
+    def self.find_by_path(url)
+     result = data.first(:path =>url)
       UrlPath.new(result)
     end
 
@@ -37,7 +39,7 @@ module TrafficSpy
     end
 
     def save
-      UrlPath.data.insert({:path => path})
+      UrlPath.data.insert({:path => path, :site_id => site_id})
     end
 
     #def self.parse(url_path)
