@@ -5,7 +5,7 @@ module TrafficSpy
     attr_accessor :path_id
     attr_reader :requestedAt, :respondedIn, :referredBy, :requestType,
                 :parameters, :eventName, :userAgent, 
-                :resolution
+                :resolution,
                 :ip
 
     def parse(json_payload)
@@ -17,26 +17,25 @@ module TrafficSpy
       
     def initialize(json_payload)
       payload = parse(json_payload)
+      
 
-      #parses url, checking against database to make sure not a new instance, if it is, stores in database.
       @path_id = parse_urlpath(payload[:url])
     
+      @eventName = payload[:eventName]
+      @userAgent = payload[:userAgent]
+
       @requestedAt = payload[:requestedAt]
       @respondedIn = payload[:respondedIn]
       @referredBy = payload[:referredBy]
       @requestType = payload[:requestType]
       @parameters = payload[:parameters]
-
-      @eventName = payload[:eventName]
-      
-      @userAgent = payload[:userAgent]
-      
+      @ip = payload[:ip]    
       @resolution = combine_resolutions(
                                         payload[:resolutionWidth], 
                                         payload[:resolutionHeight]
                                         )
-      @ip = payload[:ip]
-    
+     
+
     end
 
     def combine_resolutions(width, height)
@@ -47,7 +46,12 @@ module TrafficSpy
       if UrlPath.exists?(urlpath)
         UrlPath.find_by_path(path).id
       else
-        path = UrlPath.new({:path => urlpath, :site_id => 1})
+
+        split_url = urlpath.split("/")
+        rootUrl = "http://" + split_url[2]
+        site_id = Site.find_by_rootUrl(rootUrl).id
+
+        path = UrlPath.new({:path => urlpath, :site_id => site_id})
         path.save
         UrlPath.find_by_path(path.path).id
       end

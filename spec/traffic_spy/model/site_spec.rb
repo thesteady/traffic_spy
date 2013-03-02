@@ -65,6 +65,14 @@ describe TrafficSpy::Site do
       end
     end
 
+    describe ".find_by_rootUrl" do
+      it "returns a record with site id, rootUrl, and identifier" do
+      new_site = app.new(site1).save
+      
+      expect(app.find_by_rootUrl("http://jumpstartlab.com").id).to eq new_site
+      end
+    end
+
     describe ".exists?(identifier)" do
 
       context "record exists in db" do
