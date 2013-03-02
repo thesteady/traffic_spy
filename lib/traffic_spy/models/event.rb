@@ -1,11 +1,11 @@
 module TrafficSpy
   class Event
 
-    attr_reader :id, :eventname
+    attr_reader :id, :name
 
     def initialize(params)
       @id = params[:id]
-      @eventname = params[:eventname]
+      @name = params[:name]
     end
 
 
@@ -23,7 +23,7 @@ module TrafficSpy
     end
 
     def self.exists?(name)
-      !data.where(:eventname => name).empty?
+      !data.where(:name => name).empty?
     end
 
     def self.all
@@ -33,7 +33,7 @@ module TrafficSpy
     end
 
     def save
-      Event.data.insert({:eventname => eventname})
+      Event.data.insert({:name => name})
     end
   end
 end

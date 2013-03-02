@@ -13,9 +13,9 @@ describe TrafficSpy::Event do
   describe "New Event Instance" do
     context "given required parameters for a new event instance" do
       it "creates a new event" do
-        details = {:eventname => "log_in"}
+        details = {:name => "log_in"}
         new_event = app.new(details)
-        expect(new_event.eventname).to eq "log_in"
+        expect(new_event.name).to eq "log_in"
       end
     end
   end
@@ -27,11 +27,11 @@ describe TrafficSpy::Event do
     end
 
     let(:e1) do
-      {:eventname => "sociallogin"}
+      {:name => "sociallogin"}
     end
 
     let(:e2) do
-      {:eventname => "log_in"}
+      {:name => "log_in"}
     end
 
     describe ".count" do
@@ -56,7 +56,7 @@ describe TrafficSpy::Event do
         app.new(e2).save
 
         test_id = app.all.first.id
-        expect(app.find(test_id).eventname).to eq("/blog")
+        expect(app.find(test_id).name).to eq("sociallogin")
       end
     end
 
@@ -67,7 +67,7 @@ describe TrafficSpy::Event do
           app.new(e1).save
           event = app.all.first
 
-          expect(app.exists?(event.eventname).should be_true)
+          expect(app.exists?(event.name).should be_true)
         end
       end
 
