@@ -18,6 +18,7 @@ module TrafficSpy
 
     def initialize(json_payload)
       payload = parse(json_payload)
+
       @site_id = find_site_id(payload[:url])
       @path_id = parse_urlpath(payload[:url])
 
@@ -37,6 +38,9 @@ module TrafficSpy
                                         payload[:resolutionWidth],
                                         payload[:resolutionHeight]
                                         )
+      #create new request
+      #before saving, check if its already in the system
+      #if not, save, else, return an erro
     end
 
     def combine_resolutions(width, height)

@@ -68,47 +68,47 @@ module TrafficSpy
       end
     end
 
-    # get '/sources/:identifier/events' do
-    #   if Site.exists?(:identifier)
-    #   #displays events page... do we call methods here to grab data?
-    #     #if events have been defined, display page:
-    #       #erb :events
-    #     #else
-    #       #"{\"message\":\ no events have been defined\"}"
-    #     #end
-    #   else
-    #     status 404
-    #     "{\"message\":\identifier does not exist\"}"
-    #   end
-    # end
+    get '/sources/:identifier/events' do
+      if Site.exists?(:identifier)
+      #displays events page... do we call methods here to grab data?
+        if Event.count == 0
+          "{\"message\":\no events have been defined.\"}"
+        else
+          erb :events
+        end
+      else
+        status 404
+        "{\"message\":\identifier does not exist\"}"
+      end
+    end
 
-    # get '/sources/:identifier/campaigns' do
-    #   if Site.exists?(:identifier)
-    #     #if any campaigns exist
-    #       #show page with hyperlinks to campaign specific data
-    #       #erb :campaigns
-    #     #else
-    #       "{\"message\":\no campaigns defined\"}"
-    #     #end
-    #   else
-    #     status 403
-    #       "{\"message\":\identifier does not exist\"}"
-    #   end
-    # end
+    get '/sources/:identifier/campaigns' do
+      if Site.exists?(:identifier)
+        #if any campaigns exist
+          #show page with hyperlinks to campaign specific data
+          #erb :campaigns
+        #else
+          "{\"message\":\no campaigns defined\"}"
+        #end
+      else
+        status 403
+          "{\"message\":\identifier does not exist\"}"
+      end
+    end
 
-    # get '/sources/:identifier/campaigns/:campaignname' do
-    #   if Site.exists?(:identifier)
-    #     #if the specified campaign exists
-    #       #show page with info
-    #     else
-    #       "{\"message\":\no campaign exists\"}"
-    #       #hyperlink back to campaigns index
-    #     end
-    #   else
-    #     status 403
-    #       "{\"message\":\identifier does not exist\"}"
-    #   end
-    # end
+    get '/sources/:identifier/campaigns/:campaignname' do
+      if Site.exists?(:identifier)
+        #if the specified campaign exists
+          #show page with info
+        # else
+        #   "{\"message\":\no campaign exists\"}"
+        #   #hyperlink back to campaigns index
+        # end
+      else
+        status 403
+          "{\"message\":\identifier does not exist\"}"
+      end
+    end
 
   end
 end

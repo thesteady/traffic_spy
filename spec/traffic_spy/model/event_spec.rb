@@ -27,11 +27,11 @@ describe TrafficSpy::Event do
     end
 
     let(:e1) do
-      {:name => "sociallogin"}
+      {:name => "sociallogin", :site_id => 1}
     end
 
     let(:e2) do
-      {:name => "log_in"}
+      {:name => "log_in", :site_id => 2}
     end
 
     describe ".count" do
@@ -51,12 +51,21 @@ describe TrafficSpy::Event do
     end
 
     describe ".find(id)" do
-      it "returns record with id of first saved e" do
+      it "returns record with id of first saved" do
         app.new(e1).save
         app.new(e2).save
 
         test_id = app.all.first.id
         expect(app.find(test_id).name).to eq("sociallogin")
+      end
+    end
+
+    describe ".find_all_by_site_id(site_id)" do
+      it "returns an array of event objects belonging to site id" do
+        app.new(e1).save
+        app.new(e2).save
+
+        expect(app.find_all_by_site_id(2).count).to eq 1
       end
     end
 
