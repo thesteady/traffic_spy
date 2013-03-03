@@ -51,7 +51,7 @@ describe TrafficSpy::Campaign do
     end
 
     describe ".find(id)" do
-      it "returns record with id of first saved url" do
+      it "returns record with id of first saved campaign" do
         app.new(c1).save
         app.new(c2).save
 
@@ -70,14 +70,14 @@ describe TrafficSpy::Campaign do
      end
     end
 
-    describe ".exists?(url_name)" do
+    describe ".exists?(campaign_name)" do
 
       context "record exists in db" do
         it 'should return true' do
           app.new(c1).save
-          url = app.all.first
+          campaign = app.all.first
 
-          expect(app.exists?(url.name).should be_true)
+          expect(app.exists?(campaign.name).should be_true)
         end
       end
 

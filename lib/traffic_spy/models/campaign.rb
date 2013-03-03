@@ -40,8 +40,5 @@ module TrafficSpy
       Campaign.data.insert({:name => name})
     end
 
-
-
-
   end
 end

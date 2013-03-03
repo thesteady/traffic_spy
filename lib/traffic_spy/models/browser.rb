@@ -1,23 +1,45 @@
 module TrafficSpy
   class Browser
 
-  attr_reader :browser
+  attr_reader :id, :name
 
-    def initialize(params)
-      @browser = params[:browser]
+    def initialize(input)
+      @id = input[:id]
+      @name = input[:name]
+    end
+
+    def self.data
+      DB[:browsers]
+    end
+
+    def self.count
+      data.count
+    end
+
+    def self.find(id)
+      result = data.first(:id => id)
+      Browser.new(result)
+    end
+
+    def self.find_by_name(b_name)
+      result = data.first(:name =>b_name)
+      Browser.new(result)
+    end
+
+    def self.exists?(b_name)
+      !data.where(:name => b_name).empty?
+    end
+
+    def self.all
+      results = data.map do |browser|
+        Browser.new(browser)
+      end
+    end
+
+    def save
+      Browser.data.insert({:name => name})
     end
 
   end
 end
 
-
-#Hash
-#"userAgent":"Mozilla/5.0
-#(Macintosh; Intel Mac OS X 10_8_2)
-#AppleWebKit/537.17 (KHTML, like Gecko)
-#Chrome/24.0.1309.0
-#Safari/537.17"
-#"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17"
-
-#userAgent_pieces = payload["userAgent"].split
-#web_browser = userAgent_pieces[0]
