@@ -2,7 +2,7 @@ require 'json'
 
 module TrafficSpy
   class Request
-<<<<<<< HEAD
+
     attr_reader :id, :event_id, :url_path_id, :browser_id, :os_id, :site_id,
                 :requested_at, :response_time, :referred_by, :request_type,
                 :resolution, :ip
