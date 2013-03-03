@@ -47,10 +47,9 @@ describe TrafficSpy::RequestParser do
         expect(parsed_payload.referred_by).to eq "http://jumpstartlab.com"
         expect(parsed_payload.request_type).to eq "GET"
 
-        expect(parsed_payload.event_id).to eq TrafficSpy::Event.find_by_eventName("socialLogin").id
-        expect(parsed_payload.browser_id).to eq "Chrome"
-        expect(parsed_payload.os_id).to eq "Macintosh"
-
+        expect(parsed_payload.event_id).to eq TrafficSpy::Event.find_by_eventName("socialLogin").id        
+        expect(parsed_payload.browser_id).to eq TrafficSpy::Browser.find_by_name("Chrome").id
+        expect(parsed_payload.os_id).to eq TrafficSpy::OperatingSystem.find_by_name("Macintosh").id
         expect(parsed_payload.resolution).to eq "1920 x 1280"
         expect(parsed_payload.ip).to eq "63.29.38.211"
 
