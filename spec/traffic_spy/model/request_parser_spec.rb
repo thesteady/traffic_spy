@@ -13,10 +13,15 @@ describe TrafficSpy::RequestParser do
 
     before do
       TrafficSpy::DB[:url_paths].delete
+      TrafficSpy::DB[:sites].delete
     end
 
     context "when a new payload is received" do
       it "parses and creates a new request" do
+        
+        new_site = TrafficSpy::Site.new({:identifier=>"jumpstartlab", :rootUrl => "http://jumpstartlab.com"})
+        new_site.save
+
         payload = {
                     :url => "http://jumpstartlab.com/blog",
                     :requestedAt => "2013-02-16 21:38:28 -0700",
@@ -32,11 +37,25 @@ describe TrafficSpy::RequestParser do
                   }.to_json
 
         parsed_payload = TrafficSpy::RequestParser.new(payload)
+        
         object = TrafficSpy::UrlPath.find_by_path("http://jumpstartlab.com/blog")
 
         expect(object.path).to eq "http://jumpstartlab.com/blog"
+        expect(object.site_id). to eq TrafficSpy::Site.find_by_rootUrl("http://jumpstartlab.com").id
+        
+        expect(parsed_payload.site_id).to eq TrafficSpy::Site.find_by_rootUrl("http://jumpstartlab.com").id
         expect(parsed_payload.respondedIn).to eq 37
+        expect(parsed_payload.referredBy).to eq "http://jumpstartlab.com"
+        expect(parsed_payload.requestType).to eq "GET"
+        expect(parsed_payload.parameters).to eq []
+
+        #userAgent needs to become browser/os
+        expect(parsed_payload.eventname_id).to eq TrafficSpy::Event.find_by_eventName("socialLogin").id        
+        expect(parsed_payload.browser_id).to eq "Chrome"
+        expect(parsed_payload.os_id).to eq "Macintosh"
+        
         expect(parsed_payload.resolution).to eq "1920 x 1280"
+        expect(parsed_payload.ip).to eq "63.29.38.211"
 
       end
     end

@@ -23,7 +23,7 @@ module TrafficSpy
     end
 
     post '/sources/:identifier/data' do
-      # if identifier doesnt already exist, provide send 403 message
+      # if identifier doesnt already exist, provide send 403 message (before parse)
       # else parse payload
     end
 

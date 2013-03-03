@@ -22,6 +22,11 @@ module TrafficSpy
       Site.new(result)
     end
 
+    def self.find_by_rootUrl(url)
+      result = data.first(:rootUrl =>url)
+      Site.new(result)
+    end
+
     def self.exists?(identifier)
       !data.where(:identifier => identifier).empty?
     end
