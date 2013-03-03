@@ -5,7 +5,7 @@ require 'user_agent'
 
 module TrafficSpy
   class RequestParser
-    # attr_accessor :path_id
+    attr_accessor :req_attr
 
     # attr_reader :requested_at, :response_time, :referred_by, :request_type,
     #             :event_id, :browser_id, :os_id,
@@ -24,14 +24,14 @@ module TrafficSpy
       user_agent = UserAgent.parse(payload[:userAgent])
 
       site_id = find_site_id(payload[:url])
-      event = Event.new({name: payload[:eventName] site_id: site_id})
+      event = Event.new({name: payload[:eventName], site_id: site_id})
       url = UrlPath.new({path: payload[:url], site_id: site_id})
       os = OperatingSystem.new({name: user_agent.platform})
       browser = Browser.new({name: user_agent.browser})
 
       req_attr = {}
       req_attr[:site_id] = site_id
-      req_attr[:url_id] = RequestParser.get_foreign_keys(url)
+      req_attr[:url_path_id] = RequestParser.get_foreign_keys(url)
       req_attr[:event_id] = RequestParser.get_foreign_keys(event)
       req_attr[:browser_id] = RequestParser.get_foreign_keys(browser)
       req_attr[:os_id] = RequestParser.get_foreign_keys(os)
@@ -45,15 +45,14 @@ module TrafficSpy
                                         payload[:resolutionHeight]
                                         )
 
-      RequestParser.create_request(req_attr)
+      @req_attr = req_attr
 
     end
 
-    def self.create_request(params)
-      request = Request.new(params)
-      # check for duplicates
-      request.save
-
+    def create_request
+      request = Request.new(@req_attr)
+      @req_attr[:id] = request.save
+      @req_attr
     end
 
 

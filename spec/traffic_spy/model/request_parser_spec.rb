@@ -35,7 +35,7 @@ describe TrafficSpy::RequestParser do
                     ip: "63.29.38.211"
                   }.to_json
 
-        parsed_payload = TrafficSpy::RequestParser.new(payload)
+        request_hash = TrafficSpy::RequestParser.new(payload).create_request
 
         object = TrafficSpy::UrlPath.find(path: "http://jumpstartlab.com/blog")
 

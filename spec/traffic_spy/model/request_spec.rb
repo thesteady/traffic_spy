@@ -135,26 +135,70 @@ describe TrafficSpy::Request do
       end
     end
 
+  end
 
+  describe "When new Requests are received from RequestParser" do
 
-    # describe ".exists?(identifier)" do
+    before do
+      @site = TrafficSpy::Site.new({:identifier=>"jumpstartlab", :rootUrl => "http://jumpstartlab.com"})
+      @site.save
 
-    #   context "record exists in db" do
-    #     it 'should return true' do
-    #       app.new(site1).save
-    #       site = app.all.first
+      @payload = {
+                  url: "http://jumpstartlab.com/blog",
+                  requestedAt: "2013-02-16 21:38:28 -0700",
+                  respondedIn: 37,
+                  referredBy: "http://jumpstartlab.com",
+                  requestType: "GET",
+                  parameters: [],
+                  eventName: "socialLogin",
+                  userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
+                  resolutionWidth: "1920",
+                  resolutionHeight: "1280",
+                  ip: "63.29.38.211"
+                }.to_json
 
-    #       expect(app.exists?(site.identifier).should be_true)
-    #     end
-    #   end
+      request_hash = TrafficSpy::RequestParser.new(@payload).create_request
 
-    #   context "record does not exist in db" do
-    #     it 'should return false' do
-    #       expect(app.exists?("acme_app").should be_false)
-    #     end
-    #   end
+      @request = app.find(id: request_hash[:id]).first
+    end
 
-    # end
+    describe "non-foreign key fields" do
+
+      it "should match payload attributes" do
+       # puts @request.inspect
+        expect(@request.resolution).to eq("1920 x 1280")
+        expect(@request.ip).to eq("63.29.38.211")
+        expect(@request.request_type).to eq("GET")
+      end
+    end
+
+    describe "foreign keys" do
+      it "should retrieve url path from url_paths table" do
+        url_id = @request.url_path_id
+        expect(TrafficSpy::UrlPath.find(id: url_id).path).to eq("http://jumpstartlab.com/blog")
+      end
+
+      it "should retrieve site identifier from sites table" do
+        site_id = @request.site_id
+        expect(TrafficSpy::Site.find(id: site_id).identifier).to eq("jumpstartlab")
+      end
+
+      it "should retrieve event name from events table" do
+        event_id = @request.event_id
+        expect(TrafficSpy::Event.find(id: event_id).name).to eq("socialLogin")
+      end
+
+      it "should retrieve browser name from browsers table" do
+        browser_id = @request.browser_id
+        expect(TrafficSpy::Browser.find(id: browser_id).name).to eq("Chrome")
+      end
+
+      it "should retrieve os name from operation_systems table" do
+        os_id = @request.os_id
+        expect(TrafficSpy::OperatingSystem.find(id: os_id).name).to eq("Macintosh")
+      end
+
+    end
 
   end
 
