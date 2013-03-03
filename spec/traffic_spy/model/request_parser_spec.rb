@@ -2,7 +2,6 @@ require 'spec_helper'
 require 'rspec'
 require 'rack/test'
 require 'json'
-#require 'traffic_spy/models/url_path'
 
 describe TrafficSpy::RequestParser do
 
