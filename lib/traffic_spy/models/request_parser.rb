@@ -14,12 +14,12 @@ module TrafficSpy
       #below changes keys to symbols for easy use elsewhere
       Hash[payload.map{|(k,v)| [k.to_sym,v]}]
     end
-      
+
     def initialize(json_payload)
       payload = parse(json_payload)
-      
       @site_id = find_site_id(payload[:url])
       @path_id = parse_urlpath(payload[:url])
+
       @eventname_id = parse_eventName(payload[:eventName], payload[:url])
 
       user_agent = UserAgent.parse(payload[:userAgent])
@@ -30,14 +30,17 @@ module TrafficSpy
       os = OperatingSystem.new(:os =>user_agent.platform)
       @os_id = os.id
 
+
       @requestedAt = payload[:requestedAt]
       @respondedIn = payload[:respondedIn]
       @referredBy = payload[:referredBy]
       @requestType = payload[:requestType]
       @parameters = payload[:parameters]
-      @ip = payload[:ip]    
+
+
+      @ip = payload[:ip]
       @resolution = combine_resolutions(
-                                        payload[:resolutionWidth], 
+                                        payload[:resolutionWidth],
                                         payload[:resolutionHeight]
                                         )
     end
