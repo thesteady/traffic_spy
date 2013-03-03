@@ -58,15 +58,15 @@ module TrafficSpy
     end
 
 ################ GET METHODS ##########################
-    # get '/sources/:identifier' do
-    #   if Site.exists?(:identifier)
-    #     #do we call methods here to grab the data?
-    #     erb :index
-    #   else
-    #   status 404
-    #   "{\"message\":\identifier does not exist\"}"
-    #   end
-    # end
+    get '/sources/:identifier' do
+      if Site.exists?(:identifier)
+        #do we call methods here to grab the data?
+        erb :index
+      else
+      status 404
+      "{\"message\":\identifier does not exist\"}"
+      end
+    end
 
     # get '/sources/:identifier/events' do
     #   if Site.exists?(:identifier)
