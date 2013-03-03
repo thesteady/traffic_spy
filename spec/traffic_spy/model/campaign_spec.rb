@@ -10,15 +10,15 @@ describe TrafficSpy::Campaign do
     TrafficSpy::Campaign
   end
 
-  describe "New Campaign Instance" do
-    context "given required parameters for a new campaign instance" do
-      it "creates a new campaign" do
-        details = {:name => "button click campaign"}
-        new_campaign = app.new(details)
-        expect(new_campaign.name).to eq "button click campaign"
-      end
-    end
-  end
+  # describe "New Campaign Instance" do
+  #   context "given required parameters for a new campaign instance" do
+  #     it "creates a new campaign" do
+  #       details = {:name => "button click campaign"}
+  #       new_campaign = app.new(details)
+  #       expect(new_campaign.name).to eq "button click campaign"
+  #     end
+  #   end
+  # end
 
   describe "Class method" do
 
@@ -32,6 +32,13 @@ describe TrafficSpy::Campaign do
 
     let(:c2) do
       {:name => "labor_day_sale"}
+    end
+
+    describe ".new" do
+      it "creates a new instance" do
+        campaign = app.new(c1)
+        expect(campaign.name).to eq("holiday_sale")
+      end
     end
 
     describe ".count" do
@@ -50,40 +57,44 @@ describe TrafficSpy::Campaign do
       end
     end
 
-    describe ".find(id)" do
-      it "returns record with id of first saved campaign" do
-        app.new(c1).save
-        app.new(c2).save
+    describe ".find(input)" do
 
-        test_id = app.all.first.id
-        expect(app.find(test_id).name).to eq("holiday_sale")
+      before do
+        @c1 = app.new(c1)
+        @c1_id = @c1.save
+        @c2 = app.new(c2)
+        @c2_id = @c2.save
+      end
+
+      context "using id as parameter" do
+        it "returns first record that matches given parameter" do
+          expect(app.find(id: @c1_id).name).to eq("holiday_sale")
+        end
+      end
+
+      context "using name as parameter" do
+        it "returns first record that matches given parameter" do
+          name = @c2.name
+          expect(app.find(name: name).name).to eq("labor_day_sale")
+        end
       end
     end
 
-    describe ".find_by_name(name)"do
-      it "returns campaign for the given name" do
-        app.new(c1).save
-        app.new(c2).save
 
-        test_name = app.all.first.name
-        expect(app.find_by_name(test_name).name).to eq("holiday_sale")
-     end
-    end
-
-    describe ".exists?(campaign_name)" do
+    describe "#exists?" do
 
       context "record exists in db" do
         it 'should return true' do
-          app.new(c1).save
-          campaign = app.all.first
-
-          expect(app.exists?(campaign.name).should be_true)
+          campaign = app.new(c1)
+          campaign.save
+          expect(campaign.exists?.should be_true)
         end
       end
 
       context "record does not exist in db" do
         it 'should return false' do
-          expect(app.exists?("valentines_day").should be_false)
+          campaign = app.new(c2)
+          expect(campaign.exists?.should be_false)
         end
       end
     end

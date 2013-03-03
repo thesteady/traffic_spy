@@ -10,16 +10,6 @@ describe TrafficSpy::Event do
     TrafficSpy::Event
   end
 
-  # describe "New Event Instance" do
-  #   context "given required parameters for a new event instance" do
-  #     it "creates a new event" do
-  #       details = {:name => "log_in"}
-  #       new_event = app.new(details)
-  #       expect(new_event.name).to eq "log_in"
-  #     end
-  #   end
-  # end
-
   describe "Class method" do
 
     before do
@@ -57,13 +47,26 @@ describe TrafficSpy::Event do
       end
     end
 
-    describe ".find(id)" do
-      it "returns record with id of first saved e" do
-        app.new(e1).save
-        app.new(e2).save
+    describe ".find" do
 
-        test_id = app.all.first.id
-        expect(app.find(test_id).name).to eq("sociallogin")
+      before do
+        @e1 = app.new(e1)
+        @e1_id = @e1.save
+        @e2 = app.new(e2)
+        @e2_id = @e2.save
+      end
+
+      context "using id as parameter" do
+        it "returns first record that matches given parameter" do
+          expect(app.find(id: @e1_id).name).to eq("sociallogin")
+        end
+      end
+
+      context "using name as parameter" do
+        it "returns first record that matches given parameter" do
+          name = @e2.name
+          expect(app.find(name: name).name).to eq("log_in")
+        end
       end
     end
 
@@ -73,8 +76,6 @@ describe TrafficSpy::Event do
         it 'should return true' do
           event = app.new(e1)
           event.save
-          #event = app.all.first
-
           expect(event.exists?.should be_true)
         end
       end

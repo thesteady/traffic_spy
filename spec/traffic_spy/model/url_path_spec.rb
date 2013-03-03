@@ -73,23 +73,26 @@ describe TrafficSpy::UrlPath do
       end
     end
 
-    describe ".find_by_id(id)" do
-      it "returns record with id of first saved url" do
-        uid_1 = app.new(url1).save
-        uid_2 = app.new(url2).save
+    describe ".find" do
 
-        expect(app.find_by_id(uid_1).path).to eq("/blog")
+      before do
+        @url1 = app.new(url1)
+        @url1_id = @url1.save
+        @url2 = app.new(url2)
+        @url2_id = @url2.save
       end
-    end
 
-    describe ".find_by_path(path)"do
-      it "returns record id for the path" do
-        u1 = app.new(url1)
-        u1.save
-        u2 = app.new(url2)
-        u2.save
+      context "using id as parameter" do
+        it "returns first record that matches given parameter" do
+          expect(app.find(id: @url1_id).path).to eq("/blog")
+        end
+      end
 
-        expect(app.find_by_path(u2.path).path).to eq("/about_us")
+      context "using name as parameter" do
+        it "returns first record that matches given parameter" do
+          path = @url2.path
+          expect(app.find(path: path).path).to eq("/about_us")
+        end
       end
     end
 

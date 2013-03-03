@@ -16,9 +16,10 @@ module TrafficSpy
       data.count
     end
 
-    def self.find(id)
-      result = data.first(:id => id)
-      Browser.new(result)
+    def self.find(input)
+      data.where(input).map do |result|
+        Browser.new(result)
+      end.first
     end
 
     def self.find_by_name(b_name)
@@ -26,8 +27,9 @@ module TrafficSpy
       Browser.new(result)
     end
 
-    def self.exists?(b_name)
-      !data.where(:name => b_name).empty?
+    def exists?
+      duplicate = Browser.data.where(name: name).to_a
+      duplicate.any?
     end
 
     def self.all

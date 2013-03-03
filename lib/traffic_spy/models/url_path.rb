@@ -18,14 +18,10 @@ module TrafficSpy
       data.count
     end
 
-    def self.find_by_id(id)
-      result = data.first(id: id)
-      UrlPath.new(result)
-    end
-
-    def self.find_by_path(url)
-     result = data.first(path: url)
-      UrlPath.new(result)
+    def self.find(input)
+      data.where(input).map do |result|
+        UrlPath.new(result)
+      end.first
     end
 
     def exists?

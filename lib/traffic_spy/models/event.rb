@@ -8,7 +8,6 @@ module TrafficSpy
       @name = params[:name]
     end
 
-
     def self.data
       DB[:events]
     end
@@ -17,14 +16,10 @@ module TrafficSpy
       data.count
     end
 
-    def self.find(id)
-      result = data.first(id: id)
-      Event.new(result)
-    end
-
-    def self.find_by_eventName(eventName)
-      result = data.first(name: eventName)
-      Event.new(result)
+    def self.find(input)
+      data.where(input).map do |result|
+        Event.new(result)
+      end.first
     end
 
     def exists?

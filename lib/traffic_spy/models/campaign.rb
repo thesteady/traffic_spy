@@ -16,18 +16,15 @@ module TrafficSpy
       data.count
     end
 
-    def self.find(id)
-      result = data.first(:id => id)
-      Campaign.new(result)
+    def self.find(input)
+      data.where(input).map do |result|
+        Campaign.new(result)
+      end.first
     end
 
-    def self.find_by_name(c_name)
-      result = data.first(:name =>c_name)
-      Campaign.new(result)
-    end
-
-    def self.exists?(c_name)
-      !data.where(:name => c_name).empty?
+    def exists?
+      duplicate = Campaign.data.where(name: name).to_a
+      duplicate.any?
     end
 
     def self.all
