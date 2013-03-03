@@ -5,8 +5,7 @@ module TrafficSpy
     attr_accessor :path_id
     attr_reader :requestedAt, :respondedIn, :referredBy, :requestType,
                 :parameters, :eventname_id, :userAgent, 
-                :resolution,
-                :ip
+                :resolution, :ip, :site_id
 
     def parse(json_payload)
       payload = JSON.parse(json_payload)
@@ -18,9 +17,9 @@ module TrafficSpy
     def initialize(json_payload)
       payload = parse(json_payload)
       
+      @site_id = find_site_id(payload[:url])
 
       @path_id = parse_urlpath(payload[:url])
-    
       @eventname_id = parse_eventName(payload[:eventName], payload[:url])
 
 
@@ -48,8 +47,7 @@ module TrafficSpy
       if Event.exists?(eventName)
         Event.find_by_eventName(eventName).id
       else
-        site_id = find_site_id(url)
-        event = Event.new({:name=>eventName, :site_id=>site_id})
+        event = Event.new({:name=>eventName, :site_id=>@site_id})
         event.save
         Event.find_by_eventName(eventName).id
       end
@@ -59,8 +57,7 @@ module TrafficSpy
       if UrlPath.exists?(urlpath)
         UrlPath.find_by_path(path).id
       else
-        site_id = find_site_id(urlpath)
-        path = UrlPath.new({:path => urlpath, :site_id => site_id})
+        path = UrlPath.new({:path => urlpath, :site_id => @site_id})
         path.save
         UrlPath.find_by_path(path.path).id
       end

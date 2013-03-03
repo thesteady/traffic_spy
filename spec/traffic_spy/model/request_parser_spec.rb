@@ -42,6 +42,8 @@ describe TrafficSpy::RequestParser do
 
         expect(object.path).to eq "http://jumpstartlab.com/blog"
         expect(object.site_id). to eq TrafficSpy::Site.find_by_rootUrl("http://jumpstartlab.com").id
+        
+        expect(parsed_payload.site_id).to eq TrafficSpy::Site.find_by_rootUrl("http://jumpstartlab.com").id
         expect(parsed_payload.respondedIn).to eq 37
         expect(parsed_payload.referredBy).to eq "http://jumpstartlab.com"
         expect(parsed_payload.requestType).to eq "GET"
