@@ -18,17 +18,18 @@ module TrafficSpy
     end
 
     def self.find(id)
-      result = data.first(:id => id)
+      result = data.first(id: id)
       Event.new(result)
     end
 
     def self.find_by_eventName(eventName)
-      result = data.first(:name => eventName)
+      result = data.first(name: eventName)
       Event.new(result)
     end
 
-    def self.exists?(name)
-      !data.where(:name => name).empty?
+    def exists?
+      duplicate = Event.data.where(name: name).to_a
+      duplicate.any?
     end
 
     def self.all
@@ -38,7 +39,7 @@ module TrafficSpy
     end
 
     def save
-      Event.data.insert({:name => name})
+      Event.data.insert({name: name})
     end
   end
 end

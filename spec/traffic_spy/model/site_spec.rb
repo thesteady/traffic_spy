@@ -22,11 +22,11 @@ describe TrafficSpy::Site do
     end
 
     let(:site1) do
-      {:identifier => "jumpstartlab", :rootUrl => "http://jumpstartlab.com"}
+      {identifier: "jumpstartlab", rootUrl: "http://jumpstartlab.com"}
     end
 
     let(:site2) do
-      {:identifier => "espn", :rootUrl => "http://espn.com" }
+      {identifier: "espn", rootUrl: "http://espn.com" }
     end
 
     describe ".new" do
@@ -52,27 +52,37 @@ describe TrafficSpy::Site do
       it "returns 2 records" do
         app.new(site1).save
         app.new(site2).save
-
-        puts "******************"
-        puts app.all.inspect
         expect(app.all.count).to eq(2)
       end
     end
 
-    describe ".find(id)" do
-      it "returns record with id of 2" do
-        sid_1 = app.new(site1).save
-        sid_2 = app.new(site2).save
+    describe ".find" do
 
-        expect(app.find(sid_1).identifier).to eq("jumpstartlab")
+      before do
+        @s1 = app.new(site1)
+        @s1_id = @s1.save
+        @s2 = app.new(site2)
+        @s2_id = @s2.save
       end
-    end
 
-    describe ".find_by_rootUrl" do
-      it "returns a record with site id, rootUrl, and identifier" do
-      new_site = app.new(site1).save
+      context "using id as parameter" do
+        it "returns first record that matches given parameter" do
+          expect(app.find(id: @s1_id).identifier).to eq("jumpstartlab")
+        end
+      end
 
-      expect(app.find_by_rootUrl("http://jumpstartlab.com").id).to eq new_site
+      context "using identifier as parameter" do
+        it "returns first record that matches given parameter" do
+          identifier = @s2.identifier
+          expect(app.find(identifier: identifier).identifier).to eq("espn")
+        end
+      end
+
+      context "using rootUrl as parameter" do
+        it "returns first record that matches given parameter" do
+          rootUrl = @s2.rootUrl
+          expect(app.find(rootUrl: rootUrl).rootUrl).to eq("http://espn.com")
+        end
       end
     end
 
@@ -93,7 +103,6 @@ describe TrafficSpy::Site do
           expect(site.exists?.should be_false)
         end
       end
-
     end
 
   end

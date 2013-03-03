@@ -17,14 +17,10 @@ module TrafficSpy
       data.count
     end
 
-    def self.find(id)
-      result = data.first(:id => id)
-      Site.new(result)
-    end
-
-    def self.find_by_rootUrl(url)
-      result = data.first(:rootUrl =>url)
-      Site.new(result)
+    def self.find(input)
+      data.where(input).map do |result|
+        Site.new(result)
+      end.first
     end
 
     def self.all
@@ -44,7 +40,7 @@ module TrafficSpy
 
     def save
       return false if !valid?
-      Site.data.insert({:identifier => identifier , :rootUrl => rootUrl})
+      Site.data.insert({identifier: identifier, rootUrl: rootUrl})
     end
 
   end

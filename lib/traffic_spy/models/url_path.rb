@@ -18,18 +18,19 @@ module TrafficSpy
       data.count
     end
 
-    def self.find(id)
-      result = data.first(:id => id)
+    def self.find_by_id(id)
+      result = data.first(id: id)
       UrlPath.new(result)
     end
 
     def self.find_by_path(url)
-     result = data.first(:path =>url)
+     result = data.first(path: url)
       UrlPath.new(result)
     end
 
-    def self.exists?(url)
-      !data.where(:path => url).empty?
+    def exists?
+      duplicate = UrlPath.data.where(path: path).to_a
+      duplicate.any?
     end
 
     def self.all
@@ -39,8 +40,18 @@ module TrafficSpy
     end
 
     def save
-      UrlPath.data.insert({:path => path, :site_id => site_id})
+      UrlPath.data.insert({path: path, site_id: site_id})
     end
+
+    def find_id
+      result = UrlPath.data.where(path: path).to_a
+      result.empty? ? false : result.first[:id]
+    end
+
+    def find_or_create_new_and_return_id
+      find_id || save
+    end
+
 
   end
 end
