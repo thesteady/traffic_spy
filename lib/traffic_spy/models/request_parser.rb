@@ -18,14 +18,17 @@ module TrafficSpy
     def initialize(json_payload)
       payload = parse(json_payload)
       @site_id = find_site_id(payload[:url])
-
       @path_id = parse_urlpath(payload[:url])
 
       @event_id = parse_eventName(payload[:eventName], payload[:url])
 
       user_agent = UserAgent.parse(payload[:userAgent])
-      @browser_id = user_agent.browser
-      @os_id = user_agent.platform
+      
+      browser = Browser.new(:browser => user_agent.browser)
+      @browser_id = browser.id
+      
+      os = OperatingSystem.new(:os =>user_agent.platform)
+      @os_id = os.id
 
 
       @requested_at = payload[:requestedAt]

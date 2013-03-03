@@ -57,4 +57,36 @@ describe TrafficSpy::Router do
     end
 
   end
+
+  describe "POST /sources/:identifier/data" do
+    context "identifier does not exist" do
+      it "returns an error message that the identifier does not exist" do
+        post "/sources/pizza/data", :data => "some data"
+        last_response.status.should eq 403
+        last_response.body.should eq "{\"message\":\identifier does not exist\"}"
+      end
+    end
+  end
+
+  describe "GET /sources/:identifier" do
+    before do
+      TrafficSpy::DB[:sites].delete
+    end
+
+    context "when the identifier does not exist" do
+      it "returns an error message that the identifier does not exist" do
+        get "/sources/reggae"
+        last_response.status.should eq 404
+        last_response.body.should eq "{\"message\":\identifier does not exist\"}"
+      end
+    end
+
+    context "when the identifier does exist" do
+      it "displays a page including summary of urls (most requested to least)" do
+        pending
+        #expect(method summarizing list of urls.count). to eq 5
+
+      end
+    end
+  end
 end
