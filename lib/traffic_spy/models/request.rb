@@ -86,6 +86,10 @@ module TrafficSpy
       end
     end
 
+    # def exists?(input)
+    #   data.where(:event_id => input[:event_id], :)
+    # end
+
 
   end
 end

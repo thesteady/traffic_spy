@@ -17,6 +17,7 @@ module TrafficSpy
     end
 
     def initialize(json_payload)
+      #puts json_payload.inspect
       payload = parse(json_payload)
       @site_id = find_site_id(payload[:url])
       @path_id = parse_urlpath(payload[:url])
@@ -39,6 +40,15 @@ module TrafficSpy
                                         payload[:resolutionWidth],
                                         payload[:resolutionHeight]
                                         )
+
+      request = Request.new({:url_path_id => @path_id , :event_id => @event_id,
+                             :browser_id => @browser_id, :os_id => @os_id,
+                             :site_id => @site_id, :requested_at => @requested_at,
+                             :response_time => @response_time,
+                             :referred_by => @referred_by, :request_type => @request_type,
+                             :resolution => @resolution, :ip => @ip})
+
+      request.save
     end
 
     def combine_resolutions(width, height)
@@ -57,7 +67,7 @@ module TrafficSpy
 
     def parse_urlpath(urlpath)
       if UrlPath.exists?(urlpath)
-        UrlPath.find_by_path(path).id
+        UrlPath.find_by_path(urlpath).id
       else
         path = UrlPath.new({:path => urlpath, :site_id => @site_id})
         path.save

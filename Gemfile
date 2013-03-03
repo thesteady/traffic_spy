@@ -9,6 +9,7 @@ group :development do
   gem 'rb-readline'
   gem 'rb-fsevent', '~> 0.9'
   gem 'rack-test'
+  gem 'shotgun'
 end
 
 group :evaluations do

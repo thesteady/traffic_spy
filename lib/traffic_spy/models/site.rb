@@ -3,7 +3,7 @@ module TrafficSpy
   class Site
     attr_reader :id, :identifier, :rootUrl
 
-    def initialize(params)
+    def initialize(params = {})
       @id = params[:id]
       @identifier = params[:identifier]
       @rootUrl = params[:rootUrl]
@@ -27,17 +27,23 @@ module TrafficSpy
       Site.new(result)
     end
 
-    def self.exists?(identifier)
-      !data.where(:identifier => identifier).empty?
-    end
-
     def self.all
       data.map do |site|
         Site.new(site)
       end
     end
 
+    def exists?
+      duplicate = Site.data.where(identifier: identifier).or(rootUrl: rootUrl).to_a
+      duplicate.any?
+    end
+
+    def valid?
+      !identifier.empty? || !rootUrl.empty?
+    end
+
     def save
+      return false if !valid?
       Site.data.insert({:identifier => identifier , :rootUrl => rootUrl})
     end
 
