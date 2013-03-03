@@ -1,9 +1,10 @@
 module TrafficSpy
   class Browser
 
-  attr_reader :browser
+  attr_reader :browser, :id
 
     def initialize(params)
+      @id = params[:id]
       @browser = params[:browser]
     end
 

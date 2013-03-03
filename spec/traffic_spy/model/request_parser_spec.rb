@@ -49,7 +49,6 @@ describe TrafficSpy::RequestParser do
         expect(parsed_payload.requestType).to eq "GET"
         expect(parsed_payload.parameters).to eq []
 
-        #userAgent needs to become browser/os
         expect(parsed_payload.eventname_id).to eq TrafficSpy::Event.find_by_eventName("socialLogin").id        
         expect(parsed_payload.browser_id).to eq "Chrome"
         expect(parsed_payload.os_id).to eq "Macintosh"
