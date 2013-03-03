@@ -42,6 +42,15 @@ module TrafficSpy
       Browser.data.insert({:name => name})
     end
 
+    def find_id
+      result = Browser.data.where(name: name).to_a
+      result.empty? ? false : result.first[:id]
+    end
+
+    def find_or_create_new_and_return_id
+      find_id || save
+    end
+
   end
 end
 

@@ -33,6 +33,15 @@ module TrafficSpy
       end
     end
 
+    def find_id
+      result = Event.data.where(name: name).to_a
+      result.empty? ? false : result.first[:id]
+    end
+
+    def find_or_create_new_and_return_id
+      find_id || save
+    end
+
     def save
       Event.data.insert({name: name})
     end

@@ -80,6 +80,23 @@ describe TrafficSpy::Browser do
       end
     end
 
+    describe ".find_id" do
+      context "browser name is in db" do
+        it "returns the id for the provided path" do
+          browser = app.new(b1)
+          browser_id = browser.save
+          expect(browser.find_id).to eq(browser_id)
+        end
+      end
+
+      context "browser name is not in db" do
+        it "returns the id for a given path" do
+          browser = app.new(b2)
+          expect(browser.find_id).to eq(false)
+        end
+      end
+    end
+
 
     describe "#exists?" do
 

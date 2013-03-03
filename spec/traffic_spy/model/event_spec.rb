@@ -70,6 +70,23 @@ describe TrafficSpy::Event do
       end
     end
 
+    describe ".find_id" do
+      context "event is in db" do
+        it "returns the id for the provided event" do
+          event = app.new(e1)
+          event_id = event.save
+          expect(event.find_id).to eq(event_id)
+        end
+      end
+
+      context "event is not in db" do
+        it "returns the id for a given path" do
+          event = app.new(e1)
+          expect(event.find_id).to eq(false)
+        end
+      end
+    end
+
     describe "#exists?(event_name)" do
 
       context "record exists in db" do

@@ -10,16 +10,6 @@ describe TrafficSpy::UrlPath do
     TrafficSpy::UrlPath
   end
 
-  # describe "New Instance" do
-  #   context "given required parameters for a new instance" do
-  #     it "creates a new url path" do
-  #       details_hash = {:path=>"http://jumpstartlab.com/blog/article1"}
-  #       url = app.new(details_hash)
-  #       expect(url.path).to eq "http://jumpstartlab.com/blog/article1"
-  #     end
-  #   end
-  # end
-
   # describe "new instance" do
   #   context "given a new url_path" do
   #     it "parses it properly and stores with a new key value" do
