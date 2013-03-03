@@ -5,7 +5,7 @@ module TrafficSpy
   class RequestParser
     attr_accessor :path_id
     attr_reader :requestedAt, :respondedIn, :referredBy, :requestType,
-                :parameters, :eventname_id, :browser_id, :os_id,
+                :parameters, :event_id, :browser_id, :os_id,
                 :resolution, :ip, :site_id
 
     def parse(json_payload)
@@ -20,15 +20,11 @@ module TrafficSpy
       @site_id = find_site_id(payload[:url])
       @path_id = parse_urlpath(payload[:url])
 
-      @eventname_id = parse_eventName(payload[:eventName], payload[:url])
+      @event_id = parse_eventName(payload[:eventName], payload[:url])
 
       user_agent = UserAgent.parse(payload[:userAgent])
-      
-      browser = Browser.new(:browser => user_agent.browser)
-      @browser_id = browser.id
-      
-      os = OperatingSystem.new(:os =>user_agent.platform)
-      @os_id = os.id
+      @browser_id = parse_browser(user_agent.browser)
+      @os_id = parse_os(user_agent.platform)
 
 
       @requestedAt = payload[:requestedAt]
@@ -66,6 +62,26 @@ module TrafficSpy
         path = UrlPath.new({:path => urlpath, :site_id => @site_id})
         path.save
         UrlPath.find_by_path(path.path).id
+      end
+    end
+
+    def parse_browser(browser)
+      if Browser.exists?(browser)
+        Browser.find_by_name(browser).id
+      else
+        new_browser = Browser.new(:name => browser)
+        new_browser.save
+        Browser.find_by_name(browser).id
+      end
+    end
+
+    def parse_os(os)
+      if OperatingSystem.exists?(os)
+        OperatingSystem.find_by_name(os).id
+      else
+        new_os = OperatingSystem.new(:name =>os)
+        new_os.save
+        @os_id = OperatingSystem.find_by_name(os).id
       end
     end
 
