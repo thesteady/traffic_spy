@@ -1,10 +1,11 @@
 require 'json'
+require 'user_agent'
 
 module TrafficSpy
   class RequestParser
     attr_accessor :path_id
     attr_reader :requestedAt, :respondedIn, :referredBy, :requestType,
-                :parameters, :eventname_id, :userAgent, 
+                :parameters, :eventname_id, :browser_id, :os_id,
                 :resolution, :ip, :site_id
 
     def parse(json_payload)
@@ -22,8 +23,9 @@ module TrafficSpy
       @path_id = parse_urlpath(payload[:url])
       @eventname_id = parse_eventName(payload[:eventName], payload[:url])
 
-
-      @userAgent = payload[:userAgent]
+      user_agent = UserAgent.parse(payload[:userAgent])
+      @browser_id = user_agent.browser
+      @os_id = user_agent.platform
 
       @requestedAt = payload[:requestedAt]
       @respondedIn = payload[:respondedIn]
@@ -35,8 +37,6 @@ module TrafficSpy
                                         payload[:resolutionWidth], 
                                         payload[:resolutionHeight]
                                         )
-     
-
     end
 
     def combine_resolutions(width, height)

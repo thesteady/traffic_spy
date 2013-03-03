@@ -23,5 +23,5 @@ Gem::Specification.new do |gem|
    gem.add_dependency('sinatra', '1.3.5')
    gem.add_dependency('sequel', '3.44.0')
    gem.add_dependency('pg', '0.14.1')
-
+   gem.add_dependency('useragent', '0.4.16')
 end
