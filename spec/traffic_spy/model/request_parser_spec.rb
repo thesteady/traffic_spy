@@ -18,7 +18,7 @@ describe TrafficSpy::RequestParser do
 
     context "when a new payload is received" do
       it "parses and creates a new request" do
-        
+
         new_site = TrafficSpy::Site.new({:identifier=>"jumpstartlab", :rootUrl => "http://jumpstartlab.com"})
         new_site.save
 
@@ -37,22 +37,20 @@ describe TrafficSpy::RequestParser do
                   }.to_json
 
         parsed_payload = TrafficSpy::RequestParser.new(payload)
-        
+
         object = TrafficSpy::UrlPath.find_by_path("http://jumpstartlab.com/blog")
 
         expect(object.path).to eq "http://jumpstartlab.com/blog"
         expect(object.site_id). to eq TrafficSpy::Site.find_by_rootUrl("http://jumpstartlab.com").id
-        
+
         expect(parsed_payload.site_id).to eq TrafficSpy::Site.find_by_rootUrl("http://jumpstartlab.com").id
-        expect(parsed_payload.respondedIn).to eq 37
-        expect(parsed_payload.referredBy).to eq "http://jumpstartlab.com"
-        expect(parsed_payload.requestType).to eq "GET"
-        expect(parsed_payload.parameters).to eq []
+        expect(parsed_payload.response_time).to eq 37
+        expect(parsed_payload.referred_by).to eq "http://jumpstartlab.com"
+        expect(parsed_payload.request_type).to eq "GET"
 
         expect(parsed_payload.event_id).to eq TrafficSpy::Event.find_by_eventName("socialLogin").id        
         expect(parsed_payload.browser_id).to eq TrafficSpy::Browser.find_by_name("Chrome").id
         expect(parsed_payload.os_id).to eq TrafficSpy::OperatingSystem.find_by_name("Macintosh").id
-        
         expect(parsed_payload.resolution).to eq "1920 x 1280"
         expect(parsed_payload.ip).to eq "63.29.38.211"
 
