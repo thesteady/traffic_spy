@@ -27,12 +27,10 @@ module TrafficSpy
       @browser_id = parse_browser(user_agent.browser)
       @os_id = parse_os(user_agent.platform)
 
-
       @requested_at = payload[:requestedAt]
       @response_time = payload[:respondedIn]
       @referred_by = payload[:referredBy]
       @request_type = payload[:requestType]
-
 
       @ip = payload[:ip]
       @resolution = combine_resolutions(

@@ -23,7 +23,7 @@ module TrafficSpy
     end
 
     post '/sources/:identifier/data' do
-      
+
       if Site.exists?(:identifier)
         # parse payload
         #HERE
@@ -36,7 +36,7 @@ module TrafficSpy
 
     post '/sources/:identifier/campaigns' do
       if Site.exists?(:identifier)
-        
+
         if params[:campaignName].exists?
           status 403
           "{\"message\":\"Campaign Already Exists\"}"
