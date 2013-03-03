@@ -1,11 +1,12 @@
 module TrafficSpy
   class Event
 
-    attr_reader :id, :name
+    attr_reader :id, :name, :site_id
 
     def initialize(params)
       @id = params[:id]
       @name = params[:name]
+      @site_id = params[:site_id]
     end
 
     def self.data
@@ -38,7 +39,7 @@ module TrafficSpy
       result.empty? ? false : result.first[:id]
     end
 
-    def find_or_create_new_and_return_id
+    def find_or_create_and_get_id
       find_id || save
     end
 

@@ -16,6 +16,8 @@ require 'traffic_spy/router'
 require 'traffic_spy/version'
 require 'traffic_spy/router'
 
+ENV["TRAFFIC_SPY_ENV"] ||= "development"
+
 
 module TrafficSpy
 

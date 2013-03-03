@@ -30,7 +30,6 @@ describe TrafficSpy::Site do
     end
 
     describe ".new" do
-
       it "creates new instance" do
         site = app.new(site1)
         site.save

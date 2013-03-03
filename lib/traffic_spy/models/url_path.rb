@@ -44,7 +44,7 @@ module TrafficSpy
       result.empty? ? false : result.first[:id]
     end
 
-    def find_or_create_new_and_return_id
+    def find_or_create_and_get_id
       find_id || save
     end
 

@@ -33,11 +33,11 @@ describe TrafficSpy::UrlPath do
     end
 
     let(:url1) do
-      {path: "/blog"}
+      {path: "/blog", site_id: 1}
     end
 
     let(:url2) do
-      {path: "/about_us"}
+      {path: "/about_us", site_id: 2}
     end
 
     describe ".new" do
