@@ -30,10 +30,22 @@ module TrafficSpy
     post '/sources' do
       site = Site.new(params)
 
+      puts "******************"
+      puts site.inspect
+
+      # if site.exists?
+      #   halt 403, "{\"message\":\"identifier already exists\"}"
+      # elsif !site.valid
+      #   halt 400, "{\"message\":\"no identifier or rootUrl provided\"}"
+      # else
+      #   site.save
+      #   "{\"identifier\":\"#{params[:identifier]}\"}"
+      # end
+
       if site.save
         "{\"identifier\":\"#{params[:identifier]}\"}"
       else
-        halt 400, "{\"message\":\"no identifier or rootUrl provided\"}" if !site.valid?
+        halt 400, "{\"message\":\"missing a parameter: provide identifier and rootUrl\"}" if !site.valid?
         halt 403, "{\"message\":\"identifier already exists\"}" if site.exists?
       end
 
