@@ -51,28 +51,11 @@ module TrafficSpy
       end
     end
 
-    def self.find_by_resolution(res)
-      data.where(:resolution => res).map do |req|
-        Request.new(req)
-      end
-    end
-
     def self.summarize_url_requests_for_site(site_id)
       data.group_and_count(:url_path_id).where(:site_id =>site_id).to_a
       #returns a hash with id1=>count, id2=>count
     end
 
-    def self.summarize_browser_usage_for_site(site_id)
-      data.group_and_count(:browser_id).where(:site_id =>site_id).to_a
-    end
-
-    def self.summarize_os_usage_for_site(site_id)
-       data.group_and_count(:os_id).where(:site_id =>site_id).to_a
-    end
-
-    def self.summarize_screen_resolutions_for_site(site_id)
-      data.group_and_count(:resolution).where(:site_id =>site_id).to_a
-    end
 
     def self.summarize_response_times_for_site(site_id)
       ids = data.select(:url_path_id).where(:site_id =>site_id).to_a.uniq
@@ -94,5 +77,16 @@ module TrafficSpy
       # give back as a hash: id=>%
     end
 
+    def self.summarize_browser_requests_for_site(site_id)
+      data.group_and_count(:browser_id).where(:site_id =>site_id).to_a
+    end
+
+    def self.summarize_os_requests_for_site(site_id)
+      data.group_and_count(:os_id).where(:site_id =>site_id).to_a
+    end
+
+    def self.summarize_res_requests_for_site(site_id)
+      data.group_and_count(:resolution).where(:site_id =>site_id).to_a
+    end
   end
 end

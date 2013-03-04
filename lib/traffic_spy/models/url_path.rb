@@ -24,7 +24,7 @@ module TrafficSpy
       end.first
     end
 
-    def self.find_all_by_site_id(site_id)
+    def self.find_all(input)
       data.where(:site_id => site_id).to_a
     end
 

@@ -39,7 +39,7 @@ module TrafficSpy
     end
 
     def save
-      return false if !valid?
+      return false if (!valid? || exists?)
       Site.data.insert({identifier: identifier, rootUrl: rootUrl})
     end
 
