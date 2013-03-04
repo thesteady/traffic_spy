@@ -88,7 +88,10 @@ module TrafficSpy
     def calc_percentage(hash)
       #takes hash like id =>count
       #sum all values
-      #for each id, calc percent, give back as a hash again
+      #can i use a database method to do a sum? sequel
+      #for each id,
+      # (count/sum) * 100
+      # give back as a hash: id=>%
     end
 
   end
