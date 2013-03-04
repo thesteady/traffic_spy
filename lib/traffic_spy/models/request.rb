@@ -86,7 +86,39 @@ module TrafficSpy
       end
     end
 
+    def self.summarize_url_requests_for_site(site_id)
+      data.group_and_count(:url_path_id).where(:site_id =>site_id).to_a
+      #returns a hash with id1=>count, id2=>count
+    end
 
+    def self.summarize_browser_usage_for_site(site_id)
+      data.group_and_count(:browser_id).where(:site_id =>site_id).to_a
+    end
+
+    def self.summarize_os_usage_for_site(site_id)
+       data.group_and_count(:os_id).where(:site_id =>site_id).to_a
+    end
+
+    def self.summarize_screen_resolutions_for_site(site_id)
+      data.group_and_count(:resolution).where(:site_id =>site_id).to_a
+    end
+
+    def self.summarize_response_times_for_site(site_id)
+      ids = data.select(:url_path_id).where(:site_id =>site_id).to_a.uniq
+      #for each id, get the average response time and store it in a hash:
+      hash = Hash.new(0)
+      ids.each do |id|
+        avg_resp = Request.avg(:response_time).where(:url_path_id =>id)
+        hash << {id => avg_resp}
+      end
+      hash
+    end
+
+    def calc_percentage(hash)
+      #takes hash like id =>count
+      #sum all values
+      #for each id, calc percent, give back as a hash again
+    end
   end
 end
 

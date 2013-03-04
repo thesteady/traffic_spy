@@ -24,7 +24,7 @@ module TrafficSpy
     end
 
     def self.find_all_by_site_id(site_id)
-      events = data.where(:site_id => site_id).to_a
+      data.where(:site_id => site_id).to_a
     end
 
     def self.find_by_eventName(eventName)

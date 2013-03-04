@@ -70,8 +70,9 @@ module TrafficSpy
 
     get '/sources/:identifier/events' do
       if Site.exists?(:identifier)
-      #displays events page... do we call methods here to grab data?
-        if Event.count == 0
+        site_id = Site.find_by_identifier(:identifier).id
+        @events = Event.find_all_by_site_id(site_id)
+        if @events.count == 0
           "{\"message\":\no events have been defined.\"}"
         else
           erb :events

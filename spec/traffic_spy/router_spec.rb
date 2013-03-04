@@ -123,12 +123,8 @@ describe TrafficSpy::Router do
     context "when identifier exists but NO events are defined" do
       it "displays a message that no events are defined" do
         post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
-        #post a couple of payloads with NO events defined
         get "/sources/jumpstartlab/events"
 
-        expect (TrafficSpy::Event.count).should eq 0
-        #want a method to check events_defined for the particular identifier
-        pending
         last_response.body.should eq "{\"message\":\no events have been defined.\"}"
       end
     end

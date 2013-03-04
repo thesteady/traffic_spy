@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'rspec'
 require 'rack/test'
 
+
 describe TrafficSpy::UrlPath do
 
   include Rack::Test::Methods
@@ -11,6 +12,10 @@ describe TrafficSpy::UrlPath do
   end
 
   describe "New Instance" do
+    before do
+      TrafficSpy::DB[:url_paths].delete
+    end
+
     context "given required parameters for a new instance" do
       it "creates a new url path" do
         details_hash = {:path=>"http://jumpstartlab.com/blog/article1"}
@@ -18,20 +23,23 @@ describe TrafficSpy::UrlPath do
         expect(url.path).to eq "http://jumpstartlab.com/blog/article1"
       end
     end
-  end
 
-  describe "new instance" do
     context "given a new url_path" do
-      it "parses it properly and stores with a new key value" do
-        pending
+      it "stores with a new key value" do
+        details_hash = {:path=>"http://jumpstartlab.com/blog/article1"}
+        url = app.new(details_hash).save
+        expect(url.class).to eq Fixnum
       end
     end
-  end
 
-  describe "new instance" do
     context "given an existing url_path" do
-      it "assigns the exisiting key value" do
-        pending
+      it "assigns the exisiting url_path_id" do
+        site1 = {:path=>"http://jumpstartlab.com/blog/article1"}
+        site2 = {:path=>"http://jumpstartlab.com/blog/article1"}
+        new_site1 = app.new(site1).save
+        new_site2 = app.new(site2).save
+        expect(new_site1).to eq new_site2
+        #need to implement a method to check for it already in the class (in save?)kareem may be doing this already
       end
     end
   end
@@ -84,6 +92,30 @@ describe TrafficSpy::UrlPath do
         test_name = app.all.first.path
         expect(app.find_by_path(test_name).path).to eq("/blog")
      end
+    end
+
+    describe ".find_all_by_site_id(site_id)" do
+      context "when site_id exists" do
+        it "returns an array of url path IDs belonging to the site_id" do
+          # site1 = {:identifier=>"hey", :rootUrl => "http://hey.com"}
+          # site2 = {:identifier => "bye", :rootUrl => "http://bye.com"}
+          # TrafficSpy::Site.new(site1).save
+          # TrafficSpy::Site.new(site2).save
+
+          # url_path_1 = app.new(:path=>"http://hey.com/news").save
+          # url_path_1.stub(:site_id).and_returns(site1.id)
+          # url_path_2 = app.new(:path =>"http://hey.com/sales").save
+          # url_path_2.stub(:site_id).and_returns(site1.id)
+          # url_path_3 = app.new(:path =>url3 = "http://bye.com/news").save
+          # url_path_3.stub(:site_id).and_returns(site2.id)
+
+
+          # site_id = TrafficSpy::Site.find_by_identifier("hey").id
+
+          # expect(app.find_all_by_site_id(site_id).count).to eq 2
+          pending
+        end
+      end
     end
 
     describe ".exists?(url_path)" do

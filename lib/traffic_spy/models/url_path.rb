@@ -28,6 +28,10 @@ module TrafficSpy
       UrlPath.new(result)
     end
 
+    def self.find_all_by_site_id(site_id)
+      data.where(:site_id => site_id).to_a
+    end
+
     def self.exists?(url)
       !data.where(:path => url).empty?
     end
@@ -39,6 +43,9 @@ module TrafficSpy
     end
 
     def save
+      #create a method here to check if path already exists in db
+      #if exists, dont save and assign proper ids
+      #else, create new
       UrlPath.data.insert({:path => path, :site_id => site_id})
     end
 
