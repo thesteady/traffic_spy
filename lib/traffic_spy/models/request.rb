@@ -62,7 +62,7 @@ module TrafficSpy
       hash = Hash.new(0)
       ids.each do |id|
         avg_resp = data.where(:url_path_id =>id[:url_path_id]).avg(:response_time)
-        hash[id[:url_path_id]] = avg_resp.to_f
+        hash[id[:url_path_id]] = avg_resp.to_f.round(1)
       end
       hash #.sort_by{|k,v| v}.reverse
     end

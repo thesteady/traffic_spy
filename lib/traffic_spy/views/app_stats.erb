@@ -2,20 +2,20 @@
 <h4>RootUrl: <%= @site.rootUrl %></h4>
 
 <br/>
-<p><a href="#">View Event Statistics</a></p>
+<p><a href="/sources/<%=@site.identifier%>/events">View Event Statistics</a></p>
 
 
 <div class="row">
   <div class="span6">
 
     <h5>Most Requested URLs</h5>
-    <table class="table table-bordered table-striped table-hover">
+    <table class="table table-bordered table-striped">
       <th>URL</th>
       <th>Count</th>
       <% @url_results.each do |result| %>
       <tr>
         <td><%= result[0] %><br/></td>
-        <td><%= result[1] %><br/></td>
+        <td class="count_col"><%= result[1] %><br/></td>
       </tr>
       <% end %>
     </table>
@@ -24,13 +24,13 @@
     <br/>
 
     <h5>Browser Breakdown</h5>
-    <table class="table table-hover table-bordered">
+    <table class="table table-hover table-bordered table-striped">
       <th>Browser</th>
       <th>Count</th>
       <% @browser_results.each do |result| %>
       <tr>
         <td><%= result[0] %><br/></td>
-        <td><%= result[1] %><br/></td>
+        <td class="count_col"><%= result[1] %><br/></td>
       </tr>
       <% end %>
     </table>
@@ -38,13 +38,13 @@
     <br/>
 
     <h5>OS Breakdown</h5>
-    <table class="table table-bordered">
+    <table class="table table-bordered table-striped">
       <th>Operating System</th>
       <th>Count</th>
       <% @os_results.each do |result| %>
       <tr>
         <td><%= result[0] %><br/></td>
-        <td><%= result[1] %><br/></td>
+        <td class="count_col"><%= result[1] %><br/></td>
       </tr>
       <% end %>
     </table>
@@ -53,13 +53,13 @@
     <br/>
 
     <h5>Resolution Breakdown</h5>
-    <table class="table table-bordered">
+    <table class="table table-bordered table-striped">
       <th>Resolution</th>
       <th>Count</th>
       <% @res_results.each do |result| %>
       <tr>
         <td><%= result[0] %><br/></td>
-        <td><%= result[1] %><br/></td>
+        <td class="count_col"><%= result[1] %><br/></td>
       </tr>
       <% end %>
     </table>
@@ -69,7 +69,7 @@
 
 
     <h5>Average Response Time</h5>
-    <table class="table table-bordered">
+    <table class="table table-bordered table-striped">
       <th>URL</th>
       <th>Avg Time (ms)</th>
       <% @response_times.each do |result| %>
@@ -83,7 +83,7 @@
     <br/>
 
     <h5>All URLs</h5>
-    <table class="table table-bordered">
+    <table class="table table-bordered table-striped">
       <th>URL</th>
       <% @url_results.each do |result| %>
       <tr>

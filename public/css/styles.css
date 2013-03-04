@@ -5,3 +5,10 @@ body {
 a {
   font-size: 14px;
 }
+
+.count_col {
+    width: 100px;
+/*    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;*/
+}

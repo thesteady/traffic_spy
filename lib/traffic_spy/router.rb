@@ -30,9 +30,6 @@ module TrafficSpy
     post '/sources' do
       site = Site.new(params)
 
-      puts "******************"
-      puts site.inspect
-
       # if site.exists?
       #   halt 403, "{\"message\":\"identifier already exists\"}"
       # elsif !site.valid
