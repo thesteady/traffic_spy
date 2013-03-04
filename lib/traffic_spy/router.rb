@@ -8,7 +8,7 @@ module TrafficSpy
     end
 
     get '/sources' do
-      @title = "Site list"
+      @title = "Source List"
       @sites = TrafficSpy::Site.all
       erb :list
     end
@@ -17,7 +17,6 @@ module TrafficSpy
       #halt 404, 'The page you are looking for doesn\'t exist'
       erb :error
     end
-
 
     post '/sources' do
 
@@ -41,7 +40,16 @@ module TrafficSpy
         TrafficSpy::RequestParser.new(params[:payload]).create_request
        "{\"message\":\"payload has been parsed.\"}"
       end
+    end
 
+    get '/sources/:identifier' do
+      if Site.exists?(:identifier)
+        #do we call methods here to grab the data?
+        erb :index
+      else
+      status 404
+      "{\"message\":\identifier does not exist\"}"
+      end
     end
 
     post '/sources/:identifier/campaigns' do
@@ -67,16 +75,6 @@ module TrafficSpy
       end
     end
 
-################ GET METHODS ##########################
-    get '/sources/:identifier' do
-      if Site.exists?(:identifier)
-        #do we call methods here to grab the data?
-        erb :index
-      else
-      status 404
-      "{\"message\":\identifier does not exist\"}"
-      end
-    end
 
     # get '/sources/:identifier/events' do
     #   if Site.exists?(:identifier)
