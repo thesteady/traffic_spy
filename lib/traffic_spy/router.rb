@@ -37,7 +37,7 @@ module TrafficSpy
         TrafficSpy::RequestParser.new(params[:payload]).create_request
         "{\"message\":\"payload has been parsed.\"}"
       else
-        "{\"message\":\ identifier does not exist\"}"
+        "{\"message\":\"identifier does not exist\"}"
       end
     end
 
@@ -59,7 +59,7 @@ module TrafficSpy
 
       else
         status 403
-        "{\"message\":\ identifier does not exist\"}"
+        "{\"message\":\"identifier does not exist\"}"
       end
     end
 
@@ -70,7 +70,7 @@ module TrafficSpy
         erb :index
       else
       status 404
-      "{\"message\":\identifier does not exist\"}"
+      "{\"message\":\"identifier does not exist\"}"
       end
     end
 
@@ -80,14 +80,14 @@ module TrafficSpy
         @events = Event.find_all_by_site_id(site_id)
 
         if @events.count == 0
-          "{\"message\":\no events have been defined.\"}"
+          "{\"message\":\"no events have been defined.\"}"
         else
           erb :events
         end
 
       else
         status 404
-        "{\"message\":\identifier does not exist\"}"
+        "{\"message\":\"identifier does not exist\"}"
       end
     end
 
@@ -96,13 +96,13 @@ module TrafficSpy
         site_id = Site.find(identifier: :identifier).identifier
         @campaigns = Campaign.find_all_by_site_id(site_id)
         if @campaigns.count == 0
-          "{\"message\":\no campaigns defined\"}"
+          "{\"message\":\"no campaigns defined\"}"
         else
           erb :campaigns
         end
       else
         status 403
-          "{\"message\":\identifier does not exist\"}"
+          "{\"message\":\"identifier does not exist\"}"
       end
     end
 
@@ -116,7 +116,7 @@ module TrafficSpy
         # end
       else
         status 403
-          "{\"message\":\identifier does not exist\"}"
+          "{\"message\":\"identifier does not exist\"}"
       end
     end
 

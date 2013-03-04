@@ -52,7 +52,7 @@ describe TrafficSpy::Router do
         post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
 
         last_response.status.should eq 403
-        last_response.body.should eq "{\"message\":\identifier already exists\"}"
+        last_response.body.should eq "{\"message\":\"identifier already exists\"}"
       end
     end
   end
@@ -62,7 +62,7 @@ describe TrafficSpy::Router do
       it "returns an error message that the identifier does not exist" do
         post "/sources/pizza/data", :data => "some data"
         #last_response.status.should eq 403
-        last_response.body.should eq "{\"message\":\ identifier does not exist\"}"
+        last_response.body.should eq "{\"message\":\"identifier does not exist\"}"
       end
     end
   end
@@ -77,7 +77,7 @@ describe TrafficSpy::Router do
       it "returns an error message that the identifier does not exist" do
         get "/sources/reggae"
         last_response.status.should eq 404
-        last_response.body.should eq "{\"message\":\identifier does not exist\"}"
+        last_response.body.should eq "{\"message\":\"identifier does not exist\"}"
       end
     end
 
@@ -103,7 +103,7 @@ describe TrafficSpy::Router do
       it "returns an error message that the identifier does not exist" do
         get "/sources/reggae"
         #last_response.status.should eq 404
-        last_response.body.should eq "{\"message\":\identifier does not exist\"}"
+        last_response.body.should eq "{\"message\":\"identifier does not exist\"}"
       end
     end
 
@@ -124,7 +124,7 @@ describe TrafficSpy::Router do
         site.save
         get "/sources/ohsnap/events"
 
-        last_response.body.should eq "{\"message\":\no events have been defined.\"}"
+        last_response.body.should eq "{\"message\":\"no events have been defined.\"}"
       end
     end
 
