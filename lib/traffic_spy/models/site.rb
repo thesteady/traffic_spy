@@ -4,7 +4,7 @@ module TrafficSpy
     attr_reader :id, :identifier, :rootUrl
 
     def initialize(params = {})
-      @id = params[:id]
+      @id =params[:id]
       @identifier = params[:identifier]
       @rootUrl = params[:rootUrl]
     end

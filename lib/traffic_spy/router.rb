@@ -7,28 +7,13 @@ module TrafficSpy
       site.exists?
     end
 
-    # post '/sources' do
-    #   site = Site.new(params)
-    #   if site.save
-    #     "{\"identifier\":\"#{params[:identifier]}\"}"
-    #   else
-    #     halt 400, "{\"message\":\"no identifier or rootUrl provided\"}" if site.empty?
-    #     halt 403, "{\"message\":\identifier already exists\"}" if site.exists?
-    #   end
-    # end
-
     post '/sources' do
-      #if it already exists, give 403
-      #if missing parameters, give 400
-      #if success, give 200
-      if check_site_exists(params[:identifier]) == true
-        halt 403, "{\"message\":\identifier already exists\"}"
-      elsif params[:identifier].nil? || params[:rootUrl].nil?
-        halt 400, "{\"message\":\"missing a parameter: provide identifier and rootUrl\"}"
+      site = Site.new(params)
+      if site.save
+        "{\"identifier\":\"#{params[:identifier]}\"}"
       else
-        site = Site.new(params)
-        site.save
-        "{\"identifier\":\"jumpstartlab\"}"
+        halt 400, "{\"message\":\"no identifier or rootUrl provided\"}" if site.empty?
+        halt 403, "{\"message\":\identifier already exists\"}" if site.exists?
       end
     end
 
@@ -67,6 +52,8 @@ module TrafficSpy
     get '/sources/:identifier' do
       if check_site_exists(params) == true
         #do we call methods here to grab the data?
+        this_site = Site.find(:identifier =>identifier)
+        @site = Site.new(this_site)
         erb :index
       else
       status 404

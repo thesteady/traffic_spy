@@ -172,17 +172,6 @@ describe TrafficSpy::Request do
       end
     end
 
-    describe ".summarize_url_requests_for_site(site_id)" do
-      it "returns a hash of url_path_ids=>count for a site's requests" do
-        #mock a site_id =>1
-        #mock some requests
-        #Request.summarize_url_requests_for_site(1)
-        pending
-      end
-    end
-
-    # describe ".exists?(identifier)" do
-
     describe "foreign keys" do
       it "should retrieve url path from url_paths table" do
         url_id = @request.url_path_id
@@ -208,10 +197,16 @@ describe TrafficSpy::Request do
         os_id = @request.os_id
         expect(TrafficSpy::OperatingSystem.find(id: os_id).name).to eq("Macintosh")
       end
+    end
 
+    describe ".summarize_url_requests_for_site(site_id)" do
+      it "returns a hash of url_path_id => count for a site's requests" do
+        #mock a site_id =>1
+        #mock some requests
+        #Request.summarize_url_requests_for_site(1)
+        pending
+      end
     end
 
   end
-
-
 end

@@ -37,7 +37,7 @@ describe TrafficSpy::Router do
     end
 
     context "with rootURL but without identifier" do
-      it "returns 400 with an error meesage" do
+      it "returns 400 with an error message" do
 
         post "/sources", :rootUrl => "http://jumpstartlab.com"
 
@@ -107,17 +107,6 @@ describe TrafficSpy::Router do
       end
     end
 
-    context "when the identifier does exist AND events have been created" do
-      it "displays the events in most received to least received, with links to each" do
-        post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
-        #post a couple of payloads with events defined
-        get "sources/jumpstartlab/events"
-
-      pending
-      #will show page with hyperlinks to each event specific page details
-      end
-    end
-
     context "when identifier exists but NO events are defined" do
       it "displays a message that no events are defined" do
         site = TrafficSpy::Site.new(:identifier=>"ohsnap", :rootUrl =>'http://ohsnap.com')
@@ -128,5 +117,17 @@ describe TrafficSpy::Router do
       end
     end
 
+    context "when the identifier does exist AND events have been created" do
+      it "displays the events in most received to least received, with links to each" do
+        post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
+
+        site_id = TrafficSpy::Site.find(:identifier=>'jumpstartlab').id
+        TrafficSpy::Event.new(:name=>"login", :site_id =>site_id)
+
+        get "sources/jumpstartlab/events"
+        last_response.status.should eq 200
+      #will show page with hyperlinks to each event specific page details
+      end
+    end
   end
 end

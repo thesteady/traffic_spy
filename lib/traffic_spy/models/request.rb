@@ -79,7 +79,7 @@ module TrafficSpy
       #for each id, get the average response time and store it in a hash:
       hash = Hash.new(0)
       ids.each do |id|
-        avg_resp = Request.avg(:response_time).where(:url_path_id =>id)
+        avg_resp = data.avg(:response_time).where(:url_path_id =>id)
         hash << {id => avg_resp}
       end
       hash
@@ -96,7 +96,3 @@ module TrafficSpy
 
   end
 end
-
-# should this look like?
-# @path = RequestParser.path
-# @resolution = RequestParser.resolution
