@@ -1,6 +1,23 @@
 module TrafficSpy
   class Router < Sinatra::Base
-    #set :views, 'lib/views'
+    set :views, './views'
+
+    get '/' do
+      @title = "TrafficSpy Analytics Summary"
+      erb :index
+    end
+
+    get '/sources' do
+      @title = "Site list"
+      @sites = TrafficSpy::Site.all
+      erb :list
+    end
+
+    not_found do
+      #halt 404, 'The page you are looking for doesn\'t exist'
+      erb :error
+    end
+
 
     post '/sources' do
 
@@ -15,9 +32,16 @@ module TrafficSpy
 
     post '/sources/:identifier/data' do
 
-        # handle event where identifier does not exist in DB
+      # 1) Todo handle empty payload
+      # 2) Handle duplicate payload
+      # raise "#{params[:payload]}"
+      # halt 400, "{\"message\":\"no payload\"}" if params[:payload].empty?
+
+      if valid_site?(params[:identifier])
         TrafficSpy::RequestParser.new(params[:payload]).create_request
        "{\"message\":\"payload has been parsed.\"}"
+      end
+
     end
 
     post '/sources/:identifier/campaigns' do
@@ -97,14 +121,14 @@ module TrafficSpy
     # end
 
     helpers do
-      # def validate_site(identifier)
-      #   site = Site.find(identifier: identifier)
-      #   # if !site.exists?
-      #   #    halt 403, "{\"message\":\identifier does not exists\"}"
-      #   #  else
-      #   #   true
-      #   #  end
-      # end
+      def valid_site?(identifier)
+        site = Site.find(identifier: identifier)
+        if site.nil?
+           halt 403, "{\"message\":\identifier does not exists\"}"
+         else
+          true
+         end
+      end
     end
 
   end
