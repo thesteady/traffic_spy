@@ -51,6 +51,23 @@ module TrafficSpy
       end
     end
 
+    def self.summarize_url_requests_for_site(site_id)
+      data.group_and_count(:url_path_id).where(:site_id =>site_id).to_a
+      #returns a hash with id1=>count, id2=>count
+    end
+
+    def self.summarize_browser_requests_for_site(site_id)
+      data.group_and_count(:browser_id).where(:site_id =>site_id).to_a
+    end
+
+    def self.summarize_os_requests_for_site(site_id)
+      data.group_and_count(:os_id).where(:site_id =>site_id).to_a
+    end
+
+    def self.summarize_res_requests_for_site(site_id)
+      data.group_and_count(:resolution).where(:site_id =>site_id).to_a
+    end
+
   end
 end
 

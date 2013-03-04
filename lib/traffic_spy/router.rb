@@ -21,12 +21,14 @@ module TrafficSpy
     post '/sources' do
 
       site = Site.new(params)
+
       if site.save
         "{\"identifier\":\"#{params[:identifier]}\"}"
       else
-        halt 400, "{\"message\":\"no identifier or rootUrl provided\"}" if site.empty?
+        halt 400, "{\"message\":\"no identifier or rootUrl provided\"}" if !site.valid?
         halt 403, "{\"message\":\identifier already exists\"}" if site.exists?
       end
+
     end
 
     post '/sources/:identifier/data' do
@@ -43,13 +45,64 @@ module TrafficSpy
     end
 
     get '/sources/:identifier' do
-      if Site.exists?(:identifier)
-        #do we call methods here to grab the data?
-        erb :index
-      else
-      status 404
-      "{\"message\":\identifier does not exist\"}"
+
+      if valid_site?(params[:identifier])
+
+        @site = Site.find({identifier: params[:identifier]})
+
+        ## Most Requested URLs to least requested URLs
+        urls = Request.summarize_url_requests_for_site(@site.id)
+
+        # look into extracting this to UrlPath class
+        @url_results = urls.inject({}) do |hash, url|
+          path = UrlPath.find({id: url[:url_path_id]}).path
+          hash[path] = url[:count]
+          hash
+        end.sort_by{|k, v| v}.reverse
+
+        ## Browser breakdown
+        browsers = Request.summarize_browser_requests_for_site(@site.id)
+
+        # look into extracting this to Browser class
+        @browser_results = browsers.inject({}) do |hash, browser|
+          name = Browser.find({id: browser[:browser_id]}).name
+          hash[name] = browser[:count]
+          hash
+        end.sort_by{|k, v| v}.reverse
+
+        ## OS breakdown
+        oss = Request.summarize_os_requests_for_site(@site.id)
+
+        # look into extracting this to OS class
+        @os_results = oss.inject({}) do |hash, os|
+          name = OperatingSystem.find({id: os[:os_id]}).name
+          hash[name] = os[:count]
+          hash
+        end.sort_by{|k, v| v}.reverse
+
+        @resolutions = Request.summarize_res_requests_for_site(@site.id)
+
+
+        @res_results = @resolutions.inject({}) do |hash, res|
+          #name = OperatingSystem.find({id: url[:os_id]}).name
+          hash[res[:resolution]] = res[:count]
+          hash
+        end.sort_by{|k, v| v}.reverse
+
+
+        erb :app_stats
+        # use site_id to search request table for hash with url_path_id and count
+        # iterate through hash and get paths for each url_path_id
+        # send information to view to be displayed
       end
+
+      # if Site.exists?(:identifier)
+      #   #do we call methods here to grab the data?
+      #   erb :index
+      # else
+      # status 404
+      # "{\"message\":\identifier does not exist\"}"
+      # end
     end
 
     post '/sources/:identifier/campaigns' do
@@ -127,6 +180,9 @@ module TrafficSpy
           true
          end
       end
+
+      # def find_site_id(identifier)
+      # end
     end
 
   end
