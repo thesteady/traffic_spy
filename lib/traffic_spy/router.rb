@@ -1,6 +1,6 @@
 module TrafficSpy
   class Router < Sinatra::Base
-    set :views, './views'
+    set :views, './lib/traffic_spy/views'
 
     get '/' do
       @title = "TrafficSpy Analytics Summary"
@@ -110,6 +110,14 @@ module TrafficSpy
           hash
         end.sort_by{|k, v| v}.reverse
 
+        response_hash = Request.summarize_response_times_for_site(@site.id)
+
+        @response_times = response_hash.inject({}) do |hash, (k, v)|
+          path = UrlPath.find({id: k}).path
+          hash[path] = v
+          hash
+        end.sort_by{|k, v| v}.reverse
+
 
         erb :app_stats
         # use site_id to search request table for hash with url_path_id and count
@@ -198,12 +206,6 @@ module TrafficSpy
 
     get '/sources/:identifier/campaigns/:campaignname' do
       if check_site_exists(params) == true
-        #if the specified campaign exists
-          #show page with info
-        # else
-        #   "{\"message\":\no campaign exists\"}"
-        #   #hyperlink back to campaigns index
-        # end
       else
         status 403
           "{\"message\":\"identifier does not exist\"}"

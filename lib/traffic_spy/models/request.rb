@@ -15,7 +15,7 @@ module TrafficSpy
       @os_id = input[:os_id]
       @site_id = input[:site_id]
       @requested_at = input[:requested_at]
-      @response_time = input[:responded_at]
+      @response_time = input[:response_time]
       @referred_by = input[:referred_by]
       @request_type = input[:request_type]
       @resolution = input[:resolution]
@@ -58,12 +58,13 @@ module TrafficSpy
 
     def self.summarize_response_times_for_site(site_id)
       ids = data.select(:url_path_id).where(:site_id =>site_id).to_a.uniq
+
       hash = Hash.new(0)
       ids.each do |id|
-        avg_resp = data.avg(:response_time).where(:url_path_id =>id)
-        hash << {id => avg_resp}
+        avg_resp = data.where(:url_path_id =>id[:url_path_id]).avg(:response_time)
+        hash[id[:url_path_id]] = avg_resp.to_f
       end
-      hash
+      hash #.sort_by{|k,v| v}.reverse
     end
 
     def calc_percentage(hash)
