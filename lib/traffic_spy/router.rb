@@ -103,6 +103,8 @@ module TrafficSpy
         # use site_id to search request table for hash with url_path_id and count
         # iterate through hash and get paths for each url_path_id
         # send information to view to be displayed
+      else
+        halt 403, "{\"message\":\"identifier already exists\"}" if site.exists?
       end
 
       # if Site.exists?(:identifier)

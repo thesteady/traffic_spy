@@ -76,7 +76,7 @@ describe TrafficSpy::Router do
     context "when the identifier does not exist" do
       it "returns an error message that the identifier does not exist" do
         get "/sources/reggae"
-        last_response.status.should eq 404
+        last_response.status.should eq 403
         last_response.body.should eq "{\"message\":\"identifier does not exist\"}"
       end
     end
@@ -86,9 +86,7 @@ describe TrafficSpy::Router do
         post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
         get '/sources/jumpstartlab'
 
-        pending
-        #last_response.status.should eq 200
-       # expect(requested_urls_stats.count) to eq 5
+        last_response.status.should eq 200
       end
     end
   end
