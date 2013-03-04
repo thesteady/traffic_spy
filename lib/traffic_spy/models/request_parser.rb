@@ -7,19 +7,16 @@ module TrafficSpy
   class RequestParser
     attr_accessor :req_attr
 
-    # attr_reader :requested_at, :response_time, :referred_by, :request_type,
-    #             :event_id, :browser_id, :os_id,
-    #             :resolution, :ip, :site_id, :event, :browser
-
-    # attr_accessor :url
-
 
     def parse(json_payload)
       payload = JSON.parse(json_payload, :symbolize_names => true)
     end
 
     def initialize(json_payload)
+
       payload = parse(json_payload)
+
+
 
       user_agent = UserAgent.parse(payload[:userAgent])
 
@@ -45,11 +42,13 @@ module TrafficSpy
                                         payload[:resolutionHeight]
                                         )
 
+
       @req_attr = req_attr
 
     end
 
     def create_request
+
       request = Request.new(@req_attr)
       @req_attr[:id] = request.save
       @req_attr
