@@ -13,6 +13,10 @@ module TrafficSpy
       erb :list
     end
 
+    get '/about_us' do
+      "Coming Soon"
+    end
+
     not_found do
       #halt 404, 'The page you are looking for doesn\'t exist'
       erb :error
