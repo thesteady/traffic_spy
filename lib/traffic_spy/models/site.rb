@@ -35,11 +35,12 @@ module TrafficSpy
     end
 
     def valid?
-      !identifier.empty? || !rootUrl.empty?
+      !identifier.nil? && !rootUrl.nil?
     end
 
     def save
       return false if (!valid? || exists?)
+      #puts "saving: #{self.identifier} #{self.rootUrl}"
       Site.data.insert({identifier: identifier, rootUrl: rootUrl})
     end
 
