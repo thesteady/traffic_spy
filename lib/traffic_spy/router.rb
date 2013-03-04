@@ -2,6 +2,11 @@ module TrafficSpy
   class Router < Sinatra::Base
     #set :views, 'lib/views'
 
+    def check_site_exists(params)
+      site = Site.new(params)
+      site.exists?
+    end
+
     post '/sources' do
 
       site = Site.new(params)
@@ -13,11 +18,18 @@ module TrafficSpy
       end
     end
 
+    # post '/sources/:identifier/data' do
+    #     if check_site_exists(params) == true
+    #       TrafficSpy::RequestParser.new(params[:payload]).create_request
+    #     "{\"message\":\"payload has been parsed.\"}"
+    #   else
+    #     "{\"message\":\ identifier does not exist\"}"
+    #   end
+    # end
+
     post '/sources/:identifier/data' do
-        # handle event where identifier does not exist in DB
-        site = Site.new(params)
-        if site.exists?
-          TrafficSpy::RequestParser.new(params[:payload]).create_request
+      if check_site_exists(params) == true
+        TrafficSpy::RequestParser.new(params[:payload]).create_request
         "{\"message\":\"payload has been parsed.\"}"
       else
         "{\"message\":\ identifier does not exist\"}"
@@ -25,8 +37,7 @@ module TrafficSpy
     end
 
     post '/sources/:identifier/campaigns' do
-      site = Site.new(params)
-      if site.exists?
+      if check_site_exists(params) == true
         if params[:campaignName].exists?
           status 403
           "{\"message\":\"Campaign Already Exists\"}"
@@ -49,8 +60,7 @@ module TrafficSpy
 
 ################ GET METHODS ##########################
     get '/sources/:identifier' do
-      site = Site.new(params)
-      if site.exists?
+      if check_site_exists(params) == true
         #do we call methods here to grab the data?
         erb :index
       else
@@ -60,8 +70,7 @@ module TrafficSpy
     end
 
     get '/sources/:identifier/events' do
-      site = Site.new(params)
-      if site.exists?
+      if check_site_exists(params) == true
         site_id = Site.find(identifier: :identifier).id
         @events = Event.find_all_by_site_id(site_id)
 
@@ -78,8 +87,7 @@ module TrafficSpy
     end
 
     get '/sources/:identifier/campaigns' do
-      site = Site.new(params)
-      if site.exists?
+      if check_site_exists(params) == true
         #if any campaigns exist
           #show page with hyperlinks to campaign specific data
           #erb :campaigns
@@ -93,8 +101,7 @@ module TrafficSpy
     end
 
     get '/sources/:identifier/campaigns/:campaignname' do
-      site = Site.new(params)
-      if site.exists?
+      if check_site_exists(params) == true
         #if the specified campaign exists
           #show page with info
         # else
