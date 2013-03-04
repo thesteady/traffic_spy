@@ -10,19 +10,6 @@ describe TrafficSpy::Site do
     TrafficSpy::Site
   end
 
-  describe "Creation" do
-
-    context "given required parameters for a new instance" do
-      it "creates a new site application" do
-        data_hash = { :identifier => "jumpstartlab",
-                      :rootUrl => 'http://jumpstartlab.com'}
-        jumpstartlab = app.new(data_hash)
-
-        expect(jumpstartlab.identifier).to eq "jumpstartlab"
-        expect(jumpstartlab.rootUrl).to eq 'http://jumpstartlab.com'
-      end
-    end
-  end
 
   describe "Class method" do
 
@@ -30,12 +17,26 @@ describe TrafficSpy::Site do
       TrafficSpy::DB[:sites].delete
     end
 
+    after do
+      TrafficSpy::DB[:sites].delete
+    end
+
     let(:site1) do
-      {:identifier => "jumpstartlab", :rootUrl => "http://jumpstartlab.com"}
+      {identifier: "jumpstartlab", rootUrl: "http://jumpstartlab.com"}
     end
 
     let(:site2) do
-      {:identifier => "espn", :rootUrl => "http://espn.com" }
+      {identifier: "espn", rootUrl: "http://espn.com" }
+    end
+
+    describe ".new" do
+      it "creates new instance" do
+        site = app.new(site1)
+        site.save
+        expect(site.identifier).to eq "jumpstartlab"
+        expect(site.rootUrl).to eq 'http://jumpstartlab.com'
+      end
+
     end
 
     describe ".count" do
@@ -54,42 +55,53 @@ describe TrafficSpy::Site do
       end
     end
 
-    describe ".find(id)" do
-      it "returns record with id of 2" do
-        app.new(site1).save
-        app.new(site2).save
+    describe ".find" do
 
-        test_id = app.all.first.id
-        puts test_id
-        expect(app.find(test_id).identifier).to eq("jumpstartlab")
+      before do
+        @s1 = app.new(site1)
+        @s1_id = @s1.save
+        @s2 = app.new(site2)
+        @s2_id = @s2.save
+      end
+
+      context "using id as parameter" do
+        it "returns first record that matches given parameter" do
+          expect(app.find(id: @s1_id).identifier).to eq("jumpstartlab")
+        end
+      end
+
+      context "using identifier as parameter" do
+        it "returns first record that matches given parameter" do
+          identifier = @s2.identifier
+          expect(app.find(identifier: identifier).identifier).to eq("espn")
+        end
+      end
+
+      context "using rootUrl as parameter" do
+        it "returns first record that matches given parameter" do
+          rootUrl = @s2.rootUrl
+          expect(app.find(rootUrl: rootUrl).rootUrl).to eq("http://espn.com")
+        end
       end
     end
 
-    describe ".find_by_rootUrl" do
-      it "returns a record with site id, rootUrl, and identifier" do
-      new_site = app.new(site1).save
-      
-      expect(app.find_by_rootUrl("http://jumpstartlab.com").id).to eq new_site
-      end
-    end
-
-    describe ".exists?(identifier)" do
+    describe "#exists?(identifier)" do
 
       context "record exists in db" do
         it 'should return true' do
-          app.new(site1).save
-          site = app.all.first
+           site = app.new(site1)
+           site.save
 
-          expect(app.exists?(site.identifier).should be_true)
+          expect(site.exists?.should be_true)
         end
       end
 
       context "record does not exist in db" do
         it 'should return false' do
-          expect(app.exists?("acme_app").should be_false)
+          site = app.new(site2)
+          expect(site.exists?.should be_false)
         end
       end
-
     end
 
   end

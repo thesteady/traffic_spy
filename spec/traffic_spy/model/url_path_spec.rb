@@ -11,39 +11,6 @@ describe TrafficSpy::UrlPath do
     TrafficSpy::UrlPath
   end
 
-  describe "New Instance" do
-    before do
-      TrafficSpy::DB[:url_paths].delete
-    end
-
-    context "given required parameters for a new instance" do
-      it "creates a new url path" do
-        details_hash = {:path=>"http://jumpstartlab.com/blog/article1"}
-        url = app.new(details_hash)
-        expect(url.path).to eq "http://jumpstartlab.com/blog/article1"
-      end
-    end
-
-    context "given a new url_path" do
-      it "stores with a new key value" do
-        details_hash = {:path=>"http://jumpstartlab.com/blog/article1"}
-        url = app.new(details_hash).save
-        expect(url.class).to eq Fixnum
-      end
-    end
-
-    context "given an existing url_path" do
-      it "assigns the exisiting url_path_id" do
-        site1 = {:path=>"http://jumpstartlab.com/blog/article1"}
-        site2 = {:path=>"http://jumpstartlab.com/blog/article1"}
-        new_site1 = app.new(site1).save
-        new_site2 = app.new(site2).save
-        expect(new_site1).to eq new_site2
-        #need to implement a method to check for it already in the class (in save?)kareem may be doing this already
-      end
-    end
-  end
-
   describe "Class method" do
 
     before do
@@ -51,17 +18,24 @@ describe TrafficSpy::UrlPath do
     end
 
     let(:url1) do
-      {:path => "/blog"}
+      {path: "/blog", site_id: 1}
     end
 
     let(:url2) do
-      {:path => "/about_us"}
+      {path: "/about_us", site_id: 2}
+    end
+
+    describe ".new" do
+      it "creates a new instance" do
+        url = app.new(url1)
+        url.save
+        expect(url.path).to eq "/blog"
+      end
     end
 
     describe ".count" do
       it  "returns 1 record" do
-        url = app.new(url1)
-        url.save
+        app.new(url1).save
         expect(app.count).to eq(1)
       end
     end
@@ -74,24 +48,44 @@ describe TrafficSpy::UrlPath do
       end
     end
 
-    describe ".find(id)" do
-      it "returns record with id of first saved url" do
-        app.new(url1).save
-        app.new(url2).save
+    describe ".find" do
 
-        test_id = app.all.first.id
-        expect(app.find(test_id).path).to eq("/blog")
+      before do
+        @url1 = app.new(url1)
+        @url1_id = @url1.save
+        @url2 = app.new(url2)
+        @url2_id = @url2.save
+      end
+
+      context "using id as parameter" do
+        it "returns first record that matches given parameter" do
+          expect(app.find(id: @url1_id).path).to eq("/blog")
+        end
+      end
+
+      context "using name as parameter" do
+        it "returns first record that matches given parameter" do
+          path = @url2.path
+          expect(app.find(path: path).path).to eq("/about_us")
+        end
       end
     end
 
-    describe ".find_by_path(path)"do
-      it "returns record id for the path" do
-        app.new(url1).save
-        app.new(url2).save
+    describe ".find_id" do
+      context "url is in db" do
+        it "returns the id for the provided path" do
+          u1 = app.new(url1)
+          u1_id = u1.save
+          expect(u1.find_id).to eq(u1_id)
+        end
+      end
 
-        test_name = app.all.first.path
-        expect(app.find_by_path(test_name).path).to eq("/blog")
-     end
+      context "url is not in db" do
+        it "returns the id for a given path" do
+          u1 = app.new(url1)
+          expect(u1.find_id).to eq(false)
+        end
+      end
     end
 
     describe ".find_all_by_site_id(site_id)" do
@@ -122,19 +116,18 @@ describe TrafficSpy::UrlPath do
 
       context "record exists in db" do
         it 'should return true' do
-          app.new(url1).save
-          url = app.all.first
-
-          expect(app.exists?(url.path).should be_true)
+          url = app.new(url1)
+          url.save
+          expect(url.exists?.should be_true)
         end
       end
 
       context "record does not exist in db" do
         it 'should return false' do
-          expect(app.exists?("/help").should be_false)
+          url = app.new(url2)
+          expect(url.exists?.should be_false)
         end
       end
-
     end
 
   end

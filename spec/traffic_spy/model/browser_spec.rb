@@ -10,15 +10,15 @@ describe TrafficSpy::Browser do
     TrafficSpy::Browser
   end
 
-  describe "New Instance" do
-    context "given required parameters for a new instance" do
-      it "creates a new browser instance" do
-        details = {:name => "Mozilla/5.0"}
-        my_browser = app.new(details)
-        expect(my_browser.name).to eq "Mozilla/5.0"
-      end
-    end
-  end
+  # describe "New Instance" do
+  #   context "given required parameters for a new instance" do
+  #     it "creates a new browser instance" do
+  #       details = {:name => "Mozilla/5.0"}
+  #       my_browser = app.new(details)
+  #       expect(my_browser.name).to eq "Mozilla/5.0"
+  #     end
+  #   end
+  # end
 
   describe "Class method" do
 
@@ -32,6 +32,13 @@ describe TrafficSpy::Browser do
 
     let(:b2) do
       {:name => "Firefox"}
+    end
+
+    describe "new" do
+      it "should create new instance" do
+        browser = app.new(b1)
+        expect(browser.name).to eq("Mozilla")
+      end
     end
 
     describe ".count" do
@@ -50,40 +57,62 @@ describe TrafficSpy::Browser do
       end
     end
 
-    describe ".find(id)" do
-      it "returns browser for provided id " do
-        app.new(b1).save
-        app.new(b2).save
+    describe ".find" do
 
-        test_id = app.all.first.id
-        expect(app.find(test_id).name).to eq("Mozilla")
+      before do
+        @b1 = app.new(b1)
+        @b1_id = @b1.save
+        @b2 = app.new(b2)
+        @b2_id = @b2.save
+      end
+
+      context "using id as parameter" do
+        it "returns first record that matches given parameter" do
+          expect(app.find(id: @b1_id).name).to eq("Mozilla")
+        end
+      end
+
+      context "using name as parameter" do
+        it "returns first record that matches given parameter" do
+          name = @b2.name
+          expect(app.find(name: name).name).to eq("Firefox")
+        end
       end
     end
 
-    describe ".find_by_name(name)"do
-      it "returns browser for provided name" do
-        app.new(b1).save
-        app.new(b2).save
+    describe ".find_id" do
+      context "browser name is in db" do
+        it "returns the id for the provided path" do
+          browser = app.new(b1)
+          browser_id = browser.save
+          expect(browser.find_id).to eq(browser_id)
+        end
+      end
 
-        test_name = app.all.first.name
-        expect(app.find_by_name(test_name).name).to eq("Mozilla")
-     end
+      context "browser name is not in db" do
+        it "returns the id for a given path" do
+          browser = app.new(b2)
+          expect(browser.find_id).to eq(false)
+        end
+      end
     end
 
-    describe ".exists?(browser_name)" do
+
+    describe "#exists?" do
 
       context "record exists in db" do
         it 'should return true' do
-          app.new(b1).save
-          browser = app.all.first
+          browser = app.new(b1)
+          browser.save
 
-          expect(app.exists?(browser.name).should be_true)
+          expect(browser.exists?.should be_true)
         end
       end
 
       context "record does not exist in db" do
         it 'should return false' do
-          expect(app.exists?("Opera").should be_false)
+          browser = app.new(b2)
+          expect(browser.exists?.should be_false)
         end
       end
     end

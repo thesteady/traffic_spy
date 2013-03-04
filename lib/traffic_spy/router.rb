@@ -4,34 +4,19 @@ module TrafficSpy
 
     post '/sources' do
 
-      if params[:rootUrl].nil?
-        status 400
-        "{\"message\":\"no url provided\"}"
-
-      elsif params[:identifier].nil?
-        status 400
-        "{\"message\":\"no identifier provided\"}"
-
-      elsif Site.exists?(params[:identifier])
-        status 403
-        "{\"message\":\identifier already exists\"}"
-      else
-        site = Site.new(params)
-        site.save
+      site = Site.new(params)
+      if site.save
         "{\"identifier\":\"#{params[:identifier]}\"}"
+      else
+        halt 400, "{\"message\":\"no identifier or rootUrl provided\"}" if site.empty?
+        halt 403, "{\"message\":\identifier already exists\"}" if site.exists?
       end
     end
 
     post '/sources/:identifier/data' do
-
-      if Site.exists?(:identifier)
-        # parse payload
-        #HERE
+        # handle event where identifier does not exist in DB
+        TrafficSpy::RequestParser.new(params[:payload]).create_request
        "{\"message\":\"payload has been parsed.\"}"
-      else
-        status 403
-        "{\"message\":\identifier does not exist\"}"
-      end
     end
 
     post '/sources/:identifier/campaigns' do
@@ -109,6 +94,17 @@ module TrafficSpy
         status 403
           "{\"message\":\identifier does not exist\"}"
       end
+    end
+
+    helpers do
+      # def validate_site(identifier)
+      #   site = Site.find(identifier: identifier)
+      #   # if !site.exists?
+      #   #    halt 403, "{\"message\":\identifier does not exists\"}"
+      #   #  else
+      #   #   true
+      #   #  end
+      # end
     end
 
   end

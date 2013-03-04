@@ -9,7 +9,6 @@ module TrafficSpy
       @site_id = params[:site_id]
     end
 
-
     def self.data
       DB[:events]
     end
@@ -18,28 +17,34 @@ module TrafficSpy
       data.count
     end
 
-    def self.find(id)
-      result = data.first(:id => id)
-      Event.new(result)
-    end
-
     def self.find_all_by_site_id(site_id)
       data.where(:site_id => site_id).to_a
     end
 
-    def self.find_by_eventName(eventName)
-      result = data.first(:name => eventName)
-      Event.new(result)
+    def self.find(input)
+      data.where(input).map do |result|
+        Event.new(result)
+      end.first
     end
 
-    def self.exists?(name)
-      !data.where(:name => name).empty?
+    def exists?
+      duplicate = Event.data.where(name: name).to_a
+      duplicate.any?
     end
 
     def self.all
       results = data.map do |event|
         Event.new(event)
       end
+    end
+
+    def find_id
+      result = Event.data.where(name: name).to_a
+      result.empty? ? false : result.first[:id]
+    end
+
+    def find_or_create_and_get_id
+      find_id || save
     end
 
     def save

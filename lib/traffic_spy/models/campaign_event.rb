@@ -17,24 +17,11 @@ module TrafficSpy
       data.count
     end
 
-    def self.find_by_campaign_id(c_id)
-
-      data.where(:campaign_id => c_id).map do |ce|
-        CampaignEvent.new(ce)
+    def self.find_all(input)
+      data.where(input).map do |result|
+        CampaignEvent.new(result)
       end
     end
-
-    def self.find_by_event_id(e_id)
-
-      data.where(:event_id => e_id).map do |ce|
-        CampaignEvent.new(ce)
-      end
-    end
-
-
-    # def self.exists?(b_name)
-    #   !data.where(:name => b_name).empty?
-    # end
 
     def self.all
       data.map do |campaign_event|

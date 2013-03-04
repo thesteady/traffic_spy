@@ -27,6 +27,13 @@ describe TrafficSpy::CampaignEvent do
       {:campaign_id => 1, :event_id => 3}
     end
 
+    describe ".new" do
+      it "creates a new instance" do
+        ce = app.new(ce1)
+        expect(ce.campaign_id).to eq(1)
+      end
+    end
+
     describe ".count" do
       it  "returns 1 record" do
         campaign = app.new(ce1)
@@ -44,23 +51,23 @@ describe TrafficSpy::CampaignEvent do
       end
     end
 
-    describe ".find_by_campaign_id(id)" do
-      it "returns records associated with provided campaign_id" do
+    describe ".find(input)" do
+      before do
         app.new(ce1).save
         app.new(ce2).save
         app.new(ce3).save
-
-        expect(app.find_by_campaign_id(1).count).to eq(2)
       end
-    end
 
-    describe ".find_by_event_id(id)" do
-      it "returns records associated with provided event_id" do
-        app.new(ce1).save
-        app.new(ce2).save
-        app.new(ce3).save
+      context "using campaign_id as parameter" do
+        it "returns first record that matches given parameter" do
+          expect(app.find_all(campaign_id: 1).count).to eq(2)
+        end
+      end
 
-        expect(app.find_by_event_id(3).count).to eq(2)
+      context "using event_id as parameter" do
+        it "returns first record that matches given parameter" do
+          expect(app.find_all(event_id: 3).count).to eq(2)
+        end
       end
     end
   end

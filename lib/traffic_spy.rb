@@ -1,6 +1,8 @@
 require 'sinatra/base'
 require 'sequel'
 
+ENV["TRAFFIC_SPY_ENV"] = "development"
+
 require 'traffic_spy/models/base'
 
 require 'traffic_spy/models/request_parser'

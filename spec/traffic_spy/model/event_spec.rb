@@ -10,16 +10,6 @@ describe TrafficSpy::Event do
     TrafficSpy::Event
   end
 
-  describe "New Event Instance" do
-    context "given required parameters for a new event instance" do
-      it "creates a new event" do
-        details = {:name => "log_in"}
-        new_event = app.new(details)
-        expect(new_event.name).to eq "log_in"
-      end
-    end
-  end
-
   describe "Class method" do
 
     before do
@@ -32,6 +22,13 @@ describe TrafficSpy::Event do
 
     let(:e2) do
       {:name => "log_in", :site_id => 2}
+    end
+
+    describe ".new" do
+      it "creates a new instance" do
+        event = app.new(e1)
+        expect(event.name).to eq("sociallogin")
+      end
     end
 
     describe ".count" do
@@ -50,13 +47,43 @@ describe TrafficSpy::Event do
       end
     end
 
-    describe ".find(id)" do
-      it "returns record with id of first saved" do
-        app.new(e1).save
-        app.new(e2).save
+    describe ".find" do
 
-        test_id = app.all.first.id
-        expect(app.find(test_id).name).to eq("sociallogin")
+      before do
+        @e1 = app.new(e1)
+        @e1_id = @e1.save
+        @e2 = app.new(e2)
+        @e2_id = @e2.save
+      end
+
+      context "using id as parameter" do
+        it "returns first record that matches given parameter" do
+          expect(app.find(id: @e1_id).name).to eq("sociallogin")
+        end
+      end
+
+      context "using name as parameter" do
+        it "returns first record that matches given parameter" do
+          name = @e2.name
+          expect(app.find(name: name).name).to eq("log_in")
+        end
+      end
+    end
+
+    describe ".find_id" do
+      context "event is in db" do
+        it "returns the id for the provided event" do
+          event = app.new(e1)
+          event_id = event.save
+          expect(event.find_id).to eq(event_id)
+        end
+      end
+
+      context "event is not in db" do
+        it "returns the id for a given path" do
+          event = app.new(e1)
+          expect(event.find_id).to eq(false)
+        end
       end
     end
 
@@ -70,19 +97,18 @@ describe TrafficSpy::Event do
     end
 
     describe ".exists?(event_name)" do
-
       context "record exists in db" do
         it 'should return true' do
-          app.new(e1).save
-          event = app.all.first
-
-          expect(app.exists?(event.name).should be_true)
+          event = app.new(e1)
+          event.save
+          expect(event.exists?.should be_true)
         end
       end
 
       context "record does not exist in db" do
         it 'should return false' do
-          expect(app.exists?("cancel_account").should be_false)
+          event = app.new(e2)
+          expect(event.exists?.should be_false)
         end
       end
 
