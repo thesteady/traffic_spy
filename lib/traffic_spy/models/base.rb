@@ -1,4 +1,4 @@
-module TrafficSpy
+  module TrafficSpy
 
   if ENV["TRAFFIC_SPY_ENV"] == "test"
     database_path = 'trafficspy_test'
