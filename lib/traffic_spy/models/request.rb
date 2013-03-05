@@ -25,7 +25,7 @@ module TrafficSpy
     def save
       Request.data.insert({ site_id: site_id, url_path_id: url_path_id , event_id: event_id,
                             browser_id: browser_id, os_id: os_id,
-                            site_id: site_id, requested_at: requested_at,
+                            requested_at: requested_at,
                             response_time: response_time,
                             referred_by: referred_by, request_type: request_type,
                             resolution: resolution, ip: ip})
@@ -37,6 +37,21 @@ module TrafficSpy
 
     def self.count
       data.count
+    end
+
+    def exists?
+      duplicate = Request.data.where(site_id: site_id).
+                               where(url_path_id: url_path_id).
+                               where(event_id: event_id).
+                               where(browser_id: browser_id).
+                               where(os_id: os_id).
+                               where(requested_at: requested_at).
+                               where(response_time: response_time).
+                               where(referred_by: referred_by).
+                               where(request_type: request_type).
+                               where(resolution: resolution).
+                               where(ip: ip).to_a
+      duplicate.any?
     end
 
     def self.all
@@ -55,7 +70,6 @@ module TrafficSpy
       data.group_and_count(:url_path_id).where(:site_id =>site_id).to_a
     end
 
-
     def self.summarize_response_times_for_site(site_id)
       ids = data.select(:url_path_id).where(:site_id =>site_id).to_a.uniq
 
@@ -65,15 +79,6 @@ module TrafficSpy
         hash[id[:url_path_id]] = avg_resp.to_f.round(1)
       end
       hash
-    end
-
-    def calc_percentage(hash)
-      #takes hash like id =>count
-      #sum all values
-      #can i use a database method to do a sum? sequel
-      #for each id,
-      # (count/sum) * 100
-      # give back as a hash: id=>%
     end
 
     def self.summarize_browser_requests_for_site(site_id)

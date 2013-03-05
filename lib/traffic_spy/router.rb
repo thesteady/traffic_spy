@@ -21,11 +21,6 @@ module TrafficSpy
       erb :error
     end
 
-    def check_site_exists(params)
-      site = Site.new(params)
-      site.exists?
-    end
-
     post '/sources' do
       site = Site.new(params)
 
@@ -38,23 +33,32 @@ module TrafficSpy
     end
 
     post '/sources/:identifier/data' do
-        # handle event where identifier does not exist in DB
-
-      # 1) Todo handle empty payload
-      # 2) Handle duplicate payload
-      # raise "#{params[:payload]}"
-      # halt 400, "{\"message\":\"no payload\"}" if params[:payload].empty?
-
       if valid_site?(params)
-        TrafficSpy::RequestParser.new(params[:payload]).create_request
-       "{\"message\":\"payload has been parsed.\"}"
+        payload = params[:payload]
+        check_payload(payload)
+      else
+        halt 403, "{\"message\":\"identifier does not exist\"}"
       end
     end
 
+    def check_payload(payload)
+      if payload.nil?
+        halt 400, "{\"message\":\"payload was empty\"}"
+      elsif payload_is_redundant?(payload)
+        halt 403, "{\"message\":\"payload has already been submitted\"}"
+      else
+        TrafficSpy::RequestParser.new(payload).create_request
+      end
+    end
+
+    def payload_is_redundant?(payload)
+      parsed_payload = TrafficSpy::RequestParser.new(payload)
+      new_request = Request.new(parsed_payload.req_attr)
+      new_request.exists?
+    end
+
     get '/sources/:identifier' do
-
       if valid_site?(params)
-
         @site = Site.find({identifier: params[:identifier]})
 
         ## Most Requested URLs to least requested URLs
@@ -89,7 +93,6 @@ module TrafficSpy
 
         resolutions = Request.summarize_res_requests_for_site(@site.id)
 
-
         @res_results = resolutions.inject({}) do |hash, res|
           #name = OperatingSystem.find({id: url[:os_id]}).name
           hash[res[:resolution]] = res[:count]
@@ -123,7 +126,7 @@ module TrafficSpy
     end
 
     post '/sources/:identifier/campaigns' do
-      if check_site_exists(params) == true
+      if valid_site?(params[:identifier])
         if params[:campaignName].exists?
           status 403
           "{\"message\":\"Campaign Already Exists\"}"
@@ -145,7 +148,6 @@ module TrafficSpy
     end
 
     get '/sources/:identifier/events' do
-
       identifier = params[:identifier]
 
       if valid_site?(params) && any_events_listed?(params)
@@ -177,7 +179,7 @@ module TrafficSpy
     end
 
     # get '/sources/:identifier/campaigns' do
-    #   if check_site_exists(params) == true
+    #   if valid_site?(params[:identifier]) == true
     #     site_id = Site.find(identifier: :identifier).identifier
     #     @campaigns = Campaign.find_all_by_site_id(site_id)
     #     if @campaigns.count == 0
@@ -192,7 +194,7 @@ module TrafficSpy
     # end
 
     # get '/sources/:identifier/campaigns/:campaignname' do
-    #   if check_site_exists(params) == true
+    #   if valid_site?(params[:identifier]) == true
     #   else
     #     status 403
     #       "{\"message\":\"identifier does not exist\"}"
@@ -210,10 +212,8 @@ module TrafficSpy
       end
 
       def valid_url?(params)
-
         identifier = params[:identifier]
         rel_path = params[:rel_path]
-
         full_path = "http://#{identifier}.com/#{rel_path}"
         path = UrlPath.find(path: full_path)
         if path.nil?
@@ -250,7 +250,6 @@ module TrafficSpy
           true
         end
       end
-
     end
 
   end
