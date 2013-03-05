@@ -1,7 +1,5 @@
 <h2>Event Statistics</h2>
 
-<p><%= @event.name %></p>
-
 <h3>Identifier: <%=params[:identifier]%> </h3>
 <h4>Event Name: <%=params[:event_name]%></h4>
 <p><a href="/sources/<%= params[:identifier] %>/events">View Events Listing</a></p>
@@ -13,12 +11,12 @@
     <table class="table table-bordered table-striped">
       <th>Hour</th>
       <th>Count</th>
-
+      <% @grouped_hours.each do |result| %>
       <tr>
-        <td><br/></td>
-        <td><br/></td>
+        <td><%= result[0] %><br/></td>
+        <td class="count_col"><%= result[1] %><br/></td>
       </tr>
-
+      <% end %>
     </table>
   </div>
 </div>

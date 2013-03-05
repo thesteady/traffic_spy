@@ -171,7 +171,7 @@ module TrafficSpy
         event = Event.find({name: params[:event_name]},{site_id: site_id})
 
         # get a hash of dates grouped by hour of the day {hour: 1, count: 3}
-        event.dates_grouped_by_hour
+        @grouped_hours = event.dates_grouped_by_hour
         erb :event_detail
       end
     end
