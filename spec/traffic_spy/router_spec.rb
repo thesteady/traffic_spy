@@ -19,8 +19,6 @@ describe TrafficSpy::Router do
 
   describe "POST /sources" do
 
-
-
     context "with both identifier and rootUrl" do
       it "returns a 200(OK) with a body" do
 
@@ -74,9 +72,6 @@ describe TrafficSpy::Router do
   end
 
   describe "GET /sources/:identifier" do
-    # before do
-    #   TrafficSpy::DB[:sites].delete
-    # end
 
     context "when the identifier does not exist" do
       it "returns an error message that the identifier does not exist" do
@@ -99,7 +94,7 @@ describe TrafficSpy::Router do
   describe 'GET /sources/:identifier/urls/:rel_path' do
     before do
       post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
-      post "/sources/jumpstartlab/data", {:payload => Payload.sample}
+      post "/sources/jumpstartlab/data", {:payload => Payload.sample1}
     end
 
     context "with a valid request" do
@@ -121,7 +116,7 @@ describe TrafficSpy::Router do
   describe "GET /sources/:identifier/events" do
     before do
       post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
-      post "/sources/jumpstartlab/data", {:payload => Payload.sample}
+      post "/sources/jumpstartlab/data", {:payload => Payload.sample1}
     end
 
     context "when the identifier exists but does not have any events" do

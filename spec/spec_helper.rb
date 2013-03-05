@@ -17,7 +17,7 @@ RSpec.configure do |config|
 end
 
 class Payload
-  def self.sample
+  def self.sample1
     '{
       "url":"http://jumpstartlab.com/blog",
       "requestedAt":"2013-02-16 21:38:28 -0700",
@@ -31,5 +31,53 @@ class Payload
       "resolutionHeight":"1280",
       "ip":"63.29.38.211"
     }'
+  end
+
+  def self.sample2
+    {
+      url: "http://jumpstartlab.com/blog",
+      requestedAt: "2013-02-16 21:38:28 -0700",
+      respondedIn: 45,
+      referredBy: "http://jumpstartlab.com",
+      requestType: "GET",
+      parameters: [],
+      eventName: "Register",
+      userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
+      resolutionWidth: "1920",
+      resolutionHeight: "1280",
+      ip: "63.29.38.211"
+    }.to_json
+  end
+
+  def self.sample3
+    {
+      url: "http://jumpstartlab.com/blog",
+      requestedAt: "2013-02-16 21:38:28 -0700",
+      respondedIn: 40,
+      referredBy: "http://jumpstartlab.com",
+      requestType: "GET",
+      parameters: [],
+      eventName: "Login",
+      userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
+      resolutionWidth: "1920",
+      resolutionHeight: "1280",
+      ip: "63.29.38.211"
+    }.to_json
+  end
+
+  def self.sample4
+    {
+      url: "http://jumpstartlab.com/blog",
+      requestedAt: "2013-02-16 21:38:28 -0700",
+      respondedIn: 20,
+      referredBy: "http://jumpstartlab.com",
+      requestType: "GET",
+      parameters: [],
+      eventName: "socialLogin",
+      userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
+      resolutionWidth: "1920",
+      resolutionHeight: "1280",
+      ip: "63.29.38.211"
+    }.to_json
   end
 end

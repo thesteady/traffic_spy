@@ -88,15 +88,6 @@ describe TrafficSpy::Request do
 
       context "using id as parameter" do
         it "returns first record that matches given parameter" do
-
-          # find out why response_time is nil after save
-          # puts @req1.inspect
-          # puts @req2.inspect
-          # puts @req3.inspect
-          # puts "**************"
-
-          # # raise " yo yo #{@req1_id}"
-          #puts app.find(id: @req1_id).inspect
           expect(app.find_all(id: @req1_id).first.resolution).to eq("1920 x 1280")
         end
       end
@@ -146,19 +137,7 @@ describe TrafficSpy::Request do
       @site = TrafficSpy::Site.new({:identifier=>"jumpstartlab", :rootUrl => "http://jumpstartlab.com"})
       @site.save
 
-      @payload = {
-                  url: "http://jumpstartlab.com/blog",
-                  requestedAt: "2013-02-16 21:38:28 -0700",
-                  respondedIn: 37,
-                  referredBy: "http://jumpstartlab.com",
-                  requestType: "GET",
-                  parameters: [],
-                  eventName: "socialLogin",
-                  userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
-                  resolutionWidth: "1920",
-                  resolutionHeight: "1280",
-                  ip: "63.29.38.211"
-                }.to_json
+      @payload = Payload.sample1
 
       request_hash = TrafficSpy::RequestParser.new(@payload).create_request
 
