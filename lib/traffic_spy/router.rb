@@ -18,7 +18,6 @@ module TrafficSpy
     end
 
     not_found do
-      #halt 404, 'The page you are looking for doesn\'t exist'
       erb :error
     end
 
@@ -88,10 +87,10 @@ module TrafficSpy
           hash
         end.sort_by{|k, v| v}.reverse
 
-        @resolutions = Request.summarize_res_requests_for_site(@site.id)
+        resolutions = Request.summarize_res_requests_for_site(@site.id)
 
 
-        @res_results = @resolutions.inject({}) do |hash, res|
+        @res_results = resolutions.inject({}) do |hash, res|
           #name = OperatingSystem.find({id: url[:os_id]}).name
           hash[res[:resolution]] = res[:count]
           hash
@@ -146,19 +145,22 @@ module TrafficSpy
     end
 
     get '/sources/:identifier/events' do
-      if check_site_exists(params) == true
-        site_id = Site.find(identifier: :identifier).id
-        @events = Event.find_all_by_site_id(site_id)
 
-        if @events.count == 0
-          "{\"message\":\"no events have been defined.\"}"
-        else
-          erb :events
-        end
+      identifier = params[:identifier]
 
-      else
-        status 404
-        "{\"message\":\"identifier does not exist\"}"
+      if valid_site?(identifier) && valid_events_request?(identifier)
+
+        site_id = Site.find(identifier: identifier).id
+
+        events = Request.summarize_event_requests_for_site(site_id)
+
+        @event_results = events.inject({}) do |hash, event|
+          name = Event.find({id: event[:event_id]}).name
+          hash[name] = event[:count]
+          hash
+        end.sort_by{|k, v| v}.reverse
+
+        erb :events
       end
     end
 
@@ -189,14 +191,13 @@ module TrafficSpy
       def valid_site?(identifier)
         site = Site.find(identifier: identifier)
         if site.nil?
-           halt 403, "{\"message\":\"identifier does not exist\"}"
+          halt 403, "{\"message\":\"identifier does not exist\"}"
          else
           true
          end
       end
 
       def valid_url?(rel_path, identifier)
-
         full_path = "http://#{identifier}.com/#{rel_path}"
         path = UrlPath.find(path: full_path)
         if path.nil?
@@ -205,6 +206,17 @@ module TrafficSpy
           true
         end
       end
+
+      def valid_events_request?(identifier)
+        site_id = Site.find(identifier: identifier).id
+        events = Event.find(site_id: site_id)
+        if events.nil?
+          halt 403, "{\"message\":\"No events have been defined.\"}"
+        else
+          true
+        end
+      end
+
     end
 
   end

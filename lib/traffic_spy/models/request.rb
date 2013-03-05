@@ -87,5 +87,9 @@ module TrafficSpy
     def self.summarize_res_requests_for_site(site_id)
       data.group_and_count(:resolution).where(:site_id =>site_id).to_a
     end
+
+    def self.summarize_event_requests_for_site(site_id)
+      data.group_and_count(:event_id).where(:site_id =>site_id).to_a
+    end
   end
 end
