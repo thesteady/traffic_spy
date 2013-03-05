@@ -92,6 +92,11 @@ describe TrafficSpy::Router do
       register_jumpstartlab
     end
 
+    after do
+      TrafficSpy::DB[:sites].delete
+      TrafficSpy::DB[:requests].delete
+    end
+
     context "when identifier does not exist" do
       it "returns an error message that the identifier does not exist" do
         post "/sources/pizza/data", :data => "some data"
