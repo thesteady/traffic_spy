@@ -10,16 +10,6 @@ describe TrafficSpy::Browser do
     TrafficSpy::Browser
   end
 
-  # describe "New Instance" do
-  #   context "given required parameters for a new instance" do
-  #     it "creates a new browser instance" do
-  #       details = {:name => "Mozilla/5.0"}
-  #       my_browser = app.new(details)
-  #       expect(my_browser.name).to eq "Mozilla/5.0"
-  #     end
-  #   end
-  # end
-
   describe "Class method" do
 
     before do

@@ -11,7 +11,7 @@ describe TrafficSpy::Request do
     TrafficSpy::Request
   end
 
-  before do
+  after do
     TrafficSpy::DB[:sites].delete
     TrafficSpy::DB[:requests].delete
     TrafficSpy::DB[:events].delete

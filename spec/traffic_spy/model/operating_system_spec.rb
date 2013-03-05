@@ -10,16 +10,6 @@ describe TrafficSpy::OperatingSystem do
     TrafficSpy::OperatingSystem
   end
 
-  # describe "New Instance" do
-  #   context "given required parameters for a new instance" do
-  #     it "creates a new OS instance" do
-  #       details = {:name =>"Macintosh; Intel Mac OS X 10_8_2"}
-  #       my_os = app.new(details)
-  #       expect(my_os.name).to eq "Macintosh; Intel Mac OS X 10_8_2"
-  #     end
-  #   end
-  # end
-
   describe "Class method" do
 
     before do

@@ -10,7 +10,7 @@ describe TrafficSpy::Router do
     TrafficSpy::Router
   end
 
-  before do
+  after do
     TrafficSpy::DB[:sites].delete
     TrafficSpy::DB[:requests].delete
     TrafficSpy::DB[:events].delete

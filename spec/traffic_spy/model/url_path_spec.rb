@@ -11,7 +11,7 @@ describe TrafficSpy::UrlPath do
     TrafficSpy::UrlPath
   end
 
-  before do
+  after do
     TrafficSpy::DB[:sites].delete
     TrafficSpy::DB[:requests].delete
     TrafficSpy::DB[:events].delete

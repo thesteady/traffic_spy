@@ -10,11 +10,14 @@ describe TrafficSpy::Event do
     TrafficSpy::Event
   end
 
-  describe "Class method" do
+  after do
+    TrafficSpy::DB[:sites].delete
+    TrafficSpy::DB[:requests].delete
+    TrafficSpy::DB[:events].delete
+    TrafficSpy::DB[:url_paths].delete
+  end
 
-    before do
-      TrafficSpy::DB[:events].delete
-    end
+  describe "Class method" do
 
     let(:e1) do
       {:name => "sociallogin", :site_id => 1}
