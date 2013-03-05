@@ -22,11 +22,6 @@ module TrafficSpy
       erb :error
     end
 
-    def check_site_exists(params)
-      site = Site.new(params)
-      site.exists?
-    end
-
     post '/sources' do
       site = Site.new(params)
 
@@ -39,7 +34,7 @@ module TrafficSpy
     end
 
     post '/sources/:identifier/data' do
-      if check_site_exists(params) == true
+      if valid_site?(params[:identifier])
         payload = params[:payload]
         check_payload(payload)
       else
@@ -48,14 +43,13 @@ module TrafficSpy
     end
 
     def check_payload(payload)
-    if payload.nil?
-          #is this going to blow up? payload = {}.to_json returns false in irb
-          halt 400, "{\"message\":\"payload was empty\"}"
-        elsif payload_is_redundant?(payload)
-          halt 403, "{\"message\":\"payload has already been submitted\"}"
-        else
-          TrafficSpy::RequestParser.new(payload).create_request
-        end
+      if payload.nil?
+        halt 400, "{\"message\":\"payload was empty\"}"
+      elsif payload_is_redundant?(payload)
+        halt 403, "{\"message\":\"payload has already been submitted\"}"
+      else
+        TrafficSpy::RequestParser.new(payload).create_request
+      end
     end
 
     def payload_is_redundant?(payload)
@@ -65,9 +59,7 @@ module TrafficSpy
     end
 
     get '/sources/:identifier' do
-
       if valid_site?(params[:identifier])
-
         @site = Site.find({identifier: params[:identifier]})
 
         ## Most Requested URLs to least requested URLs
@@ -136,7 +128,7 @@ module TrafficSpy
     end
 
     post '/sources/:identifier/campaigns' do
-      if check_site_exists(params) == true
+      if valid_site?(params[:identifier])
         if params[:campaignName].exists?
           status 403
           "{\"message\":\"Campaign Already Exists\"}"
@@ -158,7 +150,7 @@ module TrafficSpy
     end
 
     get '/sources/:identifier/events' do
-      if check_site_exists(params) == true
+      if valid_site?(params[:identifier])
         site_id = Site.find(identifier: :identifier).id
         @events = Event.find_all_by_site_id(site_id)
 
@@ -175,7 +167,7 @@ module TrafficSpy
     end
 
     # get '/sources/:identifier/campaigns' do
-    #   if check_site_exists(params) == true
+    #   if valid_site?(params[:identifier]) == true
     #     site_id = Site.find(identifier: :identifier).identifier
     #     @campaigns = Campaign.find_all_by_site_id(site_id)
     #     if @campaigns.count == 0
@@ -190,7 +182,7 @@ module TrafficSpy
     # end
 
     # get '/sources/:identifier/campaigns/:campaignname' do
-    #   if check_site_exists(params) == true
+    #   if valid_site?(params[:identifier]) == true
     #   else
     #     status 403
     #       "{\"message\":\"identifier does not exist\"}"

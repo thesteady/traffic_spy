@@ -41,8 +41,6 @@ describe TrafficSpy::Router do
 
     context "with both identifier and rootUrl" do
       it "returns a 200(OK) with a body" do
-
-        #post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
         register_jumpstartlab
 
         last_response.status.should eq 200
@@ -52,7 +50,6 @@ describe TrafficSpy::Router do
 
     context "with identifier but without rootURL" do
       it "returns 400 with an error meesage" do
-
         post "/sources", :identifier => "jumpstartlab"
 
         last_response.status.should eq 400
@@ -62,7 +59,6 @@ describe TrafficSpy::Router do
 
     context "with rootURL but without identifier" do
       it "returns 400 with an error message" do
-
         post "/sources", :rootUrl => "http://jumpstartlab.com"
 
         last_response.status.should eq 400
@@ -72,8 +68,6 @@ describe TrafficSpy::Router do
 
     context "with both parameters but user already exists" do
       it "returns a 403(Forbidden) with an error message" do
-        # post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
-        # post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
         register_jumpstartlab
         register_jumpstartlab
 
@@ -82,10 +76,6 @@ describe TrafficSpy::Router do
       end
     end
   end
-
-
-
-
 
   describe "POST /sources/:identifier/data" do
     before do
@@ -100,11 +90,12 @@ describe TrafficSpy::Router do
     context "when identifier does not exist" do
       it "returns an error message that the identifier does not exist" do
         post "/sources/pizza/data", :data => "some data"
-        #last_response.status.should eq 403
+
+        last_response.status.should eq 403
         last_response.body.should eq "{\"message\":\"identifier does not exist\"}"
       end
     end
-#######
+
     context "when an identifier does exist AND" do
       context "when the payload is redundant" do
         it "returns a 403 error with message" do
@@ -115,7 +106,7 @@ describe TrafficSpy::Router do
           last_response.body.should eq "{\"message\":\"payload has already been submitted\"}"
         end
       end
-#######
+
       context "when the payload is empty" do
         it "returns a 400 Bad Request with message" do
           payload = {}
@@ -133,17 +124,8 @@ describe TrafficSpy::Router do
           last_response.status.should eq 200
         end
       end
-
     end
   end
-
-
-
-
-
-
-
-
 
   describe "GET /sources/:identifier" do
     before do
@@ -187,13 +169,7 @@ describe TrafficSpy::Router do
         last_response.status.should eq 403
       end
     end
-
-
-
-
-
   end
-
 
   describe "GET /sources/:identifier/events" do
     before do
@@ -204,7 +180,7 @@ describe TrafficSpy::Router do
     context "when the identifier does not exist" do
       it "returns an error message that the identifier does not exist" do
         get "/sources/reggae"
-        #last_response.status.should eq 404
+        last_response.status.should eq 403
         last_response.body.should eq "{\"message\":\"identifier does not exist\"}"
       end
     end
@@ -228,7 +204,6 @@ describe TrafficSpy::Router do
 
         get "sources/jumpstartlab/events"
         last_response.status.should eq 200
-      #will show page with hyperlinks to each event specific page details
       end
     end
   end
