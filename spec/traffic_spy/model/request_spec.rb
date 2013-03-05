@@ -211,7 +211,7 @@ describe TrafficSpy::Request do
       { :url_path_id => 1, :event_id => 1,
         :browser_id => 1, :os_id => 2,
         :site_id => 1, :requested_at => "2013-02-16 21:38:28 -0700",
-        :responded_at => 37,
+        :response_time => 37,
         :referred_by => "http://jumpstartlab.com", :request_type => "GET",
         :resolution => "1920 x 1280",
         :ip => "63.29.38.211"}
@@ -221,7 +221,7 @@ describe TrafficSpy::Request do
       { :url_path_id => 2, :event_id => 2,
         :browser_id => 1, :os_id => 2,
         :site_id => 2, :requested_at => "2013-02-17 21:38:28 -0700",
-        :responded_at => 40,
+        :response_time => 40,
         :referred_by => "http://espn.com", :request_type => "GET",
         :resolution => "800 x 600",
         :ip => "63.29.89.211"}
@@ -231,7 +231,7 @@ describe TrafficSpy::Request do
       { :url_path_id => 3 , :event_id => 3,
         :browser_id => 3, :os_id => 2,
         :site_id => 1, :requested_at => "2013-02-17 21:38:28 -0700",
-        :responded_at => 40,
+        :response_time => 40,
         :referred_by => "http://yahoo.com", :request_type => "GET",
         :resolution => "1920 x 1280",
         :ip => "63.9.89.231"}
@@ -254,7 +254,7 @@ describe TrafficSpy::Request do
         request1 = app.new(req1).save
         request2 = app.new(req2).save
         request3 = app.new(req3).save
-        summary = app.summarize_url_requests_for_site(1)
+        summary = app.summarize_browser_requests_for_site(1)
 
         expect(summary.count).to eq 2
       end
@@ -265,7 +265,7 @@ describe TrafficSpy::Request do
         request1 = app.new(req1).save
         request2 = app.new(req2).save
         request3 = app.new(req3).save
-        summary = app.summarize_url_requests_for_site(1)
+        summary = app.summarize_os_requests_for_site(1)
 
         expect(summary.count).to eq 2
       end
@@ -275,17 +275,21 @@ describe TrafficSpy::Request do
         request1 = app.new(req1).save
         request2 = app.new(req2).save
         request3 = app.new(req3).save
-        summary = app.summarize_url_requests_for_site(1)
+        summary = app.summarize_res_requests_for_site(1)
 
-        expect(summary.count).to eq 2
+        expect(summary.count).to eq 1
       end
     end
 
-
-    ## ADD MORE SITE STATISTICS METHODS HERE #### (BREAK THESE INTO THEIR OWN FILE?)
     describe ".summarize_response_times_for_site(site_id)" do
       it "returns a hash with url_path_id => avg resp time" do
-        pending
+        request1 = app.new(req1).save
+        request2 = app.new(req2).save
+        request3 = app.new(req3).save
+        summary = app.summarize_response_times_for_site(1)
+
+        expect(summary.count).to eq 2
+        expect(summary[1]).to eq 37
       end
     end
   end
