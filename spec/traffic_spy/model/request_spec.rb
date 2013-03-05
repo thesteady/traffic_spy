@@ -11,11 +11,14 @@ describe TrafficSpy::Request do
     TrafficSpy::Request
   end
 
-  describe "Class method" do
+  after do
+    TrafficSpy::DB[:sites].delete
+    TrafficSpy::DB[:requests].delete
+    TrafficSpy::DB[:events].delete
+    TrafficSpy::DB[:url_paths].delete
+  end
 
-    before do
-      TrafficSpy::DB[:requests].delete
-    end
+  describe "Class method" do
 
     let(:req1) do
       { :url_path_id => 1, :event_id => 1,
@@ -85,15 +88,6 @@ describe TrafficSpy::Request do
 
       context "using id as parameter" do
         it "returns first record that matches given parameter" do
-
-          # find out why response_time is nil after save
-          # puts @req1.inspect
-          # puts @req2.inspect
-          # puts @req3.inspect
-          # puts "**************"
-
-          # # raise " yo yo #{@req1_id}"
-          #puts app.find(id: @req1_id).inspect
           expect(app.find_all(id: @req1_id).first.resolution).to eq("1920 x 1280")
         end
       end
@@ -143,19 +137,7 @@ describe TrafficSpy::Request do
       @site = TrafficSpy::Site.new({:identifier=>"jumpstartlab", :rootUrl => "http://jumpstartlab.com"})
       @site.save
 
-      @payload = {
-                  url: "http://jumpstartlab.com/blog",
-                  requestedAt: "2013-02-16 21:38:28 -0700",
-                  respondedIn: 37,
-                  referredBy: "http://jumpstartlab.com",
-                  requestType: "GET",
-                  parameters: [],
-                  eventName: "socialLogin",
-                  userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
-                  resolutionWidth: "1920",
-                  resolutionHeight: "1280",
-                  ip: "63.29.38.211"
-                }.to_json
+      @payload = Payload.sample1
 
       request_hash = TrafficSpy::RequestParser.new(@payload).create_request
 
@@ -185,7 +167,8 @@ describe TrafficSpy::Request do
 
       it "should retrieve event name from events table" do
         event_id = @request.event_id
-        expect(TrafficSpy::Event.find(id: event_id).name).to eq("socialLogin")
+        site_id = @request.site_id
+        expect(TrafficSpy::Event.find({id: event_id}, {site_id: site_id}).name).to eq("socialLogin")
       end
 
       it "should retrieve browser name from browsers table" do
@@ -267,7 +250,7 @@ describe TrafficSpy::Request do
         request3 = app.new(req3).save
         summary = app.summarize_os_requests_for_site(1)
 
-        expect(summary.count).to eq 2
+        expect(summary.count).to eq 1
       end
     end
     describe "summarize_res_requests_for_site(site_id)" do

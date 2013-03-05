@@ -10,16 +10,15 @@ describe TrafficSpy::Site do
     TrafficSpy::Site
   end
 
+  after do
+    TrafficSpy::DB[:sites].delete
+    TrafficSpy::DB[:requests].delete
+    TrafficSpy::DB[:events].delete
+    TrafficSpy::DB[:url_paths].delete
+  end
+
 
   describe "Class method" do
-
-    before do
-      TrafficSpy::DB[:sites].delete
-    end
-
-    after do
-      TrafficSpy::DB[:sites].delete
-    end
 
     let(:site1) do
       {identifier: "jumpstartlab", rootUrl: "http://jumpstartlab.com"}

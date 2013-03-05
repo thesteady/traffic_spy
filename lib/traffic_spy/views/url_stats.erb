@@ -1,9 +1,7 @@
-<h2>/<%=params[:rel_path]%></h2>
+<h2>URL Statistics</h2>
 
-<h3>Identifier: </h3>
-<h4>RootUrl: </h4>
-
-
+<h3>Identifier: <%=params[:identifier]%> </h3>
+<h4>Url: /<%=params[:rel_path]%></h4>
 
 <div class="row">
   <div class="span6">
@@ -11,7 +9,7 @@
     <h5>URL Response Times</h5>
     <table class="table table-bordered table-striped">
       <th>URL id</th>
-      <th>Response Times</th>
+      <th>Response Time</th>
       <% @url_results.each do |result| %>
       <tr>
         <td><%= result[0] %><br/></td>

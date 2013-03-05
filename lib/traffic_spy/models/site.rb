@@ -38,6 +38,11 @@ module TrafficSpy
       !identifier.nil? && !rootUrl.nil?
     end
 
+    # def find_id
+    #   result = Event.data.where(name: name).to_a
+    #   result.empty? ? false : result.first[:id]
+    # end
+
     def save
       return false if (!valid? || exists?)
       #puts "saving: #{self.identifier} #{self.rootUrl}"

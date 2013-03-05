@@ -10,11 +10,14 @@ describe TrafficSpy::Event do
     TrafficSpy::Event
   end
 
-  describe "Class method" do
+  after do
+    TrafficSpy::DB[:sites].delete
+    TrafficSpy::DB[:requests].delete
+    TrafficSpy::DB[:events].delete
+    TrafficSpy::DB[:url_paths].delete
+  end
 
-    before do
-      TrafficSpy::DB[:events].delete
-    end
+  describe "Class method" do
 
     let(:e1) do
       {:name => "sociallogin", :site_id => 1}
@@ -58,14 +61,14 @@ describe TrafficSpy::Event do
 
       context "using id as parameter" do
         it "returns first record that matches given parameter" do
-          expect(app.find(id: @e1_id).name).to eq("sociallogin")
+          expect(app.find({id: @e1_id}, {site_id: 1}).name).to eq("sociallogin")
         end
       end
 
       context "using name as parameter" do
         it "returns first record that matches given parameter" do
           name = @e2.name
-          expect(app.find(name: name).name).to eq("log_in")
+          expect(app.find({name: name}, {site_id: 2}).name).to eq("log_in")
         end
       end
     end

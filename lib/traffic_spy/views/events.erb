@@ -1,18 +1,23 @@
-<!doctype html>
+<h2>Event Analytics Summary</h2>
 
-<html>
-  <head>
-    <title>TrafficSpy Events Summary</title>
-  </head>
 
-  <body>
-    <h1>TrafficSpy Event Analytics Summary</h1>
+<h3>Identifier: <%= params[:identifier] %></h3>
+<p><a href="/sources/<%= params[:identifier] %>">View Application Analytics</a></p>
 
-    <h3>Most Received Events</h3>
-    <p> show most received event to least received event</p>
 
-    <h3>Links To Event Specific Data </h3>
-    <p>stuff goes here </p>
+<div class="row">
+  <div class="span8">
 
-  </body>
-</html>
+    <h5>Events List</h5>
+    <table class="table table-bordered table-striped">
+      <th>Event Name</th>
+      <th>Count</th>
+      <% @event_results.each do |result| %>
+      <tr>
+        <td><a href="/sources/<%= params[:identifier] %>/events/<%= result[0] %>"><%= result[0] %></a><br/></td>
+        <td class="count_col"><%= result[1] %><br/></td>
+      </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
