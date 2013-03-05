@@ -39,10 +39,20 @@ module TrafficSpy
       end
     end
 
+    def self.requests_for_path_id(path_id)
+      Request.find_all(url_path_id: path_id)
+    end
+
+    def self.url_response_times(url_path)
+      urls = requests_for_path_id(url_path.id)
+
+      results = urls.inject({}) do |hash, url|
+        hash[url.id] = url.response_time
+        hash
+      end.sort_by{|k, v| v}.reverse
+    end
+
     def save
-      #create a method here to check if path already exists in db
-      #if exists, dont save and assign proper ids
-      #else, create new
       UrlPath.data.insert({path: path, site_id: site_id})
     end
 

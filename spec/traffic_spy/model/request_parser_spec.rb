@@ -16,7 +16,7 @@ describe TrafficSpy::RequestParser do
     end
 
     context "when a new payload is received" do
-      it "parses and creates a new request" do
+      it "parses and creates a new request and saves data in associated tables" do
 
         site = TrafficSpy::Site.new({:identifier=>"jumpstartlab", :rootUrl => "http://jumpstartlab.com"})
         site.save

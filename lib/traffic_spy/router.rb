@@ -30,22 +30,12 @@ module TrafficSpy
     post '/sources' do
       site = Site.new(params)
 
-      # if site.exists?
-      #   halt 403, "{\"message\":\"identifier already exists\"}"
-      # elsif !site.valid
-      #   halt 400, "{\"message\":\"no identifier or rootUrl provided\"}"
-      # else
-      #   site.save
-      #   "{\"identifier\":\"#{params[:identifier]}\"}"
-      # end
-
       if site.save
         "{\"identifier\":\"#{params[:identifier]}\"}"
       else
         halt 400, "{\"message\":\"missing a parameter: provide identifier and rootUrl\"}" if !site.valid?
         halt 403, "{\"message\":\"identifier already exists\"}" if site.exists?
       end
-
     end
 
     post '/sources/:identifier/data' do
@@ -114,23 +104,23 @@ module TrafficSpy
           hash[path] = v
           hash
         end.sort_by{|k, v| v}.reverse
-
-
         erb :app_stats
-        # use site_id to search request table for hash with url_path_id and count
-        # iterate through hash and get paths for each url_path_id
-        # send information to view to be displayed
       else
         halt 403, "{\"message\":\"identifier already exists\"}" if site.exists?
       end
+    end
 
-      # if Site.exists?(:identifier)
-      #   #do we call methods here to grab the data?
-      #   erb :index
-      # else
-      # status 404
-      # "{\"message\":\identifier does not exist\"}"
-      # end
+    get '/sources/:identifier/urls/:rel_path' do
+      if valid_site?(params[:identifier])
+        if valid_url?(params[:rel_path], params[:identifier])
+
+          path = "http://#{params[:identifier]}.com/#{params[:rel_path]}"
+
+          url = UrlPath.find(path: path)
+          @url_results = UrlPath.url_response_times(url)
+          erb :url_stats
+        end
+      end
     end
 
     post '/sources/:identifier/campaigns' do
@@ -155,20 +145,6 @@ module TrafficSpy
       end
     end
 
-################ GET METHODS ##########################
-    get '/sources/:identifier' do
-      if check_site_exists(params) == true
-        #do we call methods here to grab the data?
-        this_site = Site.find(:identifier =>identifier)
-        @site = Site.new(this_site)
-        erb :index
-      else
-      status 404
-      "{\"message\":\"identifier does not exist\"}"
-      end
-    end
-
-
     get '/sources/:identifier/events' do
       if check_site_exists(params) == true
         site_id = Site.find(identifier: :identifier).id
@@ -186,28 +162,28 @@ module TrafficSpy
       end
     end
 
-    get '/sources/:identifier/campaigns' do
-      if check_site_exists(params) == true
-        site_id = Site.find(identifier: :identifier).identifier
-        @campaigns = Campaign.find_all_by_site_id(site_id)
-        if @campaigns.count == 0
-          "{\"message\":\"no campaigns defined\"}"
-        else
-          erb :campaigns
-        end
-      else
-        status 403
-          "{\"message\":\"identifier does not exist\"}"
-      end
-    end
+    # get '/sources/:identifier/campaigns' do
+    #   if check_site_exists(params) == true
+    #     site_id = Site.find(identifier: :identifier).identifier
+    #     @campaigns = Campaign.find_all_by_site_id(site_id)
+    #     if @campaigns.count == 0
+    #       "{\"message\":\"no campaigns defined\"}"
+    #     else
+    #       erb :campaigns
+    #     end
+    #   else
+    #     status 403
+    #       "{\"message\":\"identifier does not exist\"}"
+    #   end
+    # end
 
-    get '/sources/:identifier/campaigns/:campaignname' do
-      if check_site_exists(params) == true
-      else
-        status 403
-          "{\"message\":\"identifier does not exist\"}"
-      end
-    end
+    # get '/sources/:identifier/campaigns/:campaignname' do
+    #   if check_site_exists(params) == true
+    #   else
+    #     status 403
+    #       "{\"message\":\"identifier does not exist\"}"
+    #   end
+    # end
 
     helpers do
       def valid_site?(identifier)
@@ -219,8 +195,16 @@ module TrafficSpy
          end
       end
 
-      # def find_site_id(identifier)
-      # end
+      def valid_url?(rel_path, identifier)
+
+        full_path = "http://#{identifier}.com/#{rel_path}"
+        path = UrlPath.find(path: full_path)
+        if path.nil?
+          halt 403, "{\"message\":\"url does not exist\"}"
+        else
+          true
+        end
+      end
     end
 
   end

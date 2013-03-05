@@ -94,43 +94,43 @@ describe TrafficSpy::Request do
 
           # # raise " yo yo #{@req1_id}"
           #puts app.find(id: @req1_id).inspect
-          expect(app.find(id: @req1_id).first.resolution).to eq("1920 x 1280")
+          expect(app.find_all(id: @req1_id).first.resolution).to eq("1920 x 1280")
         end
       end
 
       context "using site_id as parameter" do
         it "returns first record that matches given parameter" do
-          expect(app.find(site_id: 2).first.os_id).to eq(2)
+          expect(app.find_all(site_id: 2).first.os_id).to eq(2)
         end
       end
 
       context "using event_id as parameter" do
         it "returns first record that matches given parameter" do
-          expect(app.find(event_id: 3).first.referred_by).to eq("http://yahoo.com")
+          expect(app.find_all(event_id: 3).first.referred_by).to eq("http://yahoo.com")
         end
       end
 
       context "using browser_id as parameter" do
         it "returns first record that matches given parameter" do
-          expect(app.find(browser_id: 2).first.referred_by).to eq("http://espn.com")
+          expect(app.find_all(browser_id: 2).first.referred_by).to eq("http://espn.com")
         end
       end
 
       context "using url_path_id as parameter" do
         it "returns first record that matches given parameter" do
-          expect(app.find(url_path_id: 2).first.resolution).to eq("800 x 600")
+          expect(app.find_all(url_path_id: 2).first.resolution).to eq("800 x 600")
         end
       end
 
       context "using os_id as parameter" do
         it "returns first record that matches given parameter" do
-          expect(app.find(os_id: 2).last.site_id).to eq(1)
+          expect(app.find_all(os_id: 2).last.site_id).to eq(1)
         end
       end
 
       context "using resolution as parameter" do
         it "returns first record that matches given parameter" do
-          expect(app.find(resolution: "1920 x 1280").first.os_id).to eq(1)
+          expect(app.find_all(resolution: "1920 x 1280").first.os_id).to eq(1)
         end
       end
     end
@@ -159,7 +159,7 @@ describe TrafficSpy::Request do
 
       request_hash = TrafficSpy::RequestParser.new(@payload).create_request
 
-      @request = app.find(id: request_hash[:id]).first
+      @request = app.find_all(id: request_hash[:id]).first
     end
 
     describe "non-foreign key fields" do

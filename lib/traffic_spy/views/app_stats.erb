@@ -87,7 +87,7 @@
       <th>URL</th>
       <% @url_results.each do |result| %>
       <tr>
-        <td><a href="#"><%= result[0] %></a><br/></td>
+        <td><a href="/sources/<%= @site.identifier %>/urls<%= result[0].gsub(@site.rootUrl, "") %>"><%= result[0] %></a><br/></td>
       </tr>
       <% end %>
     </table>

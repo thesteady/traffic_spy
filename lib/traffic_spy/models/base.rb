@@ -8,7 +8,7 @@
     database_path = 'trafficspy_production'
   end
 
-  DB = Sequel.postgres(database_path)
+  DB = Sequel.postgres('trafficspy_test')
 
 end
 

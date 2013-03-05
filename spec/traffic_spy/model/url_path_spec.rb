@@ -88,30 +88,6 @@ describe TrafficSpy::UrlPath do
       end
     end
 
-    describe ".find_all_by_site_id(site_id)" do
-      context "when site_id exists" do
-        it "returns an array of url path IDs belonging to the site_id" do
-          # site1 = {:identifier=>"hey", :rootUrl => "http://hey.com"}
-          # site2 = {:identifier => "bye", :rootUrl => "http://bye.com"}
-          # TrafficSpy::Site.new(site1).save
-          # TrafficSpy::Site.new(site2).save
-
-          # url_path_1 = app.new(:path=>"http://hey.com/news").save
-          # url_path_1.stub(:site_id).and_returns(site1.id)
-          # url_path_2 = app.new(:path =>"http://hey.com/sales").save
-          # url_path_2.stub(:site_id).and_returns(site1.id)
-          # url_path_3 = app.new(:path =>url3 = "http://bye.com/news").save
-          # url_path_3.stub(:site_id).and_returns(site2.id)
-
-
-          # site_id = TrafficSpy::Site.find_by_identifier("hey").id
-
-          # expect(app.find_all_by_site_id(site_id).count).to eq 2
-          pending
-        end
-      end
-    end
-
     describe ".exists?(url_path)" do
 
       context "record exists in db" do
@@ -130,6 +106,103 @@ describe TrafficSpy::UrlPath do
       end
     end
 
+    describe ".url_response_times" do
+
+      before do
+        site1 = TrafficSpy::Site.new({:identifier=>"jumpstartlab", :rootUrl => "http://jumpstartlab.com"})
+        site1.save
+
+        payload1 = {
+                    url: "http://jumpstartlab.com/blog",
+                    requestedAt: "2013-02-16 21:38:28 -0700",
+                    respondedIn: 45,
+                    referredBy: "http://jumpstartlab.com",
+                    requestType: "GET",
+                    parameters: [],
+                    eventName: "Register",
+                    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
+                    resolutionWidth: "1920",
+                    resolutionHeight: "1280",
+                    ip: "63.29.38.211"
+                  }.to_json
+
+        payload2 = {
+                    url: "http://jumpstartlab.com/blog",
+                    requestedAt: "2013-02-16 21:38:28 -0700",
+                    respondedIn: 20,
+                    referredBy: "http://jumpstartlab.com",
+                    requestType: "GET",
+                    parameters: [],
+                    eventName: "socialLogin",
+                    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
+                    resolutionWidth: "1920",
+                    resolutionHeight: "1280",
+                    ip: "63.29.38.211"
+                  }.to_json
+
+        payload3 = {
+                    url: "http://jumpstartlab.com/blog",
+                    requestedAt: "2013-02-16 21:38:28 -0700",
+                    respondedIn: 40,
+                    referredBy: "http://jumpstartlab.com",
+                    requestType: "GET",
+                    parameters: [],
+                    eventName: "Login",
+                    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
+                    resolutionWidth: "1920",
+                    resolutionHeight: "1280",
+                    ip: "63.29.38.211"
+                  }.to_json
+
+        TrafficSpy::RequestParser.new(payload1).create_request
+        TrafficSpy::RequestParser.new(payload2).create_request
+        TrafficSpy::RequestParser.new(payload3).create_request
+
+        @urlpath = TrafficSpy::UrlPath.find(path: "http://jumpstartlab.com/blog")
+
+
+      end
+
+      # let(:url) do
+
+      #   [{:id=>1, :url_path_id=>1, :browser_id=>1, :os_id=>1, :site_id=>1, :resolution=>"1920 x 1280", :response_time=>30, :event_id=>1, :requested_at=>"2013-02-16 21:38:28 -0700", :requested_by=>nil, :request_type=>"GET", :referred_by=>"http://jumpstartlab.com", :ip=>"63.29.38.211"},
+      #    {:id=>2, :url_path_id=>1, :browser_id=>1, :os_id=>1, :site_id=>1, :resolution=>"1920 x 1280", :response_time=>30, :event_id=>1, :requested_at=>"2013-02-16 21:38:28 -0700", :requested_by=>nil, :request_type=>"GET", :referred_by=>"http://jumpstartlab.com", :ip=>"63.29.38.211"},
+      #    {:id=>3, :url_path_id=>1, :browser_id=>1, :os_id=>1, :site_id=>1, :resolution=>"1920 x 1280", :response_time=>30, :event_id=>1, :requested_at=>"2013-02-16 21:38:28 -0700", :requested_by=>nil, :request_type=>"GET", :referred_by=>"http://jumpstartlab.com", :ip=>"63.29.38.211"},
+      #    {:id=>4, :url_path_id=>1, :browser_id=>1, :os_id=>1, :site_id=>1, :resolution=>"1920 x 1280", :response_time=>30, :event_id=>1, :requested_at=>"2013-02-16 21:38:28 -0700", :requested_by=>nil, :request_type=>"GET", :referred_by=>"http://jumpstartlab.com", :ip=>"63.29.38.211"}]
+      # end
+
+      it 'should return hash of url ids and response times' do
+        results = app.url_response_times(@urlpath)
+        expect(results.last[1]).to eq(20)
+
+      end
+    end
+
+    # describe ".find_all_by_site_id(site_id)" do
+    #   context "when site_id exists" do
+    #     it "returns an array of url path IDs belonging to the site_id" do
+    #       # site1 = {:identifier=>"hey", :rootUrl => "http://hey.com"}
+    #       # site2 = {:identifier => "bye", :rootUrl => "http://bye.com"}
+    #       # TrafficSpy::Site.new(site1).save
+    #       # TrafficSpy::Site.new(site2).save
+
+    #       # url_path_1 = app.new(:path=>"http://hey.com/news").save
+    #       # url_path_1.stub(:site_id).and_returns(site1.id)
+    #       # url_path_2 = app.new(:path =>"http://hey.com/sales").save
+    #       # url_path_2.stub(:site_id).and_returns(site1.id)
+    #       # url_path_3 = app.new(:path =>url3 = "http://bye.com/news").save
+    #       # url_path_3.stub(:site_id).and_returns(site2.id)
+
+
+    #       # site_id = TrafficSpy::Site.find_by_identifier("hey").id
+
+    #       # expect(app.find_all_by_site_id(site_id).count).to eq 2
+    #       pending
+    #     end
+    #   end
+    # end
   end
+
+
 
 end

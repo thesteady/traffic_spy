@@ -3,8 +3,8 @@
 
 <ul>
   <% @sites.each do |site| %>
-    <li class="source">
-      <a href="/sources/<%= site.identifier%>"><%= site.identifier %></a><br/>
+    <li>
+      <a class="source_link" href="/sources/<%= site.identifier%>"><%= site.identifier %></a><br/>
     </li>
   <% end %>
 </ul>
