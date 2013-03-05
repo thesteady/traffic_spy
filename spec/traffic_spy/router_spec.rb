@@ -131,6 +131,14 @@ describe TrafficSpy::Router do
 
   describe "GET /sources/:identifier" do
 
+
+    before do
+      TrafficSpy::Site.new(id: 1, identifier: "jumpstartlab", rootUrl: "http://jumpstartlab.com").save
+      TrafficSpy::RequestParser.new(Payload.sample1).create_request
+      TrafficSpy::RequestParser.new(Payload.sample2).create_request
+      TrafficSpy::RequestParser.new(Payload.sample3).create_request
+    end
+
     context "when the identifier does not exist" do
       it "returns an error message that the identifier does not exist" do
         get "/sources/reggae"
@@ -141,11 +149,20 @@ describe TrafficSpy::Router do
 
     context "when the identifier does exist" do
       it "displays a page including summary of urls (most requested to least)" do
-        post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
         get '/sources/jumpstartlab'
 
         last_response.status.should eq 200
       end
+
+      # it 'correctly summarizes url counts' do
+      #   get '/sources/jumpstartlab'
+      #   doc = Nokogiri::HTML(last_response.body)
+      #   urls_table = (doc / "table#urls")
+      #   blog_row = (urls_table / "tr").detect { |r| r.text() =~ /blog/ }
+      #   count = (blog_row / "td").last.text.to_i
+
+      #   count.should eq 3
+      # end
     end
   end
 

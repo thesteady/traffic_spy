@@ -136,11 +136,7 @@ describe TrafficSpy::Request do
     before do
       @site = TrafficSpy::Site.new({:identifier=>"jumpstartlab", :rootUrl => "http://jumpstartlab.com"})
       @site.save
-
-      @payload = Payload.sample1
-
-      request_hash = TrafficSpy::RequestParser.new(@payload).create_request
-
+      request_hash = TrafficSpy::RequestParser.new(Payload.sample1).create_request
       @request = app.find_all(id: request_hash[:id]).first
     end
 

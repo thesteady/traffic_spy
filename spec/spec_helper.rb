@@ -1,5 +1,6 @@
 require 'simplecov'
 SimpleCov.start
+require 'nokogiri'
 
 ENV["TRAFFIC_SPY_ENV"] = "test"
 require 'traffic_spy'

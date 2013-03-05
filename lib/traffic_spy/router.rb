@@ -60,6 +60,24 @@ module TrafficSpy
     get '/sources/:identifier' do
       if valid_site?(params)
         @site = Site.find({identifier: params[:identifier]})
+        @site_summary = SiteSummary.new(@site)
+
+        # in view
+        @site_summary.url_results
+
+        class SiteSummary
+          def initialize(site)
+            @site = site
+          end
+
+          def url_results
+            @url_results ||= Request.summarize_url_requests_for_site(@site.id).inject({}) do |hash, url|
+              path = UrlPath.find({id: url[:url_path_id]}).path
+              hash[path] = url[:count]
+              hash
+            end.sort_by{|k, v| v}.reverse
+          end
+        end
 
         ## Most Requested URLs to least requested URLs
         urls = Request.summarize_url_requests_for_site(@site.id)
