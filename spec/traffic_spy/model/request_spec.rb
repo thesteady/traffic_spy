@@ -167,7 +167,8 @@ describe TrafficSpy::Request do
 
       it "should retrieve event name from events table" do
         event_id = @request.event_id
-        expect(TrafficSpy::Event.find(id: event_id).name).to eq("socialLogin")
+        site_id = @request.site_id
+        expect(TrafficSpy::Event.find({id: event_id}, {site_id: site_id}).name).to eq("socialLogin")
       end
 
       it "should retrieve browser name from browsers table" do

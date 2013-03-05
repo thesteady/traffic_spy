@@ -45,7 +45,7 @@ module TrafficSpy
       # raise "#{params[:payload]}"
       # halt 400, "{\"message\":\"no payload\"}" if params[:payload].empty?
 
-      if valid_site?(params[:identifier])
+      if valid_site?(params)
         TrafficSpy::RequestParser.new(params[:payload]).create_request
        "{\"message\":\"payload has been parsed.\"}"
       end
@@ -53,7 +53,7 @@ module TrafficSpy
 
     get '/sources/:identifier' do
 
-      if valid_site?(params[:identifier])
+      if valid_site?(params)
 
         @site = Site.find({identifier: params[:identifier]})
 
@@ -110,8 +110,8 @@ module TrafficSpy
     end
 
     get '/sources/:identifier/urls/:rel_path' do
-      if valid_site?(params[:identifier])
-        if valid_url?(params[:rel_path], params[:identifier])
+      if valid_site?(params)
+        if valid_url?(params)
 
           path = "http://#{params[:identifier]}.com/#{params[:rel_path]}"
 
@@ -148,12 +148,14 @@ module TrafficSpy
 
       identifier = params[:identifier]
 
-      if valid_site?(identifier) && any_events_listed?(identifier)
+      if valid_site?(params) && any_events_listed?(params)
+
         site_id = Site.find(identifier: identifier).id
         events = Request.summarize_event_requests_for_site(site_id)
 
+        #extract to class
         @event_results = events.inject({}) do |hash, event|
-          name = Event.find({id: event[:event_id]}).name
+          name = Event.find({id: event[:event_id]},{}).name
           hash[name] = event[:count]
           hash
         end.sort_by{|k, v| v}.reverse
@@ -163,8 +165,8 @@ module TrafficSpy
     end
 
     get '/sources/:identifier/events/:event_name' do
-      if valid_site?(params[:identifier]) && valid_event?(params[:event_name])
-        #raise "#{params.inspect}"
+      if valid_site?(params) && valid_event?(params)
+        # get event_id using site
         erb :event_detail
       end
     end
@@ -193,8 +195,8 @@ module TrafficSpy
     # end
 
     helpers do
-      def valid_site?(identifier)
-        site = Site.find(identifier: identifier)
+      def valid_site?(params)
+        site = Site.find(identifier: params[:identifier])
         if site.nil?
           halt 403, "{\"message\":\"identifier does not exist\"}"
          else
@@ -202,7 +204,11 @@ module TrafficSpy
          end
       end
 
-      def valid_url?(rel_path, identifier)
+      def valid_url?(params)
+
+        identifier = params[:identifier]
+        rel_path = params[:rel_path]
+
         full_path = "http://#{identifier}.com/#{rel_path}"
         path = UrlPath.find(path: full_path)
         if path.nil?
@@ -212,8 +218,13 @@ module TrafficSpy
         end
       end
 
-      def valid_event?(event_name)
-        event = Event.find(name: event_name)
+      def valid_event?(params)
+
+        identifier = params[:identifier]
+        event_name = params[:event_name]
+
+        site_id = Site.find(identifier: identifier).id
+        event = Event.find({name: event_name}, {site_id: site_id})
         if event.nil?
           halt 403, "{\"message\":\"No event with the given name has been defined\"}"
         else
@@ -221,9 +232,13 @@ module TrafficSpy
         end
       end
 
-      def any_events_listed?(identifier)
+      def any_events_listed?(params)
+
+        identifier = params[:identifier]
         site_id = Site.find(identifier: identifier).id
-        events = Event.find(site_id: site_id)
+
+        events = Event.find_all_by_site_id(site_id)
+
         if events.nil?
           halt 403, "{\"message\":\"No events have been defined.\"}"
         else

@@ -140,7 +140,7 @@ describe TrafficSpy::Router do
       end
     end
 
-    context "when the identifier does exist AND events have been created" do
+    context "when the identifier exists AND events have been created" do
       it "displays the events in most received to least received, with links to each" do
 
         get "sources/jumpstartlab/events"

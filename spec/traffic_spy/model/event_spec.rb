@@ -61,14 +61,14 @@ describe TrafficSpy::Event do
 
       context "using id as parameter" do
         it "returns first record that matches given parameter" do
-          expect(app.find(id: @e1_id).name).to eq("sociallogin")
+          expect(app.find({id: @e1_id}, {site_id: 1}).name).to eq("sociallogin")
         end
       end
 
       context "using name as parameter" do
         it "returns first record that matches given parameter" do
           name = @e2.name
-          expect(app.find(name: name).name).to eq("log_in")
+          expect(app.find({name: name}, {site_id: 2}).name).to eq("log_in")
         end
       end
     end

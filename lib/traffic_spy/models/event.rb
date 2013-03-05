@@ -21,16 +21,16 @@ module TrafficSpy
       data.where(:site_id => site_id).to_a
     end
 
-    def self.find(input)
+    def self.find(input1, input2)
       # need to add site_id to search as well
-      data.where(input).map do |result|
+      data.where(input1).where(input2).map do |result|
         Event.new(result)
       end.first
     end
 
     def exists?
       # need to add site_id to search as well .where(site_id: site_id)
-      duplicate = Event.data.where(name: name).to_a
+      duplicate = Event.data.where(name: name).where(site_id: site_id).to_a
       duplicate.any?
     end
 
@@ -41,12 +41,16 @@ module TrafficSpy
     end
 
     def find_id
-      result = Event.data.where(name: name).to_a
+      result = Event.data.where(name: name).where(site_id: site_id).to_a
       result.empty? ? false : result.first[:id]
     end
 
     def find_or_create_and_get_id
       find_id || save
+    end
+
+    def event_dates
+      # query results table with event_id and extract array of dates
     end
 
     def save
