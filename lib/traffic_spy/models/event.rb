@@ -22,12 +22,14 @@ module TrafficSpy
     end
 
     def self.find(input)
+      # need to add site_id to search as well
       data.where(input).map do |result|
         Event.new(result)
       end.first
     end
 
     def exists?
+      # need to add site_id to search as well .where(site_id: site_id)
       duplicate = Event.data.where(name: name).to_a
       duplicate.any?
     end

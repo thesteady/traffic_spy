@@ -148,10 +148,8 @@ module TrafficSpy
 
       identifier = params[:identifier]
 
-      if valid_site?(identifier) && valid_events_request?(identifier)
-
+      if valid_site?(identifier) && any_events_listed?(identifier)
         site_id = Site.find(identifier: identifier).id
-
         events = Request.summarize_event_requests_for_site(site_id)
 
         @event_results = events.inject({}) do |hash, event|
@@ -161,6 +159,13 @@ module TrafficSpy
         end.sort_by{|k, v| v}.reverse
 
         erb :events
+      end
+    end
+
+    get '/sources/:identifier/events/:event_name' do
+      if valid_site?(params[:identifier]) && valid_event?(params[:event_name])
+        #raise "#{params.inspect}"
+        erb :event_detail
       end
     end
 
@@ -207,7 +212,16 @@ module TrafficSpy
         end
       end
 
-      def valid_events_request?(identifier)
+      def valid_event?(event_name)
+        event = Event.find(name: event_name)
+        if event.nil?
+          halt 403, "{\"message\":\"No event with the given name has been defined\"}"
+        else
+          true
+        end
+      end
+
+      def any_events_listed?(identifier)
         site_id = Site.find(identifier: identifier).id
         events = Event.find(site_id: site_id)
         if events.nil?
