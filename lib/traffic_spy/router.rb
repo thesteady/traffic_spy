@@ -41,34 +41,28 @@ module TrafficSpy
     post '/sources/:identifier/data' do
       if check_site_exists(params) == true
         payload = params[:payload]
-        if payload.nil?
-          puts "checking payload"
-          #is this going to blow up? payload = {}.to_json returns false
-          halt 400, "{\"message\":\"payload was empty\"}"
-        elsif payload_is_redundant?
-
-          #what do I want this to look like?
-            parsed_payload = TrafficSpy::RequestParser.new(params[:payload])
-            #then check the requests records to see if it matches anything
-            new_request = Request.new(parsed_payload)
-            new_request.exists?
-
-        else
-          TrafficSpy::RequestParser.new(params[:payload]).create_request
-        end
-        #then check if payload is given
-        #then check if payload is unique
-        #if site does not exist, give an error
+        check_payload(payload)
       else
         halt 403, "{\"message\":\"identifier does not exist\"}"
       end
     end
 
-    #   if valid_site?(params[:identifier])
-    #     TrafficSpy::RequestParser.new(params[:payload]).create_request
-    #    "{\"message\":\"payload has been parsed.\"}"
-    #   end
-    # end
+    def check_payload(payload)
+    if payload.nil?
+          #is this going to blow up? payload = {}.to_json returns false in irb
+          halt 400, "{\"message\":\"payload was empty\"}"
+        elsif payload_is_redundant?(payload)
+          halt 403, "{\"message\":\"payload has already been submitted\"}"
+        else
+          TrafficSpy::RequestParser.new(payload).create_request
+        end
+    end
+
+    def payload_is_redundant?(payload)
+      parsed_payload = TrafficSpy::RequestParser.new(payload)
+      new_request = Request.new(parsed_payload.req_attr)
+      new_request.exists?
+    end
 
     get '/sources/:identifier' do
 
@@ -214,7 +208,6 @@ module TrafficSpy
       end
 
       def valid_url?(rel_path, identifier)
-
         full_path = "http://#{identifier}.com/#{rel_path}"
         path = UrlPath.find(path: full_path)
         if path.nil?
@@ -223,6 +216,7 @@ module TrafficSpy
           true
         end
       end
+
     end
 
   end

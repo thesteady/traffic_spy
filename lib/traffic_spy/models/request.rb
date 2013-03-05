@@ -25,7 +25,7 @@ module TrafficSpy
     def save
       Request.data.insert({ site_id: site_id, url_path_id: url_path_id , event_id: event_id,
                             browser_id: browser_id, os_id: os_id,
-                            site_id: site_id, requested_at: requested_at,
+                            requested_at: requested_at,
                             response_time: response_time,
                             referred_by: referred_by, request_type: request_type,
                             resolution: resolution, ip: ip})
@@ -40,9 +40,17 @@ module TrafficSpy
     end
 
     def exists?
-      duplicate = Request.data.where(site_id: site_id).to_a
-      puts "%%%%%%%%%%%%%%%%%"
-      puts duplicate.inspect
+      duplicate = Request.data.where(site_id: site_id).
+                               where(url_path_id: url_path_id).
+                               where(event_id: event_id).
+                               where(browser_id: browser_id).
+                               where(os_id: os_id).
+                               where(requested_at: requested_at).
+                               where(response_time: response_time).
+                               where(referred_by: referred_by).
+                               where(request_type: request_type).
+                               where(resolution: resolution).
+                               where(ip: ip).to_a
       duplicate.any?
     end
 
