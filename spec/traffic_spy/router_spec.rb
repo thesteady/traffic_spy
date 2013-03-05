@@ -10,11 +10,16 @@ describe TrafficSpy::Router do
     TrafficSpy::Router
   end
 
+  before do
+    TrafficSpy::DB[:sites].delete
+    TrafficSpy::DB[:requests].delete
+    TrafficSpy::DB[:events].delete
+    TrafficSpy::DB[:url_paths].delete
+  end
+
   describe "POST /sources" do
 
-    before do
-      TrafficSpy::DB[:sites].delete
-    end
+
 
     context "with both identifier and rootUrl" do
       it "returns a 200(OK) with a body" do
@@ -69,9 +74,9 @@ describe TrafficSpy::Router do
   end
 
   describe "GET /sources/:identifier" do
-    before do
-      TrafficSpy::DB[:sites].delete
-    end
+    # before do
+    #   TrafficSpy::DB[:sites].delete
+    # end
 
     context "when the identifier does not exist" do
       it "returns an error message that the identifier does not exist" do
@@ -115,16 +120,8 @@ describe TrafficSpy::Router do
 
   describe "GET /sources/:identifier/events" do
     before do
-      # TrafficSpy::DB[:sites].delete
-      # TrafficSpy::DB[:requests].delete
-
       post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
       post "/sources/jumpstartlab/data", {:payload => Payload.sample}
-    end
-
-    after do
-      TrafficSpy::DB[:sites].delete
-      TrafficSpy::DB[:requests].delete
     end
 
     context "when the identifier exists but does not have any events" do
@@ -133,7 +130,7 @@ describe TrafficSpy::Router do
 
         last_response.status.should eq 404
 
-        ### fix this test
+        ###*** fix this test
         #last_response.body.should eq  "{\"message\":\"No events have been defined.\"}"
       end
     end
@@ -151,10 +148,8 @@ describe TrafficSpy::Router do
     context "when the identifier does exist AND events have been created" do
       it "displays the events in most received to least received, with links to each" do
 
-        get "/sources/jumpstartlab/events"
-
-        #*** fix this test ***
-        #last_response.status.should eq 200
+        get "sources/jumpstartlab/events"
+        last_response.status.should eq 200
 
       end
     end
