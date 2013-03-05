@@ -49,8 +49,10 @@ module TrafficSpy
       find_id || save
     end
 
-    def event_dates
-      # query results table with event_id and extract array of dates
+    def dates_grouped_by_hour
+      # query requests table with event_id and extract array of requests objects
+      requests = Request.find_all(event_id: self.id)
+      raise "#{requests.inspect}"
     end
 
     def save

@@ -166,7 +166,12 @@ module TrafficSpy
 
     get '/sources/:identifier/events/:event_name' do
       if valid_site?(params) && valid_event?(params)
-        # get event_id using site
+        # get event instance using event_name and site_id
+        site_id = Site.find(identifier: params[:identifier]).id
+        event = Event.find({name: params[:event_name]},{site_id: site_id})
+
+        # get a hash of dates grouped by hour of the day {hour: 1, count: 3}
+        event.dates_grouped_by_hour
         erb :event_detail
       end
     end
