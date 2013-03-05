@@ -22,19 +22,23 @@ module TrafficSpy
       end.first
     end
 
-    def exists?
-      duplicate = Campaign.data.where(name: name).to_a
-      duplicate.any?
-    end
-
     def self.all
       results = data.map do |campaign|
         Campaign.new(campaign)
       end
     end
 
+    def exists?
+      duplicate = Campaign.data.where(name: name).to_a
+      duplicate.any?
+    end
+
     def save
       Campaign.data.insert({:name => name})
+    end
+
+    def missing_name?
+      name.nil? || name.empty?
     end
 
   end

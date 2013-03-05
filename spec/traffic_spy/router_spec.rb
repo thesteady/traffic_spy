@@ -242,7 +242,7 @@ describe TrafficSpy::Router do
           post_campaign_puma
           post_campaign_puma
           last_response.status.should eq 403
-          ast_response.body.should eq "{\"message\":\"campaign already exists\"}"
+          last_response.body.should eq "{\"message\":\"campaign already exists\"}"
         end
       end
       context "new campaign" do
@@ -257,16 +257,16 @@ describe TrafficSpy::Router do
             it "returns a 400 Bad Request with message" do
               post 'sources/puma/campaigns', 'campaignName=&eventNames[]=addedSocialThroughPromptA&eventNames[]=addedSocialThroughPromptB'
               last_response.status.should eq 400
-              last_response.body.should eq "{\"message\":\"Please provide campaignName\"}"
+              last_response.body.should eq '{"message":"missing parameter campaignName or eventNames"}'
             end
           end
 
           context "BUT eventName(s) is/are missing" do
             it "returns a 400 Bad Request with message" do
-              post 'sources/puma/campaigns', 'campaignName=sellShoes&eventNames[]='
+              post 'sources/puma/campaigns', 'campaignName=sellShoes'
 
               last_response.status.should eq 400
-              last_response.body.should eq "{\"message\":\"Please provide at least one eventName\"}"
+              last_response.body.should eq '{"message":"missing parameter campaignName or eventNames"}'
             end
           end
       end
