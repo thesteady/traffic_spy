@@ -67,7 +67,6 @@ describe TrafficSpy::Router do
     end
   end
 
-######################## GET METHODS ###########################################
   describe "GET /sources/:identifier" do
     before do
       TrafficSpy::DB[:sites].delete
@@ -90,6 +89,33 @@ describe TrafficSpy::Router do
       end
     end
   end
+
+  describe 'GET /sources/:identifier/urls/:rel_path' do
+    before do
+      post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
+      post "/sources/jumpstartlab/data", {:payload => Payload.sample}
+    end
+
+    context "with a valid request" do
+      it "displays page with url statistics" do
+        get '/sources/jumpstartlab/urls/blog'
+        last_response.status.should eq 200
+      end
+    end
+
+    context "with a invalid url" do
+      it "returns 403 status" do
+        get '/sources/jumpstartlab/urls/stuff'
+        last_response.status.should eq 403
+      end
+    end
+
+
+
+
+
+  end
+
 
   describe "GET /sources/:identifier/events" do
     before do
