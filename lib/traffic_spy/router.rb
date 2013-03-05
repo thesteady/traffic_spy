@@ -39,18 +39,36 @@ module TrafficSpy
     end
 
     post '/sources/:identifier/data' do
-        # handle event where identifier does not exist in DB
+      if check_site_exists(params) == true
+        payload = params[:payload]
+        if payload.nil?
+          puts "checking payload"
+          #is this going to blow up? payload = {}.to_json returns false
+          halt 400, "{\"message\":\"payload was empty\"}"
+        elsif payload_is_redundant?
 
-      # 1) Todo handle empty payload
-      # 2) Handle duplicate payload
-      # raise "#{params[:payload]}"
-      # halt 400, "{\"message\":\"no payload\"}" if params[:payload].empty?
+          #what do I want this to look like?
+            parsed_payload = TrafficSpy::RequestParser.new(params[:payload])
+            #then check the requests records to see if it matches anything
+            new_request = Request.new(parsed_payload)
+            new_request.exists?
 
-      if valid_site?(params[:identifier])
-        TrafficSpy::RequestParser.new(params[:payload]).create_request
-       "{\"message\":\"payload has been parsed.\"}"
+        else
+          TrafficSpy::RequestParser.new(params[:payload]).create_request
+        end
+        #then check if payload is given
+        #then check if payload is unique
+        #if site does not exist, give an error
+      else
+        halt 403, "{\"message\":\"identifier does not exist\"}"
       end
     end
+
+    #   if valid_site?(params[:identifier])
+    #     TrafficSpy::RequestParser.new(params[:payload]).create_request
+    #    "{\"message\":\"payload has been parsed.\"}"
+    #   end
+    # end
 
     get '/sources/:identifier' do
 

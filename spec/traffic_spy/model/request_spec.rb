@@ -207,6 +207,52 @@ describe TrafficSpy::Request do
         pending
       end
     end
-
   end
+  describe "Instance Methods" do
+
+    before do
+      TrafficSpy::DB[:sites].delete
+      TrafficSpy::DB[:requests].delete
+      site = TrafficSpy::Site.new(:identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com')
+      site.save
+    end
+
+    let(:req1) do
+      { :url_path_id => 1, :event_id => 1,
+        :browser_id => 1, :os_id => 1,
+        :site_id => 1, :requested_at => "2013-02-16 21:38:28 -0700",
+        :responded_at => 37,
+        :referred_by => "http://jumpstartlab.com", :request_type => "GET",
+        :resolution => "1920 x 1280",
+        :ip => "63.29.38.211"}
+    end
+
+    let(:req2) do
+      { :url_path_id => 2, :event_id => 2,
+        :browser_id => 2, :os_id => 2,
+        :site_id => 2, :requested_at => "2013-02-17 21:38:28 -0700",
+        :responded_at => 40,
+        :referred_by => "http://espn.com", :request_type => "GET",
+        :resolution => "800 x 600",
+        :ip => "63.29.89.211"}
+    end
+
+    context "#exists?" do
+      it "returns true if the request instance has been stored in the database" do
+        first = app.new(req1).save
+
+        request = app.new(req1)
+        answer = request.exists?
+        expect(answer).to be true
+      end
+    end
+    context "#exists?" do
+      it "returns false if request is NOT in the database" do
+        request = app.new(req2)
+        answer = request.exists?
+        expect(answer).to be false
+      end
+    end
+  end
+
 end

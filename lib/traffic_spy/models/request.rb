@@ -39,6 +39,13 @@ module TrafficSpy
       data.count
     end
 
+    def exists?
+      duplicate = Request.data.where(site_id: site_id).to_a
+      puts "%%%%%%%%%%%%%%%%%"
+      puts duplicate.inspect
+      duplicate.any?
+    end
+
     def self.all
       data.map do |request|
         Request.new(request)
@@ -55,7 +62,6 @@ module TrafficSpy
       data.group_and_count(:url_path_id).where(:site_id =>site_id).to_a
     end
 
-
     def self.summarize_response_times_for_site(site_id)
       ids = data.select(:url_path_id).where(:site_id =>site_id).to_a.uniq
 
@@ -65,15 +71,6 @@ module TrafficSpy
         hash[id[:url_path_id]] = avg_resp.to_f.round(1)
       end
       hash
-    end
-
-    def calc_percentage(hash)
-      #takes hash like id =>count
-      #sum all values
-      #can i use a database method to do a sum? sequel
-      #for each id,
-      # (count/sum) * 100
-      # give back as a hash: id=>%
     end
 
     def self.summarize_browser_requests_for_site(site_id)
