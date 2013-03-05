@@ -213,4 +213,64 @@ describe TrafficSpy::Router do
       end
     end
   end
+
+  describe "POST sources/IDENTIFIER/campaigns" do
+    def post_campaign_puma
+      post 'sources/puma/campaigns', 'campaignName=socialSignup&eventNames[]=addedSocialThroughPromptA&eventNames[]=addedSocialThroughPromptB'
+    end
+
+    context "when identifier does not exist" do
+      it "returns an error message with 403" do
+        post_campaign_puma
+
+        last_response.status.should eq 403
+        last_response.body.should eq "{\"message\":\"identifier does not exist\"}"
+      end
+    end
+
+    context "when identifier exists" do
+      before do
+        post 'sources' , :identifier =>'puma', :rootUrl=>"http://puma.com"
+      end
+
+      after do
+        TrafficSpy::DB[:campaigns].delete
+      end
+
+      context "campaign already exists" do
+        it "returns 403 and descriptive message" do
+          post_campaign_puma
+          post_campaign_puma
+          last_response.status.should eq 403
+          ast_response.body.should eq "{\"message\":\"campaign already exists\"}"
+        end
+      end
+      context "new campaign" do
+        context "AND valid parameters" do
+          it "returns 200 OK" do
+            post_campaign_puma
+            last_response.status.should eq 200
+          end
+        end
+
+          context "BUT campaignName is missing" do
+            it "returns a 400 Bad Request with message" do
+              post 'sources/puma/campaigns', 'campaignName=&eventNames[]=addedSocialThroughPromptA&eventNames[]=addedSocialThroughPromptB'
+              last_response.status.should eq 400
+              last_response.body.should eq "{\"message\":\"Please provide campaignName\"}"
+            end
+          end
+
+          context "BUT eventName(s) is/are missing" do
+            it "returns a 400 Bad Request with message" do
+              post 'sources/puma/campaigns', 'campaignName=sellShoes&eventNames[]='
+
+              last_response.status.should eq 400
+              last_response.body.should eq "{\"message\":\"Please provide at least one eventName\"}"
+            end
+          end
+      end
+
+    end
+  end
 end

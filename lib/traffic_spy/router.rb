@@ -125,27 +125,55 @@ module TrafficSpy
       end
     end
 
-    post '/sources/:identifier/campaigns' do
-      if valid_site?(params[:identifier])
-        if params[:campaignName].exists?
-          status 403
-          "{\"message\":\"Campaign Already Exists\"}"
-        elsif params[:campaignName].nil?
-          status 400
-          "{\"message\":\"missing parameter CampaignName\"}"
-        elsif params[:eventNames].nil?
-          status 400
-          "{\"message\":\"missing parameter EventNames\"}"
-        else
-          status 200
-          "{\"message\":\"campaign created\"}"
-        end
 
-      else
-        status 403
-        "{\"message\":\"identifier does not exist\"}"
-      end
+
+
+
+
+post '/sources/:identifier/campaigns' do
+  if valid_site?(params)
+    campaignName = params[:campaignName]
+    if !campaignName.exists?
+      Campaign.new(params).save
+      status 200
+    else
+      halt 403, "{\"message\":\"campaign already exists\"}"
     end
+  else
+    halt 403, "{\"message\":\"identifier does not exist\"}"
+  end
+end
+
+
+
+
+    # post '/sources/:identifier/campaigns' do
+    #   if valid_site?(params)
+    #     if params[:campaignName].exists?
+    #       status 403
+    #       "{\"message\":\"Campaign Already Exists\"}"
+    #     elsif params[:campaignName].nil?
+    #       status 400
+    #       "{\"message\":\"missing parameter CampaignName\"}"
+    #     elsif params[:eventNames].nil?
+    #       status 400
+    #       "{\"message\":\"missing parameter EventNames\"}"
+    #     else
+    #       status 200
+    #       "{\"message\":\"campaign created\"}"
+    #     end
+
+    #   else
+    #     status 403
+    #     "{\"message\":\"identifier does not exist\"}"
+    #   end
+    # end
+
+
+
+
+
+
 
     get '/sources/:identifier/events' do
       identifier = params[:identifier]
