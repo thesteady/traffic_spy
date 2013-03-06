@@ -24,8 +24,8 @@ module TrafficSpy
     def create_request
       request = Request.new(@req_attributes)
       @req_attributes[:id] = request.save
-      #@req_attributes
-      "hello"
+      @req_attributes
+
     end
 
     def default_hash_for_payload(payload)
