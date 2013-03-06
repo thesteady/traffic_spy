@@ -15,6 +15,13 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = 'random'
+
+  config.around(:each) do |example|
+    TrafficSpy::DB.transaction(:rollback => :always) do
+      example.run
+    end
+  end
+
 end
 
 class Payload

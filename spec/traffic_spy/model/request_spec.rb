@@ -11,13 +11,6 @@ describe TrafficSpy::Request do
     TrafficSpy::Request
   end
 
-  after do
-    TrafficSpy::DB[:sites].delete
-    TrafficSpy::DB[:requests].delete
-    TrafficSpy::DB[:events].delete
-    TrafficSpy::DB[:url_paths].delete
-  end
-
   describe "Class method" do
 
     let(:req1) do

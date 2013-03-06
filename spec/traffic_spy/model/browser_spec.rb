@@ -12,10 +12,6 @@ describe TrafficSpy::Browser do
 
   describe "Class method" do
 
-    before do
-      TrafficSpy::DB[:browsers].delete
-    end
-
     let(:b1) do
       {:name => "Mozilla"}
     end

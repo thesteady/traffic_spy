@@ -22,10 +22,6 @@ describe TrafficSpy::Campaign do
 
   describe "Class method" do
 
-    before do
-      TrafficSpy::DB[:campaigns].delete
-    end
-
     let(:c1) do
       {:name => "holiday_sale"}
     end

@@ -8,19 +8,18 @@ end
 
 def submit_jumpstart_payload
   payload = {
-                    url: "http://jumpstartlab.com/blog",
-                    requestedAt: "2013-02-16 21:38:28 -0700",
-                    respondedIn: 37,
-                    referredBy: "http://jumpstartlab.com",
-                    requestType: "GET",
-                    parameters: [],
-                    eventName: "socialLogin",
-                    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
-                    resolutionWidth: "1920",
-                    resolutionHeight: "1280",
-                    ip: "63.29.38.211"
-                  }.to_json
-
+              url: "http://jumpstartlab.com/blog",
+              requestedAt: "2013-02-16 21:38:28 -0700",
+              respondedIn: 37,
+              referredBy: "http://jumpstartlab.com",
+              requestType: "GET",
+              parameters: [],
+              eventName: "socialLogin",
+              userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
+              resolutionWidth: "1920",
+              resolutionHeight: "1280",
+              ip: "63.29.38.211"
+            }.to_json
   post "/sources/jumpstartlab/data", {payload: payload}
 end
 
@@ -30,13 +29,6 @@ describe TrafficSpy::Router do
 
   def app
     TrafficSpy::Router
-  end
-
-  after do
-    TrafficSpy::DB[:sites].delete
-    TrafficSpy::DB[:requests].delete
-    TrafficSpy::DB[:events].delete
-    TrafficSpy::DB[:url_paths].delete
   end
 
   describe "POST /sources" do
@@ -122,7 +114,6 @@ describe TrafficSpy::Router do
       context "when the payload is unique" do
         it "returns a 200 OK" do
           submit_jumpstart_payload
-
           last_response.status.should eq 200
         end
       end
@@ -150,7 +141,6 @@ describe TrafficSpy::Router do
     context "when the identifier does exist" do
       it "displays a page including summary of urls (most requested to least)" do
         get '/sources/jumpstartlab'
-
         last_response.status.should eq 200
       end
 

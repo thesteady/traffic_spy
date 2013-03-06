@@ -19,7 +19,6 @@ module TrafficSpy
         os_id: os_id,
         browser_id: browser_id
       )
-
     end
 
     def create_request
@@ -68,9 +67,6 @@ module TrafficSpy
       RequestParser.get_foreign_keys(parse_user_agent[:os])
     end
 
-
-
-
     def combine_resolutions(payload)
       "#{payload[:resolutionWidth]} x #{payload[:resolutionHeight]}"
     end
@@ -78,7 +74,6 @@ module TrafficSpy
     def self.get_foreign_keys(obj)
       obj.find_or_create_and_get_id
     end
-
 
     def find_site_id(urlpath)
       split_url = urlpath.split("/")

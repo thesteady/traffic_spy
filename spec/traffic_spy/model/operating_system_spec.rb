@@ -12,10 +12,6 @@ describe TrafficSpy::OperatingSystem do
 
   describe "Class method" do
 
-    before do
-      TrafficSpy::DB[:operating_systems].delete
-    end
-
     let(:os1) do
       {:name => "Mac OSX"}
     end
