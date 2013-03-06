@@ -183,7 +183,9 @@ module TrafficSpy
       if valid_site?(params)
         site_id = Site.find(identifier: params[:identifier]).id
         if site_has_campaigns?(site_id)
-          puts "hey"
+          puts "***************"
+          erb :campaigns
+          status 200
         else
           '{"message":"No campaigns have been defined."}'
         end
@@ -194,8 +196,7 @@ module TrafficSpy
     end
 
     def site_has_campaigns?(site_id)
-      cam = Campaign.find(site_id)
-      puts cam.inspect
+      Campaign.find(site_id: site_id)
     end
     # get '/sources/:identifier/campaigns/:campaignname' do
     #   if valid_site?(params[:identifier]) == true

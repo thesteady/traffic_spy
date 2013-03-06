@@ -36,11 +36,6 @@ module TrafficSpy
       duplicate.any?
     end
 
-    # def self.campaign_for_site_exists?
-    #   duplicate = Campaign.data.where(site_id: site_id).to_a
-    #   duplicate.any?
-    # end
-
     def save
       Campaign.data.insert({:name => name, :site_id =>site_id})
     end

@@ -257,6 +257,7 @@ describe TrafficSpy::Router do
 
     end
   end
+
   describe "GET /sources/:identifier/campaigns" do
     before do
       post 'sources' , :identifier =>'puma', :rootUrl=>"http://puma.com"
@@ -265,8 +266,8 @@ describe TrafficSpy::Router do
     context "when no campaigns are defined" do
       it "displays a message that no campaigns have been defined" do
         get 'sources/puma/campaigns'
-        pending
-        #last_response.body.should eq '{"message":"No campaigns have been defined."}'
+
+        last_response.body.should eq '{"message":"No campaigns have been defined."}'
       end
     end
 
@@ -275,8 +276,7 @@ describe TrafficSpy::Router do
         post 'sources/puma/campaigns', 'campaignName=socialSignup&eventNames[]=addedSocialThroughPromptA&eventNames[]=addedSocialThroughPromptB'
         get 'sources/puma/campaigns'
 
-        pending
-        #last_response.status.should eq 200
+        last_response.status.should eq 200
       end
     end
 
