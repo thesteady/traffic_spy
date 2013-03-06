@@ -79,7 +79,6 @@ module TrafficSpy
 
     get '/sources/:identifier/urls.json', :provides => :json do
 
-      #raise "#{params.inspect}"
       content_type :json
 
       if valid_site?(params) #&& valid_url?(params)
