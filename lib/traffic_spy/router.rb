@@ -42,71 +42,17 @@ module TrafficSpy
       end
     end
 
-    def check_payload(payload)
-      if payload.nil?
-        halt 400, "{\"message\":\"payload was empty\"}"
-      elsif payload_is_redundant?(payload)
-        halt 403, "{\"message\":\"payload has already been submitted\"}"
-      else
-        TrafficSpy::RequestParser.new(payload).create_request
-      end
-    end
-
-    def payload_is_redundant?(payload)
-      parsed_payload = TrafficSpy::RequestParser.new(payload)
-      new_request = Request.new(parsed_payload.req_attr)
-      new_request.exists?
-    end
-
     get '/sources/:identifier' do
       if valid_site?(params)
         @site = Site.find({identifier: params[:identifier]})
+        site_summary = SiteSummary.new(@site)
 
-        ## Most Requested URLs to least requested URLs
-        urls = Request.summarize_url_requests_for_site(@site.id)
+        @url_results = site_summary.url_results
+        @browser_results = site_summary.browser_results
+        @os_results = site_summary.os_results
+        @res_results = site_summary.os_results
+        @response_times = site_summary.response_times
 
-        # look into extracting this to UrlPath class
-        @url_results = urls.inject({}) do |hash, url|
-          path = UrlPath.find({id: url[:url_path_id]}).path
-          hash[path] = url[:count]
-          hash
-        end.sort_by{|k, v| v}.reverse
-
-        ## Browser breakdown
-        browsers = Request.summarize_browser_requests_for_site(@site.id)
-
-        # look into extracting this to Browser class
-        @browser_results = browsers.inject({}) do |hash, browser|
-          name = Browser.find({id: browser[:browser_id]}).name
-          hash[name] = browser[:count]
-          hash
-        end.sort_by{|k, v| v}.reverse
-
-        ## OS breakdown
-        oss = Request.summarize_os_requests_for_site(@site.id)
-
-        # look into extracting this to OS class
-        @os_results = oss.inject({}) do |hash, os|
-          name = OperatingSystem.find({id: os[:os_id]}).name
-          hash[name] = os[:count]
-          hash
-        end.sort_by{|k, v| v}.reverse
-
-        resolutions = Request.summarize_res_requests_for_site(@site.id)
-
-        @res_results = resolutions.inject({}) do |hash, res|
-          #name = OperatingSystem.find({id: url[:os_id]}).name
-          hash[res[:resolution]] = res[:count]
-          hash
-        end.sort_by{|k, v| v}.reverse
-
-        response_hash = Request.summarize_response_times_for_site(@site.id)
-
-        @response_times = response_hash.inject({}) do |hash, (k, v)|
-          path = UrlPath.find({id: k}).path
-          hash[path] = v
-          hash
-        end.sort_by{|k, v| v}.reverse
         erb :app_stats
       else
         halt 403, "{\"message\":\"identifier already exists\"}" if site.exists?
@@ -153,15 +99,9 @@ module TrafficSpy
 
       if valid_site?(params) && any_events_listed?(params)
 
-        site_id = Site.find(identifier: identifier).id
-        events = Request.summarize_event_requests_for_site(site_id)
-
-        #extract to class
-        @event_results = events.inject({}) do |hash, event|
-          name = Event.find({id: event[:event_id]},{}).name
-          hash[name] = event[:count]
-          hash
-        end.sort_by{|k, v| v}.reverse
+        site = Site.find({identifier: params[:identifier]})
+        site_summary = SiteSummary.new(site)
+        @event_results = site_summary.event_results
 
         erb :events
       end
@@ -169,12 +109,11 @@ module TrafficSpy
 
     get '/sources/:identifier/events/:event_name' do
       if valid_site?(params) && valid_event?(params)
-        # get event instance using event_name and site_id
+
         site_id = Site.find(identifier: params[:identifier]).id
         event = Event.find({name: params[:event_name]},{site_id: site_id})
 
-        # get a hash of dates grouped by hour of the day {hour: 1, count: 3}
-        event.dates_grouped_by_hour
+        @grouped_hours = event.dates_grouped_by_hour
         erb :event_detail
       end
     end
@@ -206,6 +145,13 @@ module TrafficSpy
     # end
 
     helpers do
+
+      def payload_is_redundant?(payload)
+        parsed_payload = TrafficSpy::RequestParser.new(payload)
+        new_request = Request.new(parsed_payload.req_attributes)
+        new_request.exists?
+      end
+
       def valid_site?(params)
         site = Site.find(identifier: params[:identifier])
         if site.nil?
@@ -218,6 +164,7 @@ module TrafficSpy
       def valid_url?(params)
         identifier = params[:identifier]
         rel_path = params[:rel_path]
+
         full_path = "http://#{identifier}.com/#{rel_path}"
         path = UrlPath.find(path: full_path)
         if path.nil?
@@ -241,6 +188,16 @@ module TrafficSpy
         end
       end
 
+      def check_payload(payload)
+        if payload.nil?
+          halt 400, "{\"message\":\"payload was empty\"}"
+        elsif payload_is_redundant?(payload)
+          halt 403, "{\"message\":\"payload has already been submitted\"}"
+        else
+          TrafficSpy::RequestParser.new(payload).create_request
+        end
+      end
+
       def any_events_listed?(params)
 
         identifier = params[:identifier]
@@ -248,7 +205,7 @@ module TrafficSpy
 
         events = Event.find_all_by_site_id(site_id)
 
-        if events.nil?
+        if events.empty?
           halt 403, "{\"message\":\"No events have been defined.\"}"
         else
           true

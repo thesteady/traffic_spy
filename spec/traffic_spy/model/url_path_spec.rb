@@ -11,13 +11,6 @@ describe TrafficSpy::UrlPath do
     TrafficSpy::UrlPath
   end
 
-  after do
-    TrafficSpy::DB[:sites].delete
-    TrafficSpy::DB[:requests].delete
-    TrafficSpy::DB[:events].delete
-    TrafficSpy::DB[:url_paths].delete
-  end
-
   describe "Class method" do
 
     let(:url1) do

@@ -13,6 +13,10 @@ group :development do
   gem 'shotgun'
 end
 
+group :test do
+  gem 'nokogiri'
+end
+
 group :evaluations do
   # THIS SPACE RESERVED FOR EVALUATIONS
 end

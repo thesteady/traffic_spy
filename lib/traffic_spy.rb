@@ -13,6 +13,7 @@ require 'traffic_spy/models/campaign'
 require 'traffic_spy/models/browser'
 require 'traffic_spy/models/operating_system'
 require 'traffic_spy/models/url_path'
+require 'traffic_spy/models/site_summary'
 require 'traffic_spy/router'
 
 require 'traffic_spy/version'

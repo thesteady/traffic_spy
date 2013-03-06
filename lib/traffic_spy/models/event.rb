@@ -52,7 +52,12 @@ module TrafficSpy
     def dates_grouped_by_hour
       # query requests table with event_id and extract array of requests objects
       requests = Request.find_all(event_id: self.id)
-      raise "#{requests.inspect}"
+      hours = requests.map {|result| result.requested_at.hour}
+
+      grouped_hours = hours.inject(Hash.new(0)) do |hash, hour|
+        hash[hour] += 1
+        hash
+      end.sort_by{|k, v| v}
     end
 
     def save

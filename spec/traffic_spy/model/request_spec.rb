@@ -11,13 +11,6 @@ describe TrafficSpy::Request do
     TrafficSpy::Request
   end
 
-  after do
-    TrafficSpy::DB[:sites].delete
-    TrafficSpy::DB[:requests].delete
-    TrafficSpy::DB[:events].delete
-    TrafficSpy::DB[:url_paths].delete
-  end
-
   describe "Class method" do
 
     let(:req1) do
@@ -136,11 +129,7 @@ describe TrafficSpy::Request do
     before do
       @site = TrafficSpy::Site.new({:identifier=>"jumpstartlab", :rootUrl => "http://jumpstartlab.com"})
       @site.save
-
-      @payload = Payload.sample1
-
-      request_hash = TrafficSpy::RequestParser.new(@payload).create_request
-
+      request_hash = TrafficSpy::RequestParser.new(Payload.sample1).create_request
       @request = app.find_all(id: request_hash[:id]).first
     end
 

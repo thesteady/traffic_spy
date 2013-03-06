@@ -8,19 +8,18 @@ end
 
 def submit_jumpstart_payload
   payload = {
-                    url: "http://jumpstartlab.com/blog",
-                    requestedAt: "2013-02-16 21:38:28 -0700",
-                    respondedIn: 37,
-                    referredBy: "http://jumpstartlab.com",
-                    requestType: "GET",
-                    parameters: [],
-                    eventName: "socialLogin",
-                    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
-                    resolutionWidth: "1920",
-                    resolutionHeight: "1280",
-                    ip: "63.29.38.211"
-                  }.to_json
-
+              url: "http://jumpstartlab.com/blog",
+              requestedAt: "2013-02-16 21:38:28 -0700",
+              respondedIn: 37,
+              referredBy: "http://jumpstartlab.com",
+              requestType: "GET",
+              parameters: [],
+              eventName: "socialLogin",
+              userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1309.0 Safari/537.17",
+              resolutionWidth: "1920",
+              resolutionHeight: "1280",
+              ip: "63.29.38.211"
+            }.to_json
   post "/sources/jumpstartlab/data", {payload: payload}
 end
 
@@ -110,7 +109,6 @@ describe TrafficSpy::Router do
       context "when the payload is unique" do
         it "returns a 200 OK" do
           submit_jumpstart_payload
-
           last_response.status.should eq 200
         end
       end
@@ -118,6 +116,14 @@ describe TrafficSpy::Router do
   end
 
   describe "GET /sources/:identifier" do
+
+
+    before do
+      TrafficSpy::Site.new(id: 1, identifier: "jumpstartlab", rootUrl: "http://jumpstartlab.com").save
+      TrafficSpy::RequestParser.new(Payload.sample1).create_request
+      TrafficSpy::RequestParser.new(Payload.sample2).create_request
+      TrafficSpy::RequestParser.new(Payload.sample3).create_request
+    end
 
     context "when the identifier does not exist" do
       it "returns an error message that the identifier does not exist" do
@@ -129,11 +135,19 @@ describe TrafficSpy::Router do
 
     context "when the identifier does exist" do
       it "displays a page including summary of urls (most requested to least)" do
-        post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
         get '/sources/jumpstartlab'
-
         last_response.status.should eq 200
       end
+
+      # it 'correctly summarizes url counts' do
+      #   get '/sources/jumpstartlab'
+      #   doc = Nokogiri::HTML(last_response.body)
+      #   urls_table = (doc / "table#urls")
+      #   blog_row = (urls_table / "tr").detect { |r| r.text() =~ /blog/ }
+      #   count = (blog_row / "td").last.text.to_i
+
+      #   count.should eq 3
+      # end
     end
   end
 
@@ -279,6 +293,30 @@ describe TrafficSpy::Router do
         last_response.status.should eq 200
       end
     end
+  end
 
+  describe "GET /sources/:identifier/events/:event_name" do
+    before do
+      TrafficSpy::Site.new(id: 1, identifier: "jumpstartlab", rootUrl: "http://jumpstartlab.com").save
+      TrafficSpy::RequestParser.new(Payload.sample4).create_request
+      TrafficSpy::RequestParser.new(Payload.sample5).create_request
+    end
+
+    context "when request is valid" do
+
+      it "should return display page with event details" do
+
+        get "sources/jumpstartlab/events/socialLogin"
+        last_response.status.should eq 200
+      end
+    end
+
+    context "when request is invalid" do
+      it "should return a 403 status" do
+
+        get "sources/jumpstartlab/events/idunno"
+        last_response.status.should eq 403
+      end
+    end
   end
 end
