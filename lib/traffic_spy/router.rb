@@ -191,6 +191,7 @@ module TrafficSpy
           halt 403, "{\"message\":\"payload has already been submitted\"}"
         else
           TrafficSpy::RequestParser.new(payload).create_request
+          "Success"
         end
       end
 
