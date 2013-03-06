@@ -1,13 +1,18 @@
-<h2>Application Analytics Summary</h2>
 
-<h3>Identifier: <%= @site.identifier %></h3>
+<div class="page-header">
+  <h3>Application Analytics Summary: <%= params[:identifier] %> </h3>
+</div>
+
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#">Analytics Summary</a></li>
+  <li><a href="/sources/<%=@site.identifier%>/events">Event Analytics</a></li>
+  <li><a href="#">URL Analytics</a></li>
+</ul>
 
 <br/>
-<p><a href="/sources/<%=@site.identifier%>/events">View Event Analytics</a></p>
-
 
 <div class="row">
-  <div class="span6">
+  <div class="span5">
 
     <h5>Most Requested URLs</h5>
     <table class="table table-bordered table-striped" id="urls">
@@ -66,7 +71,7 @@
     </table>
 
   </div>
-  <div class="span6">
+  <div class="span5">
 
 
     <h5>Average Response Time</h5>

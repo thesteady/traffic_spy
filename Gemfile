@@ -17,6 +17,12 @@ group :test do
   gem 'nokogiri'
 end
 
+group :test, :development do
+  gem 'cane'
+  gem 'reek'
+  gem 'rake'
+end
+
 group :evaluations do
   # THIS SPACE RESERVED FOR EVALUATIONS
 end
