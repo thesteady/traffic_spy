@@ -85,11 +85,11 @@ module TrafficSpy
 
         site_id = Site.find({identifier: params[:identifier]}).id
 
-        raise "#{site_id}"
+        #raise "site_id: #{site_id}"
 
-         @urls #= UrlPath.find_all({site_id: site_id}).map do |url|
-        #   url.path
-        # end
+         @urls = UrlPath.find_all({site_id: site_id}).map do |url|
+          url[:path]
+        end
 
         @urls.to_json
       end
