@@ -295,6 +295,35 @@ describe TrafficSpy::Router do
     end
   end
 
+  describe "GET /sources/:identifier/campaingns/:campaignname" do
+    before do
+      post 'sources' , :identifier =>'jumpstartlab', :rootUrl=>"http://jumpstartlab.com"
+    end
+
+    context "when the campaign exists" do
+      it "displays campaign events ranked most received to least received" do
+        post 'sources/jumpstartlab/campaigns', 'campaignName=socialSignup&eventNames[]=addedSocialThroughPromptA&eventNames[]=addedSocialThroughPromptB'
+        TrafficSpy::RequestParser.new(Payload.sample3).create_request
+        TrafficSpy::RequestParser.new(Payload.sample4).create_request
+        TrafficSpy::RequestParser.new(Payload.sample5).create_request
+        get 'sources/puma/campaigns/socialSignup'
+
+        pending
+        last_response.status.should eq 200
+      end
+    end
+
+    context "when the campaign does not exist" do
+      it "displays a message that no campaign with that name exists" do
+        post 'sources/jumpstartlab/campaigns', 'campaignName=socialSignup&eventNames[]=addedSocialThroughPromptA&eventNames[]=addedSocialThroughPromptB'
+        get 'sources/jumpstartlab/campaigns/notacampaign'
+        pending
+
+        last_response.status.should eq 403
+      end
+    end
+  end
+
   describe "GET /sources/:identifier/events/:event_name" do
     before do
       TrafficSpy::Site.new(id: 1, identifier: "jumpstartlab", rootUrl: "http://jumpstartlab.com").save

@@ -38,6 +38,15 @@ module TrafficSpy
       duplicate.any?
     end
 
+    def self.get_site_campaign_names(site_id)
+        array_of_hashes = data.where(site_id: site_id).to_a
+        names = []
+        array_of_hashes.each do |campaign|
+          names << campaign[:name]
+        end
+        names
+    end
+
     def save
       Campaign.data.insert({:name => name, :site_id =>site_id})
     end

@@ -123,12 +123,12 @@ module TrafficSpy
         site_id = Site.find(identifier: params[:identifier]).id
         if site_has_campaigns?(site_id)
           @identifier = Site.find(identifier: params[:identifier]).identifier
-          @array_of_campaigns = Campaign.find_all_by(site_id)
+          @array_of_names = Campaign.get_site_campaign_names(site_id)
 
-          puts @array_of_campaigns.inspect
+          puts @array_of_names.inspect
 
-          erb :campaigns
           status 200
+          erb :campaigns
         else
           '{"message":"No campaigns have been defined."}'
         end

@@ -14,11 +14,11 @@
       <th>Campaign Name</th>
       <th>Campaign Details Page</th>
 
-      <% @array_of_campaigns.each do |campaign| %>
+      <% @array_of_names.each do |name| %>
       <tr>
-        <td>campaign[:name]</td>
+        <td><%= name %></td>
         <td>
-          <a href="/sources/<%= @identifier %>/campaigns/<%= campaign[:name] %>">campaign[:name]</a>
+          <a href="/sources/<%= @identifier %>/campaigns/<%= name %>"><%= name %></a>
         </td>
       </tr>
       <% end %>
