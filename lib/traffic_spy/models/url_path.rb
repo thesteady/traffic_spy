@@ -25,7 +25,7 @@ module TrafficSpy
     end
 
     def self.find_all(input)
-      data.where(:site_id => site_id).to_a
+      data.where(input).to_a
     end
 
     def exists?

@@ -17,10 +17,6 @@ module TrafficSpy
       "Coming Soon"
     end
 
-    not_found do
-      erb :error
-    end
-
     post '/sources' do
       site = Site.new(params)
 
@@ -33,14 +29,26 @@ module TrafficSpy
       end
     end
 
-    post '/sources/:identifier/data' do
-      if valid_site?(params)
-        payload = params[:payload]
-        check_payload(payload)
+    get '/sources/:identifier.json', :provides => :json do
+      content_type :json
+     if valid_site?(params)
+        @site = Site.find({identifier: params[:identifier]})
+        site_summary = SiteSummary.new(@site)
+
+        results = {}
+
+        results[:url_results] = site_summary.url_results
+        results[:browser_results] = site_summary.browser_results
+        results[:os_results] = site_summary.os_results
+        results[:resolution_results] = site_summary.os_results
+        results[:response_times] = site_summary.response_times
+
+        results.to_json
       else
-        halt 403, "{\"message\":\"identifier does not exist\"}"
+        halt 403, "{\"message\":\"identifier already exists\"}" if site.exists?
       end
     end
+
 
     get '/sources/:identifier' do
       if valid_site?(params)
@@ -59,16 +67,42 @@ module TrafficSpy
       end
     end
 
-    get '/sources/:identifier/urls/:rel_path' do
-      if valid_site?(params)
-        if valid_url?(params)
 
+    post '/sources/:identifier/data' do
+      if valid_site?(params)
+        payload = params[:payload]
+        check_payload(payload)
+      else
+        halt 403, "{\"message\":\"identifier does not exist\"}"
+      end
+    end
+
+    get '/sources/:identifier/urls.json', :provides => :json do
+
+      content_type :json
+
+      if valid_site?(params) #&& valid_url?(params)
+
+        site_id = Site.find({identifier: params[:identifier]}).id
+
+        #raise "site_id: #{site_id}"
+
+         @urls = UrlPath.find_all({site_id: site_id}).map do |url|
+          url[:path]
+        end
+
+        @urls.to_json
+      end
+    end
+
+
+    get '/sources/:identifier/urls/:rel_path' do
+      if valid_site?(params) && valid_url?(params)
           path = "http://#{params[:identifier]}.com/#{params[:rel_path]}"
 
           url = UrlPath.find(path: path)
           @url_results = UrlPath.url_response_times(url)
           erb :url_stats
-        end
       end
     end
 
@@ -80,17 +114,19 @@ module TrafficSpy
       end
     end
 
-    def check_campaign_components(params)
-      site_id = TrafficSpy::Site.find(identifier: params[:identifier]).id
-      campaign = Campaign.new(name: params[:campaignName], site_id: site_id)
+    get '/sources/:identifier/events.json', :provides => :json do
+      content_type :json
+      identifier = params[:identifier]
 
-      if campaign.missing_name? || params[:eventNames].nil?
-        halt 400, '{"message":"missing parameter campaignName or eventNames"}'
-      elsif !campaign.exists?
-        campaign.save
-        status 200
-      else
-        halt 403, "{\"message\":\"campaign already exists\"}"
+      if valid_site?(params) && any_events_listed?(params)
+
+        site = Site.find({identifier: params[:identifier]})
+        site_summary = SiteSummary.new(site)
+        @event_results = site_summary.event_results
+
+        @event_results.to_json
+
+        #erb :events
       end
     end
 
@@ -118,6 +154,7 @@ module TrafficSpy
       end
     end
 
+
     get '/sources/:identifier/campaigns' do
       if valid_site?(params)
         site_id = Site.find(identifier: params[:identifier]).id
@@ -132,6 +169,49 @@ module TrafficSpy
           "{\"message\":\"identifier does not exist\"}"
       end
     end
+
+    not_found do
+      erb :error
+    end
+
+    # post '/sources/:identifier/campaigns' do
+    #   if valid_site?(params[:identifier])
+    #     if params[:campaignName].exists?
+    #       status 403
+    #       "{\"message\":\"Campaign Already Exists\"}"
+    #     elsif params[:campaignName].nil?
+    #       status 400
+    #       "{\"message\":\"missing parameter CampaignName\"}"
+    #     elsif params[:eventNames].nil?
+    #       status 400
+    #       "{\"message\":\"missing parameter EventNames\"}"
+    #     else
+    #       status 200
+    #       "{\"message\":\"campaign created\"}"
+    #     end
+
+    #   else
+    #     status 403
+    #     "{\"message\":\"identifier does not exist\"}"
+    #   end
+    # end
+
+
+
+    # get '/sources/:identifier/campaigns' do
+    #   if valid_site?(params[:identifier]) == true
+    #     site_id = Site.find(identifier: :identifier).identifier
+    #     @campaigns = Campaign.find_all_by_site_id(site_id)
+    #     if @campaigns.count == 0
+    #       "{\"message\":\"no campaigns defined\"}"
+    #     else
+    #       erb :campaigns
+    #     end
+    #   else
+    #     status 403
+    #       "{\"message\":\"identifier does not exist\"}"
+    #   end
+    # end
 
     def site_has_campaigns?(site_id)
       Campaign.find(site_id: site_id)
@@ -212,6 +292,21 @@ module TrafficSpy
           true
         end
       end
+
+      def check_campaign_components(params)
+        site_id = TrafficSpy::Site.find(identifier: params[:identifier]).id
+        campaign = Campaign.new(name: params[:campaignName], site_id: site_id)
+
+        if campaign.missing_name? || params[:eventNames].nil?
+          halt 400, '{"message":"missing parameter campaignName or eventNames"}'
+        elsif !campaign.exists?
+          campaign.save
+          status 200
+        else
+          halt 403, "{\"message\":\"campaign already exists\"}"
+        end
+      end
+
     end
 
   end
