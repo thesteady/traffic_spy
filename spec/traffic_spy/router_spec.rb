@@ -32,13 +32,6 @@ describe TrafficSpy::Router do
     TrafficSpy::Router
   end
 
-  after do
-    TrafficSpy::DB[:sites].delete
-    TrafficSpy::DB[:requests].delete
-    TrafficSpy::DB[:events].delete
-    TrafficSpy::DB[:url_paths].delete
-  end
-
   describe "POST /sources" do
 
     context "with both identifier and rootUrl" do
@@ -82,11 +75,6 @@ describe TrafficSpy::Router do
   describe "POST /sources/:identifier/data" do
     before do
       register_jumpstartlab
-    end
-
-    after do
-      TrafficSpy::DB[:sites].delete
-      TrafficSpy::DB[:requests].delete
     end
 
     context "when identifier does not exist" do
@@ -214,7 +202,7 @@ describe TrafficSpy::Router do
     end
   end
 
-  describe "POST sources/IDENTIFIER/campaigns" do
+  describe "POST /sources/:identifier/campaigns" do
     def post_campaign_puma
       post 'sources/puma/campaigns', 'campaignName=socialSignup&eventNames[]=addedSocialThroughPromptA&eventNames[]=addedSocialThroughPromptB'
     end
@@ -231,10 +219,6 @@ describe TrafficSpy::Router do
     context "when identifier exists" do
       before do
         post 'sources' , :identifier =>'puma', :rootUrl=>"http://puma.com"
-      end
-
-      after do
-        TrafficSpy::DB[:campaigns].delete
       end
 
       context "campaign already exists" do
@@ -272,5 +256,29 @@ describe TrafficSpy::Router do
       end
 
     end
+  end
+  describe "GET /sources/:identifier/campaigns" do
+    before do
+      post 'sources' , :identifier =>'puma', :rootUrl=>"http://puma.com"
+    end
+
+    context "when no campaigns are defined" do
+      it "displays a message that no campaigns have been defined" do
+        get 'sources/puma/campaigns'
+        pending
+        #last_response.body.should eq '{"message":"No campaigns have been defined."}'
+      end
+    end
+
+    context "when a campaign exists" do
+      it "displays a page with hyperlinks to specific data" do
+        post 'sources/puma/campaigns', 'campaignName=socialSignup&eventNames[]=addedSocialThroughPromptA&eventNames[]=addedSocialThroughPromptB'
+        get 'sources/puma/campaigns'
+
+        pending
+        #last_response.status.should eq 200
+      end
+    end
+
   end
 end

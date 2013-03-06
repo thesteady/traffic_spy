@@ -128,7 +128,6 @@ module TrafficSpy
 
     post '/sources/:identifier/campaigns' do
       if valid_site?(params)
-        puts params.inspect
         check_campaign_components(params)
       else
         halt 403, "{\"message\":\"identifier does not exist\"}"
@@ -136,7 +135,9 @@ module TrafficSpy
     end
 
     def check_campaign_components(params)
-      campaign = Campaign.new(:name=>params[:campaignName])
+      site_id = TrafficSpy::Site.find(identifier: params[:identifier]).id
+      campaign = Campaign.new(name: params[:campaignName], site_id: site_id)
+
       if campaign.missing_name? || params[:eventNames].nil?
         halt 400, '{"message":"missing parameter campaignName or eventNames"}'
       elsif !campaign.exists?
@@ -178,21 +179,24 @@ module TrafficSpy
       end
     end
 
-    # get '/sources/:identifier/campaigns' do
-    #   if valid_site?(params[:identifier]) == true
-    #     site_id = Site.find(identifier: :identifier).identifier
-    #     @campaigns = Campaign.find_all_by_site_id(site_id)
-    #     if @campaigns.count == 0
-    #       "{\"message\":\"no campaigns defined\"}"
-    #     else
-    #       erb :campaigns
-    #     end
-    #   else
-    #     status 403
-    #       "{\"message\":\"identifier does not exist\"}"
-    #   end
-    # end
+    get '/sources/:identifier/campaigns' do
+      if valid_site?(params)
+        site_id = Site.find(identifier: params[:identifier]).id
+        if site_has_campaigns?(site_id)
+          puts "hey"
+        else
+          '{"message":"No campaigns have been defined."}'
+        end
+      else
+        status 403
+          "{\"message\":\"identifier does not exist\"}"
+      end
+    end
 
+    def site_has_campaigns?(site_id)
+      cam = Campaign.find(site_id)
+      puts cam.inspect
+    end
     # get '/sources/:identifier/campaigns/:campaignname' do
     #   if valid_site?(params[:identifier]) == true
     #   else
