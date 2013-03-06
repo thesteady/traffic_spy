@@ -220,4 +220,31 @@ describe TrafficSpy::Router do
       end
     end
   end
+
+  describe "GET /sources/:identifier/events/:event_name" do
+    before do
+      TrafficSpy::Site.new(id: 1, identifier: "jumpstartlab", rootUrl: "http://jumpstartlab.com").save
+      TrafficSpy::RequestParser.new(Payload.sample4).create_request
+      TrafficSpy::RequestParser.new(Payload.sample5).create_request
+    end
+
+    context "when request is valid" do
+
+      it "should return display page with event details" do
+
+        get "sources/jumpstartlab/events/socialLogin"
+        last_response.status.should eq 200
+      end
+    end
+
+    context "when request is invalid" do
+
+      it "should return a 403 status" do
+
+        get "sources/jumpstartlab/events/idunno"
+        last_response.status.should eq 403
+      end
+    end
+
+  end
 end

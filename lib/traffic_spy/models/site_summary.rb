@@ -33,18 +33,27 @@ module TrafficSpy
     end
 
     def res_results
-      @res_results = Request.summarize_res_requests_for_site(@site.id).inject({}) do |hash, res|
+      @res_results ||= Request.summarize_res_requests_for_site(@site.id).inject({}) do |hash, res|
         hash[res[:resolution]] = res[:count]
         hash
       end.sort_by{|k, v| v}.reverse
     end
 
     def response_times
-      @response_times = Request.summarize_response_times_for_site(@site.id).inject({}) do |hash, (k, v)|
+      @response_times ||= Request.summarize_response_times_for_site(@site.id).inject({}) do |hash, (k, v)|
         path = UrlPath.find({id: k}).path
         hash[path] = v
         hash
       end.sort_by{|k, v| v}.reverse
+    end
+
+    def event_results
+      @event_results ||= Request.summarize_event_requests_for_site(@site.id).inject({}) do |hash, event|
+        name = Event.find({id: event[:event_id]},{}).name
+        hash[name] = event[:count]
+        hash
+      end.sort_by{|k, v| v}.reverse
+
     end
 
   end

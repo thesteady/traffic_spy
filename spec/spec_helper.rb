@@ -92,7 +92,7 @@ class Payload
   def self.sample5
     {
       url: "http://jumpstartlab.com/blog",
-      requestedAt: "2013-02-16 19:07:28 -0700",
+      requestedAt: "2013-02-16 18:07:28 -0700",
       respondedIn: 20,
       referredBy: "http://jumpstartlab.com",
       requestType: "GET",

@@ -41,27 +41,11 @@ module TrafficSpy
       end
     end
 
-    def check_payload(payload)
-      if payload.nil?
-        halt 400, "{\"message\":\"payload was empty\"}"
-      elsif payload_is_redundant?(payload)
-        halt 403, "{\"message\":\"payload has already been submitted\"}"
-      else
-        TrafficSpy::RequestParser.new(payload).create_request
-      end
-    end
-
-    def payload_is_redundant?(payload)
-      parsed_payload = TrafficSpy::RequestParser.new(payload)
-      new_request = Request.new(parsed_payload.req_attributes)
-      new_request.exists?
-    end
-
     get '/sources/:identifier' do
       if valid_site?(params)
         @site = Site.find({identifier: params[:identifier]})
-
         site_summary = SiteSummary.new(@site)
+
         @url_results = site_summary.url_results
         @browser_results = site_summary.browser_results
         @os_results = site_summary.os_results
@@ -87,42 +71,36 @@ module TrafficSpy
       end
     end
 
-    post '/sources/:identifier/campaigns' do
-      if valid_site?(params[:identifier])
-        if params[:campaignName].exists?
-          status 403
-          "{\"message\":\"Campaign Already Exists\"}"
-        elsif params[:campaignName].nil?
-          status 400
-          "{\"message\":\"missing parameter CampaignName\"}"
-        elsif params[:eventNames].nil?
-          status 400
-          "{\"message\":\"missing parameter EventNames\"}"
-        else
-          status 200
-          "{\"message\":\"campaign created\"}"
-        end
+    # post '/sources/:identifier/campaigns' do
+    #   if valid_site?(params[:identifier])
+    #     if params[:campaignName].exists?
+    #       status 403
+    #       "{\"message\":\"Campaign Already Exists\"}"
+    #     elsif params[:campaignName].nil?
+    #       status 400
+    #       "{\"message\":\"missing parameter CampaignName\"}"
+    #     elsif params[:eventNames].nil?
+    #       status 400
+    #       "{\"message\":\"missing parameter EventNames\"}"
+    #     else
+    #       status 200
+    #       "{\"message\":\"campaign created\"}"
+    #     end
 
-      else
-        status 403
-        "{\"message\":\"identifier does not exist\"}"
-      end
-    end
+    #   else
+    #     status 403
+    #     "{\"message\":\"identifier does not exist\"}"
+    #   end
+    # end
 
     get '/sources/:identifier/events' do
       identifier = params[:identifier]
 
       if valid_site?(params) && any_events_listed?(params)
 
-        site_id = Site.find(identifier: identifier).id
-        events = Request.summarize_event_requests_for_site(site_id)
-
-        #extract to class
-        @event_results = events.inject({}) do |hash, event|
-          name = Event.find({id: event[:event_id]},{}).name
-          hash[name] = event[:count]
-          hash
-        end.sort_by{|k, v| v}.reverse
+        site = Site.find({identifier: params[:identifier]})
+        site_summary = SiteSummary.new(site)
+        @event_results = site_summary.event_results
 
         erb :events
       end
@@ -130,11 +108,10 @@ module TrafficSpy
 
     get '/sources/:identifier/events/:event_name' do
       if valid_site?(params) && valid_event?(params)
-        # get event instance using event_name and site_id
+
         site_id = Site.find(identifier: params[:identifier]).id
         event = Event.find({name: params[:event_name]},{site_id: site_id})
 
-        # get a hash of dates grouped by hour of the day {hour: 1, count: 3}
         @grouped_hours = event.dates_grouped_by_hour
         erb :event_detail
       end
@@ -164,6 +141,13 @@ module TrafficSpy
     # end
 
     helpers do
+
+      def payload_is_redundant?(payload)
+        parsed_payload = TrafficSpy::RequestParser.new(payload)
+        new_request = Request.new(parsed_payload.req_attributes)
+        new_request.exists?
+      end
+
       def valid_site?(params)
         site = Site.find(identifier: params[:identifier])
         if site.nil?
@@ -176,6 +160,7 @@ module TrafficSpy
       def valid_url?(params)
         identifier = params[:identifier]
         rel_path = params[:rel_path]
+
         full_path = "http://#{identifier}.com/#{rel_path}"
         path = UrlPath.find(path: full_path)
         if path.nil?
@@ -196,6 +181,16 @@ module TrafficSpy
           halt 403, "{\"message\":\"No event with the given name has been defined\"}"
         else
           true
+        end
+      end
+
+      def check_payload(payload)
+        if payload.nil?
+          halt 400, "{\"message\":\"payload was empty\"}"
+        elsif payload_is_redundant?(payload)
+          halt 403, "{\"message\":\"payload has already been submitted\"}"
+        else
+          TrafficSpy::RequestParser.new(payload).create_request
         end
       end
 
