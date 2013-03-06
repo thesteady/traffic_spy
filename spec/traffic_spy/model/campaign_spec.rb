@@ -10,45 +10,43 @@ describe TrafficSpy::Campaign do
     TrafficSpy::Campaign
   end
 
-  # describe "New Campaign Instance" do
-  #   context "given required parameters for a new campaign instance" do
-  #     it "creates a new campaign" do
-  #       details = {:name => "button click campaign"}
-  #       new_campaign = app.new(details)
-  #       expect(new_campaign.name).to eq "button click campaign"
-  #     end
-  #   end
-  # end
-
   describe "Class method" do
-
-    let(:c1) do
-      {:name => "holiday_sale"}
+    before do
+        @site1 = TrafficSpy::Site.new(identifier: 'jumpstartlab', rootUrl: 'http://jumpstartlab.com').save
+        @site2 = TrafficSpy::Site.new(identifier: 'otter', rootUrl: 'http://otter.com').save
+        @site_id1 = TrafficSpy::Site.find(identifier: 'jumpstartlab').id
+        @site_id2 = TrafficSpy::Site.find(identifier: 'otter').id
     end
 
-    let(:c2) do
-      {:name => "labor_day_sale"}
+    let(:input1) do
+      {:identifier=> 'jumpstartlab', :name=>'holiday_sale', :site_id=>@site_id1}
+    end
+
+    let(:input2) do
+      {:identifier=> 'otter', :name=>'labor_day_sale', :site_id=>@site_id2}
     end
 
     describe ".new" do
       it "creates a new instance" do
-        campaign = app.new(c1)
+        campaign = app.new(input1)
+        site_id = @site1
         expect(campaign.name).to eq("holiday_sale")
       end
     end
 
     describe ".count" do
       it  "returns 1 record" do
-        campaign = app.new(c1)
-        campaign.save
+        app.new(input1).save
         expect(app.count).to eq(1)
       end
     end
 
     describe ".all" do
       it "returns 2 records" do
-        app.new(c1).save
-        app.new(c2).save
+        app.new(input1).save
+        app.new(input2).save
+        all_records = app.all
+
         expect(app.all.count).to eq(2)
       end
     end
@@ -56,9 +54,9 @@ describe TrafficSpy::Campaign do
     describe ".find(input)" do
 
       before do
-        @c1 = app.new(c1)
+        @c1 = app.new(input1)
         @c1_id = @c1.save
-        @c2 = app.new(c2)
+        @c2 = app.new(input2)
         @c2_id = @c2.save
       end
 
@@ -76,12 +74,10 @@ describe TrafficSpy::Campaign do
       end
     end
 
-
     describe "#exists?" do
-
       context "record exists in db" do
         it 'should return true' do
-          campaign = app.new(c1)
+          campaign = app.new(input1)
           campaign.save
           expect(campaign.exists?.should be_true)
         end
@@ -89,7 +85,7 @@ describe TrafficSpy::Campaign do
 
       context "record does not exist in db" do
         it 'should return false' do
-          campaign = app.new(c2)
+          campaign = app.new(input2)
           expect(campaign.exists?.should be_false)
         end
       end

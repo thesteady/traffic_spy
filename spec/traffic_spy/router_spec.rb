@@ -76,11 +76,6 @@ describe TrafficSpy::Router do
       register_jumpstartlab
     end
 
-    after do
-      TrafficSpy::DB[:sites].delete
-      TrafficSpy::DB[:requests].delete
-    end
-
     context "when identifier does not exist" do
       it "returns an error message that the identifier does not exist" do
         post "/sources/pizza/data", :data => "some data"
@@ -221,6 +216,85 @@ describe TrafficSpy::Router do
     end
   end
 
+  describe "POST /sources/:identifier/campaigns" do
+    def post_campaign_puma
+      post 'sources/puma/campaigns', 'campaignName=socialSignup&eventNames[]=addedSocialThroughPromptA&eventNames[]=addedSocialThroughPromptB'
+    end
+
+    context "when identifier does not exist" do
+      it "returns an error message with 403" do
+        post_campaign_puma
+
+        last_response.status.should eq 403
+        last_response.body.should eq "{\"message\":\"identifier does not exist\"}"
+      end
+    end
+
+    context "when identifier exists" do
+      before do
+        post 'sources' , :identifier =>'puma', :rootUrl=>"http://puma.com"
+      end
+
+      context "campaign already exists" do
+        it "returns 403 and descriptive message" do
+          post_campaign_puma
+          post_campaign_puma
+          last_response.status.should eq 403
+          last_response.body.should eq "{\"message\":\"campaign already exists\"}"
+        end
+      end
+      context "new campaign" do
+        context "AND valid parameters" do
+          it "returns 200 OK" do
+            post_campaign_puma
+            last_response.status.should eq 200
+          end
+        end
+
+          context "BUT campaignName is missing" do
+            it "returns a 400 Bad Request with message" do
+              post 'sources/puma/campaigns', 'campaignName=&eventNames[]=addedSocialThroughPromptA&eventNames[]=addedSocialThroughPromptB'
+              last_response.status.should eq 400
+              last_response.body.should eq '{"message":"missing parameter campaignName or eventNames"}'
+            end
+          end
+
+          context "BUT eventName(s) is/are missing" do
+            it "returns a 400 Bad Request with message" do
+              post 'sources/puma/campaigns', 'campaignName=sellShoes'
+
+              last_response.status.should eq 400
+              last_response.body.should eq '{"message":"missing parameter campaignName or eventNames"}'
+            end
+          end
+      end
+
+    end
+  end
+
+  describe "GET /sources/:identifier/campaigns" do
+    before do
+      post 'sources' , :identifier =>'puma', :rootUrl=>"http://puma.com"
+    end
+
+    context "when no campaigns are defined" do
+      it "displays a message that no campaigns have been defined" do
+        get 'sources/puma/campaigns'
+
+        last_response.body.should eq '{"message":"No campaigns have been defined."}'
+      end
+    end
+
+    context "when a campaign exists" do
+      it "displays a page with hyperlinks to specific data" do
+        post 'sources/puma/campaigns', 'campaignName=socialSignup&eventNames[]=addedSocialThroughPromptA&eventNames[]=addedSocialThroughPromptB'
+        get 'sources/puma/campaigns'
+
+        last_response.status.should eq 200
+      end
+    end
+  end
+
   describe "GET /sources/:identifier/events/:event_name" do
     before do
       TrafficSpy::Site.new(id: 1, identifier: "jumpstartlab", rootUrl: "http://jumpstartlab.com").save
@@ -238,13 +312,11 @@ describe TrafficSpy::Router do
     end
 
     context "when request is invalid" do
-
       it "should return a 403 status" do
 
         get "sources/jumpstartlab/events/idunno"
         last_response.status.should eq 403
       end
     end
-
   end
 end

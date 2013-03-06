@@ -1,11 +1,12 @@
 module TrafficSpy
   class Campaign
 
-    attr_reader :id, :name
+    attr_accessor :id, :name, :site_id
 
     def initialize(input)
       @id = input[:id]
       @name = input[:name]
+      @site_id = input[:site_id]
     end
 
     def self.data
@@ -22,19 +23,23 @@ module TrafficSpy
       end.first
     end
 
-    def exists?
-      duplicate = Campaign.data.where(name: name).to_a
-      duplicate.any?
-    end
-
     def self.all
       results = data.map do |campaign|
         Campaign.new(campaign)
       end
     end
 
+    def exists?
+      duplicate = Campaign.data.where(name: name).to_a
+      duplicate.any?
+    end
+
     def save
-      Campaign.data.insert({:name => name})
+      Campaign.data.insert({:name => name, :site_id =>site_id})
+    end
+
+    def missing_name?
+      name.nil? || name.empty?
     end
 
   end

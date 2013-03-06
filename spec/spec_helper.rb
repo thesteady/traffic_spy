@@ -21,8 +21,9 @@ RSpec.configure do |config|
       example.run
     end
   end
-
 end
+
+
 
 class Payload
   def self.sample1
