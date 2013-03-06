@@ -4,8 +4,6 @@ module TrafficSpy
     attr_accessor :id, :name, :site_id
 
     def initialize(input)
-      #site_id = Site.find(identifier: input[:identifier]).id
-
       @id = input[:id]
       @name = input[:name]
       @site_id = input[:site_id]
