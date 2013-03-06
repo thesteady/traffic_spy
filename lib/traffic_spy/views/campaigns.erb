@@ -1,1 +1,32 @@
 <h2>Campaign Analytics Summary</h2>
+
+<h3>Identifier: <%= @identifier %></h3>
+<p><a href="/sources/<%= @identifier %>">View Application Analytics</a></p>
+
+
+
+<div class="row">
+  <div class="span8">
+
+    <h5>Campaigns List</h5>
+
+    <table class="table table-bordered table-striped">
+      <th>Campaign Name</th>
+      <th>Campaign Details Page</th>
+
+      <% @array_of_campaigns.each do |campaign| %>
+      <tr>
+        <td>campaign[:name]</td>
+        <td>
+          <a href="/sources/<%= @identifier %>/campaigns/<%= campaign[:name] %>">campaign[:name]</a>
+        </td>
+      </tr>
+      <% end %>
+
+    </table>
+
+  </div>
+</div>
+
+
+

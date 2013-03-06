@@ -122,6 +122,11 @@ module TrafficSpy
       if valid_site?(params)
         site_id = Site.find(identifier: params[:identifier]).id
         if site_has_campaigns?(site_id)
+          @identifier = Site.find(identifier: params[:identifier]).identifier
+          @array_of_campaigns = Campaign.find_all_by(site_id)
+
+          puts @array_of_campaigns.inspect
+
           erb :campaigns
           status 200
         else
@@ -136,13 +141,6 @@ module TrafficSpy
     def site_has_campaigns?(site_id)
       Campaign.find(site_id: site_id)
     end
-    # get '/sources/:identifier/campaigns/:campaignname' do
-    #   if valid_site?(params[:identifier]) == true
-    #   else
-    #     status 403
-    #       "{\"message\":\"identifier does not exist\"}"
-    #   end
-    # end
 
     helpers do
 
