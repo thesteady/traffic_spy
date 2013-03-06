@@ -183,7 +183,8 @@ module TrafficSpy
       if valid_site?(params)
         site_id = Site.find(identifier: params[:identifier]).id
         if site_has_campaigns?(site_id)
-          puts "***************"
+          #@campaigns = Campaign.find(site_id)
+          #need to implement method to grab all of a site's campaigns to push them onto the webpage
           erb :campaigns
           status 200
         else
