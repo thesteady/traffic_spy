@@ -155,32 +155,9 @@ describe TrafficSpy::Router do
         last_response.status.should eq 200
 
       end
-
-      # it 'correctly summarizes url counts' do
-      #   get '/sources/jumpstartlab'
-      #   doc = Nokogiri::HTML(last_response.body)
-      #   urls_table = (doc / "table#urls")
-      #   blog_row = (urls_table / "tr").detect { |r| r.text() =~ /blog/ }
-      #   count = (blog_row / "td").last.text.to_i
-
-      #   count.should eq 3
-      # end
     end
   end
 
-  describe "GET /sources/:identifier.json" do
-
-    before do
-      post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
-      post "/sources/jumpstartlab/data", {:payload => Payload.sample1}
-    end
-
-    # it "displays a page including summary of urls (most requested to least)" do
-    #   get '/sources/jumpstartlab.json'
-    #    last_response.status.should eq 200
-    #   #last_response.body.should eq "{\"message\":\"yo does not exist\"}"
-    # end
-  end
 
   describe 'GET /sources/:identifier/urls/:rel_path' do
     before do
