@@ -171,10 +171,6 @@ describe TrafficSpy::Router do
   describe "GET /sources/:identifier.json" do
 
     before do
-      # TrafficSpy::Site.new(id: 1, identifier: "jumpstartlab", rootUrl: "http://jumpstartlab.com").save
-      # TrafficSpy::RequestParser.new(Payload.sample1).create_request
-      # TrafficSpy::RequestParser.new(Payload.sample2).create_request
-      # TrafficSpy::RequestParser.new(Payload.sample3).create_request
       post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
       post "/sources/jumpstartlab/data", {:payload => Payload.sample1}
     end
