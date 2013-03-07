@@ -52,11 +52,15 @@ module TrafficSpy
     end
 
     def event_id
-      RequestParser.get_foreign_keys(Event.new({name: payload[:eventName], site_id: site_id}))
+      RequestParser.get_foreign_keys(Event.new(
+                                  {name: payload[:eventName], site_id: site_id}
+                                  ))
     end
 
     def url_id
-      RequestParser.get_foreign_keys(UrlPath.new({path: payload[:url], site_id: site_id}))
+      RequestParser.get_foreign_keys(UrlPath.new(
+                                      {path: payload[:url], site_id: site_id}
+                                     ))
     end
 
     def browser_id

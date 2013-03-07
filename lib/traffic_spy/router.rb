@@ -24,7 +24,7 @@ module TrafficSpy
         { identifier: params[:identifier] }.to_json
         "{\"identifier\":\"#{params[:identifier]}\"}"
       else
-        halt 400, "{\"message\":\"missing a parameter: provide identifier and rootUrl\"}" if !site.valid?
+        halt 400, "{\"message\":\"missing a parameter\"}" if !site.valid?
         halt 403, "{\"message\":\"identifier already exists\"}" if site.exists?
       end
     end
@@ -178,21 +178,17 @@ module TrafficSpy
         site_id = Site.find(identifier: params[:identifier]).id
         campaign = Campaign.new(name: params[:campaignname], site_id: site_id)
         if campaign.exists?
-          camp = Campaign.get_campaign_id(name: campaign.name, site_id: campaign.site_id)
-          #raise "#{camp.inspect}"
+          camp = Campaign.get_campaign_id(name: campaign.name,
+                                          site_id: campaign.site_id
+                                          )
           @events = camp.events
-
-          event_ids = camp.event_ids
-         # @events_results = Request.summarize_campaign_events(event_ids)
-           @campaign_results = Request.summarize_campaign_events(@events)
+          @campaign_results = Request.summarize_campaign_events(@events)
           erb :campaign_detail
         else
-          status 403
-          '{"message":"Campaign has not been defined."}'
+          halt 403, '{"message":"Campaign has not been defined."}'
         end
       else
-        status 403
-        "{\"message\":\"identifier does not exist\"}"
+        status 403, "{\"message\":\"identifier does not exist\"}"
       end
     end
 
@@ -244,7 +240,7 @@ module TrafficSpy
         site_id = Site.find(identifier: identifier).id
         event = Event.find({name: event_name}, {site_id: site_id})
         if event.nil?
-          halt 403, "{\"message\":\"No event with the given name has been defined\"}"
+          halt 403, "{\"message\":\"No event with that name has been defined\"}"
         else
           true
         end
@@ -283,12 +279,13 @@ module TrafficSpy
         if campaign.missing_name? || event_names.nil?
           halt 400, '{"message":"missing parameter campaignName or eventNames"}'
         elsif !campaign.exists?
-          
           campaign_id = campaign.save
           events = event_names.map {|name| Event.find_all_by_site_id(site_id)}
-          #raise "events: #{events.flatten}, site_id: #{site_id}"
           events.flatten.each do |event|
-             CampaignEvent.new(campaign_id: campaign_id, event_id: event[:id]).save
+             CampaignEvent.new(
+                              campaign_id: campaign_id,
+                              event_id: event[:id]
+                              ).save
           end
 
 
