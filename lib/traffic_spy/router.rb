@@ -77,13 +77,16 @@ module TrafficSpy
     # end
 
 
-    get '/sources/:identifier/urls/:rel_path' do
-      if valid_site?(params) && valid_url?(params)
-          path = "http://#{params[:identifier]}.com/#{params[:rel_path]}"
+    get '/sources/:identifier/urls/*' do
 
-          url = UrlPath.find(path: path)
-          @url_results = UrlPath.url_response_times(url)
-          erb :url_stats
+      if valid_site?(params) && valid_url?(params)
+        rootUrl = Site.find({identifier: params[:identifier]}).rootUrl
+
+        @path = "#{rootUrl}/#{params[:splat].join}"
+
+        url = UrlPath.find(path: @path)
+        @url_results = UrlPath.url_response_times(url)
+        erb :url_stats
       end
     end
 
@@ -94,22 +97,6 @@ module TrafficSpy
       #   halt 403, "{\"message\":\"identifier does not exist\"}"
       end
     end
-
-    # get '/sources/:identifier/events.json', :provides => :json do
-    #   content_type :json
-    #   identifier = params[:identifier]
-
-    #   if valid_site?(params) && any_events_listed?(params)
-
-    #     site = Site.find({identifier: params[:identifier]})
-    #     site_summary = SiteSummary.new(site)
-    #     @event_results = site_summary.event_results
-
-    #     @event_results.to_json
-
-    #     erb :events
-    #   end
-    # end
 
     get '/sources/:identifier/events' do
       identifier = params[:identifier]
@@ -203,15 +190,19 @@ module TrafficSpy
       end
 
       def valid_url?(params)
-        identifier = params[:identifier]
+        #identifier = params[:identifier]
         rel_path = params[:rel_path]
+        site = Site.find({identifier: params[:identifier]})
 
-        full_path = "http://#{identifier}.com/#{rel_path}"
+        full_path = "#{site.rootUrl}/#{rel_path}"
+
         path = UrlPath.find(path: full_path)
+
 
         if path.nil?
           halt 403, "{\"message\":\"url does not exist\"}"
         else
+          #raise "true"
           true
         end
 
