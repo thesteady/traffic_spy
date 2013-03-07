@@ -57,7 +57,8 @@ module TrafficSpy
 
     def self.get_campaign_id(input)
       campaigns = []
-      data.where(site_id: input[:site_id]).where(name: input[:name]).each do |row|
+      ds = data.where(site_id: input[:site_id]).where(name: input[:name])
+      ds.each do |row|
         campaigns << Campaign.new(row)
       end
       campaigns.first
@@ -75,14 +76,6 @@ module TrafficSpy
         event_ids = results.map {|result| result.event_id }
 
     end
-
-    # def event_results
-    #   @event_results ||= Request.summarize_event_requests_for_site(@site.id).inject({}) do |hash, event|
-    #     name = Event.find({id: event[:event_id]},{}).name
-    #     hash[name] = event[:count]
-    #     hash
-    #   end.sort_by{|k, v| v}.reverse
-    # end
 
   end
 end

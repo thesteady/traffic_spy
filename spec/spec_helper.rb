@@ -1,5 +1,7 @@
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start do
+  add_filter '/spec'
+end
 require 'nokogiri'
 
 ENV["TRAFFIC_SPY_ENV"] ||= "test"

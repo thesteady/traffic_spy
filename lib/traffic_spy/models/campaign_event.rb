@@ -30,7 +30,7 @@ module TrafficSpy
     end
 
     def save
-      CampaignEvent.data.insert(:campaign_id => campaign_id, :event_id => event_id)
+      CampaignEvent.data.insert(campaign_id: campaign_id, event_id: event_id)
     end
 
   end

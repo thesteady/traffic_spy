@@ -30,8 +30,8 @@ module TrafficSpy
     end
 
     def exists?
-      duplicate = Site.data.where(identifier: identifier).
-                            or(rootUrl: rootUrl).to_a
+      results = Site.data.where(identifier: identifier).or(rootUrl: rootUrl)
+      duplicate = results.to_a
       duplicate.any?
     end
 

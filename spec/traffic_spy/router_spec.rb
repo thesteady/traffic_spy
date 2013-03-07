@@ -48,6 +48,7 @@ describe TrafficSpy::Router do
 
         last_response.status.should eq 400
         last_response.body.should eq "{\"message\":\"missing a parameter\"}"
+
       end
     end
 
@@ -69,6 +70,21 @@ describe TrafficSpy::Router do
         last_response.body.should eq "{\"message\":\"identifier already exists\"}"
       end
     end
+  end
+
+  describe "GET /sources" do
+
+    before do
+      post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
+      post "/sources", :identifier => "batman", :rootUrl => 'http://batman.com'
+    end
+
+    it "should return 2 sites" do
+      get "/sources"
+      last_response.status.should eq 200
+     # expect(TrafficSpy::Site.all.count).to eq(2)
+    end
+
   end
 
   describe "POST /sources/:identifier/data" do
@@ -137,6 +153,7 @@ describe TrafficSpy::Router do
       it "displays a page including summary of urls (most requested to least)" do
         get '/sources/jumpstartlab'
         last_response.status.should eq 200
+
       end
 
       # it 'correctly summarizes url counts' do
@@ -149,6 +166,24 @@ describe TrafficSpy::Router do
       #   count.should eq 3
       # end
     end
+  end
+
+  describe "GET /sources/:identifier.json" do
+
+    before do
+      # TrafficSpy::Site.new(id: 1, identifier: "jumpstartlab", rootUrl: "http://jumpstartlab.com").save
+      # TrafficSpy::RequestParser.new(Payload.sample1).create_request
+      # TrafficSpy::RequestParser.new(Payload.sample2).create_request
+      # TrafficSpy::RequestParser.new(Payload.sample3).create_request
+      post "/sources", :identifier => "jumpstartlab", :rootUrl => 'http://jumpstartlab.com'
+      post "/sources/jumpstartlab/data", {:payload => Payload.sample1}
+    end
+
+    # it "displays a page including summary of urls (most requested to least)" do
+    #   get '/sources/jumpstartlab.json'
+    #    last_response.status.should eq 200
+    #   #last_response.body.should eq "{\"message\":\"yo does not exist\"}"
+    # end
   end
 
   describe 'GET /sources/:identifier/urls/:rel_path' do
@@ -321,7 +356,7 @@ describe TrafficSpy::Router do
 
     context "when the campaign does not exist" do
       it "displays a message that no campaign with that name exists" do
-        post 'sources/jumpstartlab/campaigns', 'campaignName=socialSignup&eventNames[]=addedSocialThroughPromptA&eventNames[]=addedSocialThroughPromptB'
+       # post 'sources/jumpstartlab/campaigns', 'campaignName=socialSignup&eventNames[]=addedSocialThroughPromptA&eventNames[]=addedSocialThroughPromptB'
         get 'sources/jumpstartlab/campaigns/notacampaign'
 
         last_response.status.should eq 403
