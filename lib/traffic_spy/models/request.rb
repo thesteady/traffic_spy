@@ -23,11 +23,13 @@ module TrafficSpy
     end
 
     def save
-      Request.data.insert({ site_id: site_id, url_path_id: url_path_id , event_id: event_id,
+      Request.data.insert({ site_id: site_id, url_path_id: url_path_id,
+                            event_id: event_id,
                             browser_id: browser_id, os_id: os_id,
                             requested_at: requested_at,
                             response_time: response_time,
-                            referred_by: referred_by, request_type: request_type,
+                            referred_by: referred_by,
+                            request_type: request_type,
                             resolution: resolution, ip: ip})
     end
 

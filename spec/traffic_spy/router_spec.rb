@@ -47,7 +47,7 @@ describe TrafficSpy::Router do
         post "/sources", :identifier => "jumpstartlab"
 
         last_response.status.should eq 400
-        last_response.body.should eq "{\"message\":\"missing identifier and rootUrl\"}"
+        last_response.body.should eq "{\"message\":\"no identifier or rootUrl\"}"
       end
     end
 
@@ -56,7 +56,7 @@ describe TrafficSpy::Router do
         post "/sources", :rootUrl => "http://jumpstartlab.com"
 
         last_response.status.should eq 400
-        last_response.body.should eq "{\"message\":\"missing identifier and rootUrl\"}"
+        last_response.body.should eq "{\"message\":\"no identifier or rootUrl\"}"
       end
     end
 

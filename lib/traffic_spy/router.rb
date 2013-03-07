@@ -24,7 +24,7 @@ module TrafficSpy
         { identifier: params[:identifier] }.to_json
         "{\"identifier\":\"#{params[:identifier]}\"}"
       else
-        halt 400, "{\"message\":\"missing identifier and rootUrl\"}" if !site.valid?
+        halt 400, "{\"message\":\"no identifier or rootUrl\"}" if !site.valid?
         halt 403, "{\"message\":\"identifier already exists\"}" if site.exists?
       end
     end
@@ -242,7 +242,7 @@ module TrafficSpy
         site_id = Site.find(identifier: identifier).id
         event = Event.find({name: event_name}, {site_id: site_id})
         if event.nil?
-          halt 403, "{\"message\":\"No event with the given name has been defined\"}"
+          halt 403, "{\"message\":\"given event has not been defined\"}"
         else
           true
         end
@@ -285,7 +285,8 @@ module TrafficSpy
           events = event_names.map {|name| Event.find_all_by_site_id(site_id)}
 
           events.flatten.each do |event|
-             CampaignEvent.new(campaign_id: campaign_id, event_id: event[:id]).save
+            c=CampaignEvent.new(campaign_id: campaign_id, event_id: event[:id])
+            c.save
           end
           status 200
         else
