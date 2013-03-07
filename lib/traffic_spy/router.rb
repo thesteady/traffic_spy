@@ -179,11 +179,12 @@ module TrafficSpy
         campaign = Campaign.new(name: params[:campaignname], site_id: site_id)
         if campaign.exists?
           camp = Campaign.get_campaign_id(name: campaign.name, site_id: campaign.site_id)
+          #raise "#{camp.inspect}"
           @events = camp.events
 
           event_ids = camp.event_ids
          # @events_results = Request.summarize_campaign_events(event_ids)
-           @events_results = Request.summarize_campaign_events(@events)
+           @campaign_results = Request.summarize_campaign_events(@events)
           erb :campaign_detail
         else
           status 403
@@ -280,12 +281,14 @@ module TrafficSpy
         if campaign.missing_name? || event_names.nil?
           halt 400, '{"message":"missing parameter campaignName or eventNames"}'
         elsif !campaign.exists?
+          
           campaign_id = campaign.save
-          events = event_names.map {|name| Event.find({site_id: site_id}, {name: name})}
-
-          events.each do |event|
-            CampaignEvent.new(campaign_id: campaign_id, event_id: event.id).save
+          events = event_names.map {|name| Event.find_all_by_site_id(site_id)}
+          #raise "events: #{events.flatten}, site_id: #{site_id}"
+          events.flatten.each do |event|
+             CampaignEvent.new(campaign_id: campaign_id, event_id: event[:id]).save
           end
+
 
           status 200
         else

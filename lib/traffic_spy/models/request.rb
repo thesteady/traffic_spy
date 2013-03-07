@@ -106,6 +106,8 @@ module TrafficSpy
         event_count[event.name] = data.where(:event_id => event.id).to_a.count
       end
       event_count.sort_by{|k, v| v}.reverse
+
     end
+
   end
 end

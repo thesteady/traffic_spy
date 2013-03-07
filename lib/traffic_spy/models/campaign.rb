@@ -66,11 +66,14 @@ module TrafficSpy
     def events
         event_ids
         events = event_ids.map {|event_id| Event.find_by_id(event_id)}
+
     end
 
     def event_ids
+
         results = CampaignEvent.find_all(campaign_id: id)
         event_ids = results.map {|result| result.event_id }
+
     end
 
     # def event_results
