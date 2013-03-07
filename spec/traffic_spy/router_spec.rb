@@ -194,17 +194,6 @@ describe TrafficSpy::Router do
       end
     end
 
-    context "when the identifier exists but does not have any events" do
-      it "returns an error message that no events are defined" do
-        get "/sources/jumpstartlab/reggae"
-
-        last_response.status.should eq 404
-        pending
-        ###*** fix this test
-        #last_response.body.should eq  "{\"message\":\"No events have been defined.\"}"
-      end
-    end
-
     context "when an identifier does not exist" do
       it "displays a message that no events are defined" do
 
