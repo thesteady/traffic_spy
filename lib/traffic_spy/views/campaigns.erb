@@ -1,7 +1,13 @@
-<h2>Campaign Analytics Summary</h2>
+<div class="page-header">
+  <h3>Campaign Analytics Summary: <%= params[:identifier] %> </h3>
+</div>
 
-<h3>Identifier: <%= @identifier %></h3>
-<p><a href="/sources/<%= @identifier %>">View Application Analytics</a></p>
+<ul class="nav nav-tabs">
+  <li> <a href="/sources/<%= params[:identifier] %>">Analytics Summary</a></li>
+  <li class="active"><a href="#">Event Analytics</a></li>
+  <li><a href="#">URL Analytics</a></li>
+  <li> <a href="/sources/<%= params[:identifier] %>/campaigns">Campaigns</a></li>
+</ul>
 
 
 
