@@ -178,9 +178,12 @@ module TrafficSpy
         site_id = Site.find(identifier: params[:identifier]).id
         campaign = Campaign.new(name: params[:campaignname], site_id: site_id)
         if campaign.exists?
-          id = Campaign.get_campaign_id(name: campaign.name, site_id: campaign.site_id)
-         #@events = campaign.events
+          camp = Campaign.get_campaign_id(name: campaign.name, site_id: campaign.site_id)
+          @events = camp.events
 
+          event_ids = camp.event_ids
+         # @events_results = Request.summarize_campaign_events(event_ids)
+           @events_results = Request.summarize_campaign_events(@events)
           erb :campaign_detail
         else
           status 403

@@ -264,6 +264,17 @@ describe TrafficSpy::Request do
         expect(summary[1]).to eq 37
       end
     end
+    # describe "summarize_campaign_events(event_ids)" do
+    #   it "returns a hash of event_id=>count" do
+    #     request1 = app.new(req1).save
+    #     request2 = app.new(req2).save
+    #     request3 = app.new(req3).save
+        
+    #     summary = app.summarize_campaign_events(2)
+
+    #     expect(summary.count).to eq 1
+    #   end
+    # end
   end
 
   describe "Instance Methods" do
