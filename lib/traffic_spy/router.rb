@@ -58,7 +58,7 @@ module TrafficSpy
         @url_results = site_summary.url_results
         @browser_results = site_summary.browser_results
         @os_results = site_summary.os_results
-        @res_results = site_summary.os_results
+        @res_results = site_summary.res_results
         @response_times = site_summary.response_times
 
         erb :app_stats
@@ -180,11 +180,11 @@ module TrafficSpy
         campaign = Campaign.new(name: params[:campaignname], site_id: site_id)
 
         if campaign.exists?
-          camp = Campaign.get_campaign_id(name: campaign.name, site_id: campaign.site_id)
+          camp = Campaign.get_campaign_id({name: campaign.name, site_id: campaign.site_id})
           @events = camp.events
 
           event_ids = camp.event_ids
-           @campaign_results = Request.summarize_campaign_events(@events)
+          @campaign_results = Request.summarize_campaign_events(@events)
           erb :campaign_detail
         else
           halt 403, '{"message":"Campaign has not been defined."}'
