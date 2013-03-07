@@ -34,6 +34,20 @@ describe TrafficSpy::Campaign do
       end
     end
 
+    describe ".get_campaign_id" do
+      context "when the campaign exists" do
+        it "returns a campaign" do
+          campaign = TrafficSpy::Campaign.new(input1)
+          campaign.save
+
+          campaign = TrafficSpy::Campaign.get_campaign_id(site_id: @site_id1, name: 'holiday_sale')
+          expect(campaign).to be_kind_of TrafficSpy::Campaign
+        end
+      end
+      context "when the campaign does not exist" do
+      end
+    end
+
     describe ".count" do
       it  "returns 1 record" do
         app.new(input1).save

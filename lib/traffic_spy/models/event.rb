@@ -22,10 +22,13 @@ module TrafficSpy
     end
 
     def self.find(input1, input2)
-      # need to add site_id to search as well
       data.where(input1).where(input2).map do |result|
         Event.new(result)
       end.first
+    end
+
+    def self.find_by_id(id)
+      data.where(id: id).map {|result| Event.new(result)}
     end
 
     def exists?

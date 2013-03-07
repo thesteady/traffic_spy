@@ -53,7 +53,6 @@ module TrafficSpy
         hash[name] = event[:count]
         hash
       end.sort_by{|k, v| v}.reverse
-
     end
 
   end

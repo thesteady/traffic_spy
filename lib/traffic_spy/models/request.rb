@@ -96,5 +96,18 @@ module TrafficSpy
     def self.summarize_event_requests_for_site(site_id)
       data.group_and_count(:event_id).where(:site_id =>site_id).to_a
     end
+
+    def self.summarize_campaign_events(events)
+      #input is an array of event objects
+      events = events.flatten
+      event_count = {}
+      events.each do |event|
+        puts "in loop"
+        event_count[event.name] = data.where(:event_id => event.id).to_a.count
+      end
+      event_count.sort_by{|k, v| v}.reverse
+
+    end
+
   end
 end
