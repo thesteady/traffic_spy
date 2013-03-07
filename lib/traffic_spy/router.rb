@@ -157,19 +157,20 @@ module TrafficSpy
 
     get '/sources/:identifier/campaigns' do
       if valid_site?(params)
+
         site_id = Site.find(identifier: params[:identifier]).id
         if site_has_campaigns?(site_id)
           @identifier = Site.find(identifier: params[:identifier]).identifier
           @array_of_names = Campaign.get_site_campaign_names(site_id)
 
+
           status 200
           erb :campaigns
         else
-          '{"message":"No campaigns have been defined."}'
+          halt 403, "{\"message\":\"No campaigns have been defined.\"}"
         end
       else
-        status 403
-          "{\"message\":\"identifier does not exist\"}"
+        halt 403, "{\"message\":\"identifier does not exist\"}"
       end
     end
 
@@ -177,6 +178,7 @@ module TrafficSpy
       if valid_site?(params)
         site_id = Site.find(identifier: params[:identifier]).id
         campaign = Campaign.new(name: params[:campaignname], site_id: site_id)
+
         if campaign.exists?
           camp = Campaign.get_campaign_id(name: campaign.name, site_id: campaign.site_id)
           @events = camp.events
@@ -185,12 +187,10 @@ module TrafficSpy
            @campaign_results = Request.summarize_campaign_events(@events)
           erb :campaign_detail
         else
-          status 403
-          '{"message":"Campaign has not been defined."}'
+          halt 403, '{"message":"Campaign has not been defined."}'
         end
       else
-        status 403
-        "{\"message\":\"identifier does not exist\"}"
+        halt 403, "{\"message\":\"identifier does not exist\"}"
       end
     end
 
@@ -283,14 +283,18 @@ module TrafficSpy
         elsif !campaign.exists?
           campaign_id = campaign.save
           events = event_names.map {|name| Event.find_all_by_site_id(site_id)}
+          create_campaign_events(events, campaign_id)
 
-          events.flatten.each do |event|
-            c=CampaignEvent.new(campaign_id: campaign_id, event_id: event[:id])
-            c.save
-          end
           status 200
         else
           halt 403, "{\"message\":\"campaign already exists\"}"
+        end
+      end
+
+      def create_campaign_events(events, campaign_id)
+        events.flatten.each do |event|
+          c=CampaignEvent.new(campaign_id: campaign_id, event_id: event[:id])
+          c.save
         end
       end
 
