@@ -29,25 +29,6 @@ module TrafficSpy
       end
     end
 
-    # get '/sources/:identifier.json', :provides => :json do
-    #   content_type :json
-    #  if valid_site?(params)
-    #     @site = Site.find({identifier: params[:identifier]})
-    #     site_summary = SiteSummary.new(@site)
-
-    #     results = {}
-
-    #     results[:url_results] = site_summary.url_results
-    #     results[:browser_results] = site_summary.browser_results
-    #     results[:os_results] = site_summary.os_results
-    #     results[:resolution_results] = site_summary.os_results
-    #     results[:response_times] = site_summary.response_times
-
-    #     results.to_json
-    #   # else
-    #   #   halt 403, "{\"message\":\"identifier already exists\"}" if site.exists?
-    #   end
-    # end
 
 
     get '/sources/:identifier' do
@@ -63,7 +44,7 @@ module TrafficSpy
 
         erb :app_stats
       # else
-      #   halt 403, "{\"message\":\"identifier already exists\"}" if site.exists?
+      #   halt 403, "{\"message\":\"identifialready exists\"}" if site.exists?
       end
     end
 
