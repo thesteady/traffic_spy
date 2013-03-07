@@ -1,9 +1,13 @@
 <div class="page-header">
-  <h2>URL Statistics <small>Subtext for header</small></h2>
+  <h3>URL Statistics Detail: <%= params[:identifier] %> </h3>
 </div>
 
+<ul class="nav nav-tabs">
+  <li> <a href="/sources/<%= params[:identifier] %>">Analytics Summary</a></li>
+  <li><a href="#">Event Analytics</a></li>
+  <li class="active"><a href="#">URL Analytics</a></li>
+</ul>
 
-<h3>Identifier: <%=params[:identifier]%> </h3>
 <h4>Url: <%= @path %></h4>
 
 <div class="row">
