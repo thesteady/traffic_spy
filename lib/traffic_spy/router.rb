@@ -247,11 +247,13 @@ module TrafficSpy
 
         full_path = "http://#{identifier}.com/#{rel_path}"
         path = UrlPath.find(path: full_path)
+
         if path.nil?
           halt 403, "{\"message\":\"url does not exist\"}"
         else
           true
         end
+
       end
 
       def valid_event?(params)
