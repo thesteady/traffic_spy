@@ -276,20 +276,20 @@ module TrafficSpy
       def check_campaign_components(params)
         site_id = TrafficSpy::Site.find(identifier: params[:identifier]).id
         campaign = Campaign.new(name: params[:campaignName], site_id: site_id)
-        event_names = params[:eventNames]
-
-        if campaign.missing_name? || event_names.nil?
+        if campaign.missing_name? || params[:eventNames].nil?
           halt 400, '{"message":"missing parameter campaignName or eventNames"}'
         elsif !campaign.exists?
           campaign_id = campaign.save
-          events = event_names.map {|name| Event.find_all_by_site_id(site_id)}
-          create_campaign_events(events, campaign_id)
-
-
+          events = find_events_for_campaign(params[:eventNames], site_id)
+          results = create_campaign_events(events, campaign_id)
           status 200
         else
           halt 403, "{\"message\":\"campaign already exists\"}"
         end
+      end
+
+      def find_events_for_campaign(event_names, site_id)
+          event_names.map {|name| Event.find_all_by_site_id(site_id)}
       end
 
       def create_campaign_events(events, campaign_id)
